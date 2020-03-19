@@ -3,7 +3,8 @@
   "scripts": {
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
-    "serve": "npm run build && firebase emulators:start --only functions",
+    "watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions --inspect-functions=9228",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
@@ -12,10 +13,17 @@
   "engines": {
     "node": "8"
   },
-  "main": "lib/index.js",
+  "main": "lib/functions/src/index.js",
+  "_moduleAliases": {
+    "@api": "lib/functions/src",
+    "@shared": "lib/shared/src"
+  },
   "dependencies": {
+    "@types/chalk": "^2.2.0",
+    "chalk": "^3.0.0",
     "firebase-admin": "^8.6.0",
-    "firebase-functions": "^3.3.0"
+    "firebase-functions": "^3.3.0",
+    "module-alias": "^2.2.2"
   },
   "devDependencies": {
     "tslint": "^5.12.0",

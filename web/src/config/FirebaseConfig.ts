@@ -18,6 +18,7 @@ const firebaseConfig = {
 };
 
 let _firebaseApp: firebase.app.App | undefined = undefined;
+let _db: firebase.firestore.Firestore | undefined;
 
 export function initFirestore(): firebase.app.App {
     if (_firebaseApp) {
@@ -26,5 +27,14 @@ export function initFirestore(): firebase.app.App {
     }
     _firebaseApp = firebase.initializeApp(firebaseConfig);
     logger.info("Configured Firebase");
+
     return _firebaseApp;
 }
+
+export const db = () => {
+    return _firebaseApp!.firestore()
+};
+
+export const auth = () => {
+    return _firebaseApp!.auth();
+};
