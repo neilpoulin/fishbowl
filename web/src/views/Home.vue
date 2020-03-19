@@ -1,18 +1,19 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="/images/fishbowl.png" />
-    <HelloWorld msg="Welcome to Fishbowl" />
-  </div>
+    <div class="home">
+        <img alt="Vue logo" src="/images/fishbowl.png"/>
+        <ComingSoon msg="Welcome to Fishbowl"/>
+    </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+<script lang="ts">
+    // @ is an alias to /src
+    import HelloWorld from '@/components/HelloWorld.vue'
+    import ComingSoon from '@/components/ComingSoon.vue'
 
-export default {
-  name: "Home",
-  components: {
-    HelloWorld
-  }
-};
+    export default {
+        name: 'Home',
+        components: {
+            ComingSoon,
+        },
+    }
 </script>
