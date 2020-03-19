@@ -1,6 +1,6 @@
-import {User} from "firebase";
+import { User } from "firebase";
 
 export interface AuthState {
-    hasLoaded: boolean,
-    user?: User
+  hasLoaded: boolean;
+  user?: User;
 }

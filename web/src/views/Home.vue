@@ -6,8 +6,6 @@
 </template>
 
 <script lang="ts">
-// @ is an alias to /src
-import HelloWorld from "@web/components/HelloWorld.vue";
 import ComingSoon from "@web/components/ComingSoon.vue";
 
 export default {
