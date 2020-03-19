@@ -1,5 +1,5 @@
 //tslint:disable:no-console
-
+/*eslint-disable*/
 export default class Logger {
     fileName: string;
     serverName?: string;

@@ -20,7 +20,6 @@ const firebaseConfig = {
 let _firebaseApp: firebase.app.App | undefined = undefined;
 
 export function initFirestore(): firebase.app.App {
-  console.log("Firebase config", firebaseConfig);
   if (_firebaseApp) {
     logger.warn("Firebase is already configured. Returning existing app.");
     return _firebaseApp;
