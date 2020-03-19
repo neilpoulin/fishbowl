@@ -1,7 +1,6 @@
 # Logs
 logs
 .idea/
-web/public/
 web/dist/
 web/node_modules/
 *.log
