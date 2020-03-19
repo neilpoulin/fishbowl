@@ -1,0 +1,19 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "description": "Fishbowl Web Resources",
+  "main": " ",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Neilpoulin/fishbowl.git"
+  },
+  "author": "Neil Poulin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Neilpoulin/fishbowl/issues"
+  },
+  "homepage": "https://github.com/Neilpoulin/fishbowl#readme"
+}
