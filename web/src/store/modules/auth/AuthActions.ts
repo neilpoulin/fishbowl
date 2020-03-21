@@ -1,23 +1,14 @@
 import { ActionTree } from "vuex";
 import { AuthState } from "@web/store/modules/auth/AuthModuleTypes";
-import { RootState } from "@web/store/StoreTypes";
+import { GlobalState } from "@web/store/StoreTypes";
 import { auth } from "@web/config/FirebaseConfig";
 import Logger from "@shared/Logger";
-import { Namespace } from "@web/store";
+import { Actions } from "@web/store/Actions";
 import UserCredential = firebase.auth.UserCredential;
 
-export enum AuthAction {
-  watchAuth = "watchAuth",
-  signInAnonymously = "signInAnonymously"
-}
-
-export const createAction = (name: AuthAction): string => {
-  return `${Namespace.auth}/${name}`;
-};
-
 const logger = new Logger("AuthActions");
-export const actions: ActionTree<AuthState, RootState> = {
-  [AuthAction.watchAuth]: ({ commit, dispatch }) => {
+export const actions: ActionTree<AuthState, GlobalState> = {
+  [Actions.watchAuth]: ({ commit, dispatch }) => {
     auth().onAuthStateChanged(async user => {
       logger.info(`Auth state changed. User = `, user?.toJSON());
       if (!user) {
@@ -27,7 +18,7 @@ export const actions: ActionTree<AuthState, RootState> = {
       }
     });
   },
-  [AuthAction.signInAnonymously]: async (): Promise<UserCredential> => {
+  [Actions.signInAnonymously]: async (): Promise<UserCredential> => {
     return await auth().signInAnonymously();
   }
 };
