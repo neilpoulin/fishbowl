@@ -25,7 +25,7 @@ export const getters: GetterTree<GamesState, GlobalState> = {
   [GamesGetters.all](state): Game[] {
     return Object.values(state.gamesById);
   },
-  [GamesGetters.gameNames](state, getters): (string | undefined)[] {
+  [GamesGetters.gameNames](state): (string | undefined)[] {
     return Object.values(state.gamesById)
       .filter(Boolean)
       .map((game: Game) => game.name);

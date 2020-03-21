@@ -19,17 +19,14 @@ const logger = new Logger("GameActions");
 let gamesUnsubscriber: Unsubscribe | null = null;
 
 export const actions: ActionTree<GamesState, GlobalState> = {
-  async [GamesActions.createGame](
-  { commit, dispatch },
-  payload: CreateGameParams
-  ) {
+  async [GamesActions.createGame]({ commit }, payload: CreateGameParams) {
     const game = new Game();
     game.name = payload?.name ?? new Date().toISOString();
     // game.id = `ts_${ Date.now() }`;
 
     const ref = db()
-    .collection(game.collection)
-    .doc();
+      .collection(game.collection)
+      .doc();
     game.id = ref.id;
     await ref.set(game.data());
 
@@ -45,15 +42,15 @@ export const actions: ActionTree<GamesState, GlobalState> = {
     }
 
     gamesUnsubscriber = db()
-    .collection(Collection.games)
-    .onSnapshot(snapshot => {
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        data.id = doc.id;
-        const game = Game.fromData(data);
-        commit(GamesMutations.addGame, game);
+      .collection(Collection.games)
+      .onSnapshot(snapshot => {
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          const game = Game.fromData(data);
+          commit(GamesMutations.addGame, game);
+        });
       });
-    });
 
     return;
   },
