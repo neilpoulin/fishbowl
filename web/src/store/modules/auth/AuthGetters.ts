@@ -1,5 +1,5 @@
 import { GetterTree } from "vuex";
-import { RootState } from "@web/store/StoreTypes";
+import { GlobalState } from "@web/store/StoreTypes";
 import { AuthState } from "@web/store/modules/auth/AuthModuleTypes";
 
 export enum AuthGetters {
@@ -7,7 +7,7 @@ export enum AuthGetters {
   authLoaded = "auth.authLoaded"
 }
 
-export const getters: GetterTree<AuthState, RootState> = {
+export const getters: GetterTree<AuthState, GlobalState> = {
   [AuthGetters.currentUserId](state): string | undefined {
     const { user } = state;
     return user?.uid;

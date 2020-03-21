@@ -3,6 +3,7 @@ import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import Logger from "@shared/Logger";
+import { initialize as initFirestoreUtil } from "@shared/util/FirestoreUtil";
 
 const logger = new Logger("FirestoreConfig");
 
@@ -20,6 +21,8 @@ const firebaseConfig = {
 let _firebaseApp: firebase.app.App | undefined = undefined;
 
 export function initFirestore(): firebase.app.App {
+  initFirestoreUtil({ timestamp: firebase.firestore.Timestamp });
+
   if (_firebaseApp) {
     logger.warn("Firebase is already configured. Returning existing app.");
     return _firebaseApp;

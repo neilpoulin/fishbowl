@@ -1,9 +1,14 @@
 import { Module } from "vuex";
 import { GlobalState } from "@web/store/StoreTypes";
 import { AuthState } from "@web/store/modules/auth/AuthModuleTypes";
-import { actions } from "@web/store/modules/auth/AuthActions";
-import { mutations } from "@web/store/modules/auth/AuthMutations";
-import { getters } from "@web/store/modules/auth/AuthGetters";
+import { actions, AuthActions } from "@web/store/modules/auth/AuthActions";
+import {
+  mutations,
+  AuthMutations
+} from "@web/store/modules/auth/AuthMutations";
+import { getters, AuthGetters } from "@web/store/modules/auth/AuthGetters";
+
+export import Actions = AuthActions;
 
 export const initialState: AuthState = {
   user: undefined,
@@ -17,3 +22,9 @@ export const store = (namespaced: boolean): Module<AuthState, GlobalState> => ({
   mutations,
   namespaced
 });
+
+export default {
+  Actions,
+  Getters: AuthGetters,
+  Mutations: AuthMutations
+};

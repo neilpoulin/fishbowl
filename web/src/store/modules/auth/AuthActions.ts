@@ -3,22 +3,27 @@ import { AuthState } from "@web/store/modules/auth/AuthModuleTypes";
 import { GlobalState } from "@web/store/StoreTypes";
 import { auth } from "@web/config/FirebaseConfig";
 import Logger from "@shared/Logger";
-import { Actions } from "@web/store/Actions";
 import UserCredential = firebase.auth.UserCredential;
+import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
+
+export enum AuthActions {
+  watchAuth = "auth.watchAuth",
+  signInAnonymously = "auth.signInAnonymously"
+}
 
 const logger = new Logger("AuthActions");
 export const actions: ActionTree<AuthState, GlobalState> = {
-  [Actions.watchAuth]: ({ commit, dispatch }) => {
+  [AuthActions.watchAuth]: ({ commit, dispatch }) => {
     auth().onAuthStateChanged(async user => {
       logger.info(`Auth state changed. User = `, user?.toJSON());
       if (!user) {
-        await dispatch("signInAnonymously", null);
+        await dispatch(AuthActions.signInAnonymously, null);
       } else {
-        commit("authChanged", user);
+        commit(AuthMutations.authChanged, user);
       }
     });
   },
-  [Actions.signInAnonymously]: async (): Promise<UserCredential> => {
+  [AuthActions.signInAnonymously]: async (): Promise<UserCredential> => {
     return await auth().signInAnonymously();
   }
 };
