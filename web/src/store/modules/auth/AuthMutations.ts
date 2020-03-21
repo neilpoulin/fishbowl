@@ -4,7 +4,7 @@ import {
     AuthState,
     SetDisplayNamePayload
 } from "@web/store/modules/auth/AuthModuleTypes";
-import { Player } from "@shared/models/Player";
+import Player from "@shared/models/Player";
 
 export enum AuthMutations {
     authChanged = "auth.changed",

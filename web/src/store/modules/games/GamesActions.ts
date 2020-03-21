@@ -8,11 +8,12 @@ import { Collection } from "@shared/models/Model";
 import { Game, WordEntry } from "@shared/models/Game";
 import { Unsubscribe } from "firebase";
 import FirestoreService from "@web/services/FirestoreService";
-import { Player } from "@shared/models/Player";
+import Player from "@shared/models/Player";
 import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
 import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 import { AlertMessage } from "@web/util/AlertMessage";
+import { AddWordParams, CreateGameParams, JoinGameParams, SetPhaseParams } from "@web/store/modules/games/Games";
 
 export enum GamesActions {
     createGame = "games.createGame",
@@ -22,7 +23,8 @@ export enum GamesActions {
     load = "games.load",
     updatePlayer = "games.updatePlayer",
     addGame = "games.addGame",
-    addWord = "games.addWord"
+    addWord = "games.addWord",
+    setPlayerPhase = "games.setReadyStatus"
 }
 
 const logger = new Logger("GameActions");
@@ -124,5 +126,17 @@ export const actions: ActionTree<GamesState, GlobalState> = {
                 )
             });
         }
+    },
+    async [GamesActions.setPlayerPhase]({ getters }, payload: SetPhaseParams) {
+        const player = getters[GamesGetters.currentPlayer] as Player | null;
+        const game = getters[GamesGetters.currentGame] as Game | null;
+        if (!player || !game) {
+            return;
+        }
+        const { phase } = payload;
+        player.phase = phase;
+        logger.info(`Set player phage to ${phase}`);
+        game.addPlayer(player);
+        await FirestoreService.shared.save(game);
     }
 };

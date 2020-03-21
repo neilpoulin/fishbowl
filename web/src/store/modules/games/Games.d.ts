@@ -1,3 +1,5 @@
+import { Phase } from "@shared/models/Game";
+
 declare interface JoinGameParams {
     gameId: string;
 }
@@ -12,4 +14,8 @@ declare interface CreateGameParams {
 
 declare interface AddWordParams {
     word: string,
+}
+
+declare interface SetPhaseParams {
+    phase: Phase
 }

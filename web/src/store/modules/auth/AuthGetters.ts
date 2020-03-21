@@ -1,7 +1,7 @@
 import { GetterTree } from "vuex";
 import { GlobalState } from "@web/store/StoreTypes";
 import { AuthState } from "@web/store/modules/auth/AuthModuleTypes";
-import { Player } from "@shared/models/Player";
+import Player from "@shared/models/Player";
 
 export enum AuthGetters {
     currentUserId = "auth.currentUserId",

@@ -4,6 +4,7 @@ import { GlobalState } from "@web/store/StoreTypes";
 import { Game, WordEntry } from "@shared/models/Game";
 import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
 import { AlertMessage } from "@web/util/AlertMessage";
+import Player from "@shared/models/Player";
 
 export enum GamesGetters {
     currentGame = "games.currentGame",
@@ -11,7 +12,8 @@ export enum GamesGetters {
     all = "games.all",
     gameNames = "games.allNames",
     submittedWords = "games.submittedWords",
-    submittedWordsError = "games.submittedWordsError"
+    submittedWordsError = "games.submittedWordsError",
+    currentPlayer = "games.currentPlayer"
 }
 
 // type GetterType =
@@ -45,5 +47,13 @@ export const getters: GetterTree<GamesState, GlobalState> = {
     },
     [GamesGetters.submittedWordsError](state): AlertMessage | null | undefined {
         return state.addWordError;
+    },
+    [GamesGetters.currentPlayer](state, getters): Player | null {
+        const game = getters[GamesGetters.currentGame] as Game | undefined;
+        const userId = getters[AuthGetters.currentUserId] as string | undefined;
+        if (!game || !userId) {
+            return null;
+        }
+        return game.getPlayer(userId) || null;
     }
 };

@@ -1,5 +1,5 @@
 import { User } from "firebase";
-import { Player } from "@shared/models/Player";
+import Player from "@shared/models/Player";
 
 export interface AuthState {
     hasLoaded: boolean;

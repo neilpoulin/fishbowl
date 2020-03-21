@@ -1,16 +1,22 @@
 import { BaseModel, Collection, FirestoreData } from "@shared/models/Model";
 import { DocumentSnapshot } from "@shared/util/FirestoreUtil";
-import { Player } from "@shared/models/Player";
+import Player from "@shared/models/Player";
 
 export interface WordEntry {
     word: string;
     userId: string;
 }
 
+export enum Phase {
+    SETUP = 0,
+    IN_PROGRESS = 1,
+    FINISHED = 2
+}
+
 export class Game extends BaseModel {
     readonly collection = Collection.games;
     name?: string;
-
+    phase: Phase = Phase.SETUP;
     players: { [userId: string]: Player } = {};
 
     words: WordEntry[] = [];
