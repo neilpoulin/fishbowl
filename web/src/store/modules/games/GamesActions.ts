@@ -5,13 +5,14 @@ import { GamesState } from "@web/store/modules/games/GamesModule";
 import { GamesMutations } from "@web/store/modules/games/GamesMutations";
 import { db } from "@web/config/FirebaseConfig";
 import { Collection } from "@shared/models/Model";
-import { Game } from "@shared/models/Game";
+import { Game, WordEntry } from "@shared/models/Game";
 import { Unsubscribe } from "firebase";
 import FirestoreService from "@web/services/FirestoreService";
 import { Player } from "@shared/models/Player";
 import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
 import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
+import { AlertMessage } from "@web/util/AlertMessage";
 
 export enum GamesActions {
     createGame = "games.createGame",
@@ -20,7 +21,8 @@ export enum GamesActions {
     join = "games.join",
     load = "games.load",
     updatePlayer = "games.updatePlayer",
-    addGame = "games.addGame"
+    addGame = "games.addGame",
+    addWord = "games.addWord"
 }
 
 const logger = new Logger("GameActions");
@@ -96,6 +98,31 @@ export const actions: ActionTree<GamesState, GlobalState> = {
                 game.addPlayer(player);
                 await FirestoreService.shared.save(game);
             }
+        }
+    },
+    async [GamesActions.addWord]({ getters, commit }, payload: AddWordParams) {
+        logger.info("attempting ot add word", payload);
+        const userId = getters[AuthGetters.currentUserId];
+        const game = getters[GamesGetters.currentGame] as Game | undefined;
+        if (!userId || !game) {
+            logger.error("no game or user was found. can not submit word");
+            return;
+        }
+
+        const { word } = payload;
+        const wordEntry: WordEntry = { word, userId };
+        const added = game.addWord(wordEntry);
+        if (added) {
+            logger.info("added word to the game..saving the game object");
+            commit(GamesMutations.addWordSuccess);
+            await FirestoreService.shared.save(game);
+        } else {
+            logger.error("Unable to add word");
+            commit(GamesMutations.addWordError, {
+                error: AlertMessage.error(
+                    "Unable to add this word. You may have already added it."
+                )
+            });
         }
     }
 };

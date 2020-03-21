@@ -1,14 +1,17 @@
 <template>
-    <div>
+    <div class="display-name-form">
         <div class="input-field">
             <label for="display-name-input">Display Name</label>
-            <input
-                type="text"
-                v-model="displayNameValue"
-                id="display-name-input"
-            />
+            <div class="actions">
+                <input
+                    type="text"
+                    v-model="displayNameValue"
+                    id="display-name-input"
+                    placeholder="Enter your name"
+                />
+                <button class="btn secondary" @click="save">Save</button>
+            </div>
         </div>
-        <button class="btn" @click="save">Save</button>
     </div>
 </template>
 
@@ -49,4 +52,16 @@ export default class DisplayNameForm extends Vue {
 @import "common";
 @import "mixins";
 @import "variables";
+
+.display-name-form {
+    .actions {
+        input {
+            margin-right: spacing($md);
+            width: 20rem;
+        }
+        display: flex;
+        /*justify-content: center;*/
+        align-items: center;
+    }
+}
 </style>

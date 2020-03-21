@@ -2,17 +2,19 @@
     <div class="start">
         <h1>Start</h1>
         <display-name-form />
-        <p>Games Count: {{ gamesCount }}</p>
-        <h1>Has Loaded {{ authLoaded }}</h1>
-        <h3>Current UserID {{ currentUserId }}</h3>
-        <p>Version: {{ this.$store.state.version }}</p>
-        <p>Version with getter: {{ version }}</p>
 
         <hr />
         <div v-if="game">
             <h3>Current Game</h3>
             <h1>{{ game.name }}</h1>
-            <button @click="leaveGame">Leave Game</button>
+            <div class="actions">
+                <button class="btn danger" @click="leaveGame">
+                    Leave Game
+                </button>
+                <button class="btn primary" @click="joinGame(game.id)">
+                    Join
+                </button>
+            </div>
         </div>
         <div v-else>
             <create-game />
@@ -69,7 +71,7 @@ export default class Start extends Vue {
     private startGamesObserver!: () => void;
 
     async joinGame(id: string) {
-        await this.joinGameById({ gameId: id });
+        // await this.joinGameById({ gameId: id });
         await router.push(RouteBuilder.game(id));
     }
 
@@ -79,4 +81,13 @@ export default class Start extends Vue {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@import "mixins";
+@import "variables";
+.actions {
+    .btn {
+        margin-right: spacing($lg);
+        min-width: 20rem;
+    }
+}
+</style>

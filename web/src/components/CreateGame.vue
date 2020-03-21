@@ -9,7 +9,7 @@
         </div>
 
         <alert :alert="alert" v-if="alert" />
-        <button class="btn" @click="submit">Create Game</button>
+        <button class="btn primary" @click="submit">Create Game</button>
     </div>
 </template>
 

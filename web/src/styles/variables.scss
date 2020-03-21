@@ -16,6 +16,8 @@ $color-foreground: "foreground";
 $color-background: "background";
 $color-text: "text";
 $color-shadow: "shadow";
+$color-danger: "danger";
+$color-success: "success";
 
 //color variants
 $variant-base: "base";
@@ -28,41 +30,51 @@ $italic: italic;
 $thin: thin;
 
 $theme-colors: (
-  $color-primary: (
-    $variant-base: #384ea9,
-    $variant-light: #e4efff,
-    $variant-dark: #273677
-  ),
-  $color-accent: (
-    $variant-base: #f08110,
-    $variant-light: #ff8100,
-    $variant-dark: #e47f17
-  ),
-  $color-foreground: (
-    $variant-base: #393939,
-    $variant-light: #6e6e6e,
-    $variant-dark: #111
-  ),
-  $color-background: (
-    $variant-base: #f8f5f5,
-    $variant-light: #fff,
-    $variant-dark: #ddd
-  ),
-  $color-text: (
-    $variant-base: #393939,
-    $variant-light: #fff,
-    $variant-dark: #111
-  ),
-  $color-shadow: (
-    $variant-base: #393939,
-    $variant-light: #6e6e6e,
-    $variant-dark: #111
-  )
+    $color-primary: (
+        $variant-base: #384ea9,
+        $variant-light: #e4efff,
+        $variant-dark: #273677
+    ),
+    $color-accent: (
+        $variant-base: #f08110,
+        $variant-light: #ff8100,
+        $variant-dark: #e47f17
+    ),
+    $color-danger: (
+        $variant-base: #d85033,
+        $variant-light: lighten(#d85033, 15%),
+        $variant-dark: darken(#d85033, 15%)
+    ),
+    $color-success: (
+        $variant-base: #0D8D7F,
+        $variant-light: lighten(#0D8D7F, 15%),
+        $variant-dark: darken(#0D8D7F, 15%)
+    ),
+    $color-foreground: (
+        $variant-base: #393939,
+        $variant-light: #6e6e6e,
+        $variant-dark: #111
+    ),
+    $color-background: (
+        $variant-base: #f8f5f5,
+        $variant-light: #fff,
+        $variant-dark: #ddd
+    ),
+    $color-text: (
+        $variant-base: #393939,
+        $variant-light: #fff,
+        $variant-dark: #111
+    ),
+    $color-shadow: (
+        $variant-base: #393939,
+        $variant-light: #6e6e6e,
+        $variant-dark: #111
+    )
 );
 
 @function color($key: $color-primary, $variant: "base") {
-  $map: map-get($theme-colors, $key);
-  @return map-get($map, $variant);
+    $map: map-get($theme-colors, $key);
+    @return map-get($map, $variant);
 }
 
 $base-font-size: 1.6rem;
@@ -71,61 +83,61 @@ $font-stack-normal: Avenir, Helvetica, Arial, sans-serif;
 $font-stack-heading: "Raleway", sans-serif;
 $font-stack-input: "Roboto", sans-serif;
 $font-settings: (
-  $xs: (
-    font-size: 0.75 * $base-font-size,
-    line-height: $base-line-height,
-    family: $font-stack-normal
-  ),
-  $sm: (
-    font-size: 0.875 * $base-font-size,
-    line-height: $base-line-height,
-    family: $font-stack-normal
-  ),
-  $variant-base: (
-    font-size: $base-font-size,
-    line-height: $base-line-height,
-    family: $font-stack-normal
-  ),
-  $md: (
-    font-size: 1.125 * $base-font-size,
-    line-height: $base-line-height * 2,
-    family: $font-stack-normal
-  ),
-  $lg: (
-    font-size: 1.4 * $base-font-size,
-    line-height: $base-line-height * 2,
-    family: $font-stack-heading
-  ),
-  $xl: (
-    font-size: 2 * $base-font-size,
-    line-height: $base-line-height * 2,
-    family: $font-stack-heading
-  ),
-  $xxl: (
-    font-size: 3.5 * $base-font-size,
-    line-height: $base-line-height * 2,
-    family: $font-stack-heading
-  )
+    $xs: (
+        font-size: 0.75 * $base-font-size,
+        line-height: $base-line-height,
+        family: $font-stack-normal
+    ),
+    $sm: (
+        font-size: 0.875 * $base-font-size,
+        line-height: $base-line-height,
+        family: $font-stack-normal
+    ),
+    $variant-base: (
+        font-size: $base-font-size,
+        line-height: $base-line-height,
+        family: $font-stack-normal
+    ),
+    $md: (
+        font-size: 1.125 * $base-font-size,
+        line-height: $base-line-height * 2,
+        family: $font-stack-normal
+    ),
+    $lg: (
+        font-size: 1.4 * $base-font-size,
+        line-height: $base-line-height * 2,
+        family: $font-stack-heading
+    ),
+    $xl: (
+        font-size: 2 * $base-font-size,
+        line-height: $base-line-height * 2,
+        family: $font-stack-heading
+    ),
+    $xxl: (
+        font-size: 3.5 * $base-font-size,
+        line-height: $base-line-height * 2,
+        family: $font-stack-heading
+    )
 );
 
 @function text-scale($level) {
-  @return map-get(map-get($font-settings, $level), "font-size");
+    @return map-get(map-get($font-settings, $level), "font-size");
 }
 
 @function line-height($level) {
-  @return map-get(map-get($font-settings, $level), "line-height");
+    @return map-get(map-get($font-settings, $level), "line-height");
 }
 
 @function font-stack($level) {
-  @return map-get(map-get($font-settings, $level), "family");
+    @return map-get(map-get($font-settings, $level), "family");
 }
 
 @mixin font($level, $weight: normal) {
-  font-family: font-stack($level);
-  font-size: text-scale($level);
-  line-height: line-height($level);
-  font-weight: $weight;
-  @content;
+    font-family: font-stack($level);
+    font-size: text-scale($level);
+    line-height: line-height($level);
+    font-weight: $weight;
+    @content;
 }
 
 //colors
@@ -135,14 +147,14 @@ $cornerRadius: 0.5rem;
 $cornerRadiusLg: 1rem;
 
 $spacing-settings: (
-  $xs: 0.1rem,
-  $sm: 0.6rem,
-  $variant-base: 1rem,
-  $md: 1.2rem,
-  $lg: 1.8rem,
-  $xl: 3rem
+    $xs: 0.1rem,
+    $sm: 0.6rem,
+    $variant-base: 1rem,
+    $md: 1.2rem,
+    $lg: 1.8rem,
+    $xl: 3rem
 );
 
 @function spacing($level) {
-  @return map-get($spacing-settings, $level);
+    @return map-get($spacing-settings, $level);
 }

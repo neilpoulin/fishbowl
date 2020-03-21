@@ -7,9 +7,11 @@ import {
     GamesMutations,
     mutations
 } from "@web/store/modules/games/GamesMutations";
+import { AlertMessage } from "@web/util/AlertMessage";
 
 export interface GamesState {
     currentGameId?: string | null;
+    addWordError?: AlertMessage | null;
     gamesById: { [gameId: string]: Game };
 }
 

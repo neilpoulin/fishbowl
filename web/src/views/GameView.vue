@@ -5,7 +5,9 @@
         <div v-if="game">
             <h3>{{ game.name }}</h3>
         </div>
+        <game-submit-words />
 
+        <h4>Players in the game</h4>
         <ul>
             <li v-for="player in players" :key="player.userId">
                 {{ player.displayName }}
@@ -23,10 +25,11 @@ import { Game } from "@shared/models/Game";
 import { Getter } from "vuex-class";
 import { Player } from "@shared/models/Player";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
+import GameSubmitWords from "@web/components/GameSubmitWords.vue";
 
 const logger = new Logger("GameView");
 @Component({
-    components: { DisplayNameForm }
+    components: { GameSubmitWords, DisplayNameForm }
 })
 export default class GameView extends Vue {
     @Getter(Games.Getters.currentGame) game?: Game | undefined;

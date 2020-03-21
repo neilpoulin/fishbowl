@@ -9,3 +9,7 @@ declare interface LoadGameParams {
 declare interface CreateGameParams {
     name?: string;
 }
+
+declare interface AddWordParams {
+    word: string,
+}
