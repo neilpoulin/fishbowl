@@ -1,7 +1,11 @@
 declare interface JoinGameParams {
-  gameId: string;
+    gameId: string;
+}
+
+declare interface LoadGameParams {
+    gameId: string;
 }
 
 declare interface CreateGameParams {
-  name?: string;
+    name?: string;
 }

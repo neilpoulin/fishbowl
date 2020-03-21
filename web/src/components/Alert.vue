@@ -1,7 +1,7 @@
 <template>
-  <div class="alert" :class="[alert.level]">
-    <span class="message">{{ alert.message }}</span>
-  </div>
+    <div class="alert" :class="[alert.level]">
+        <span class="message">{{ alert.message }}</span>
+    </div>
 </template>
 
 <script lang="ts">
@@ -10,9 +10,9 @@ import Component from "vue-class-component";
 import { AlertMessage } from "@web/util/AlertMessage";
 // import test from "vue-pro"
 @Component({
-  props: {
-    alert: { type: Object as () => AlertMessage, required: true }
-  }
+    props: {
+        alert: { type: Object as () => AlertMessage, required: true }
+    }
 })
 export default class Alert extends Vue {}
 </script>
@@ -22,34 +22,34 @@ export default class Alert extends Vue {}
 @import "mixins";
 
 .alert {
-  @include container {
-    @include rounded;
-    margin: spacing($lg) 0;
-  }
-
-  .message {
-    color: black;
-    @include font($lg);
-  }
-
-  &.error {
-    background: color($color-accent, $variant-light);
+    @include container {
+        @include rounded;
+        margin: spacing($lg) 0;
+    }
 
     .message {
-      color: white;
+        color: black;
+        @include font($lg);
     }
-  }
 
-  &.warn {
-    background: wheat;
-  }
+    &.error {
+        background: color($color-accent, $variant-light);
 
-  &.info {
-    background: aquamarine;
-  }
+        .message {
+            color: white;
+        }
+    }
 
-  &.success {
-    background: darkseagreen;
-  }
+    &.warn {
+        background: wheat;
+    }
+
+    &.info {
+        background: aquamarine;
+    }
+
+    &.success {
+        background: darkseagreen;
+    }
 }
 </style>

@@ -7,13 +7,20 @@ import { db } from "@web/config/FirebaseConfig";
 import { Collection } from "@shared/models/Model";
 import { Game } from "@shared/models/Game";
 import { Unsubscribe } from "firebase";
-import router, { RouteBuilder } from "@web/router";
+import FirestoreService from "@web/services/FirestoreService";
+import { Player } from "@shared/models/Player";
+import { GamesGetters } from "@web/store/modules/games/GamesGetters";
+import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
+import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 
 export enum GamesActions {
-  createGame = "games.createGame",
-  observeAll = "games.observeAll",
-  leaveGame = "games.leave",
-  join = "games.join"
+    createGame = "games.createGame",
+    observeAll = "games.observeAll",
+    leaveGame = "games.leave",
+    join = "games.join",
+    load = "games.load",
+    updatePlayer = "games.updatePlayer",
+    addGame = "games.addGame"
 }
 
 const logger = new Logger("GameActions");
@@ -21,52 +28,74 @@ const logger = new Logger("GameActions");
 let gamesUnsubscriber: Unsubscribe | null = null;
 
 export const actions: ActionTree<GamesState, GlobalState> = {
-  async [GamesActions.createGame](
-  { dispatch },
-  payload: CreateGameParams
-  ): Promise<Game> {
-    const game = new Game();
-    game.name = payload?.name ?? new Date().toISOString();
-    // game.id = `ts_${ Date.now() }`;
+    async [GamesActions.createGame](
+        { dispatch },
+        payload: CreateGameParams
+    ): Promise<Game> {
+        const game = new Game();
+        game.name = payload?.name ?? new Date().toISOString();
+        await FirestoreService.shared.save(game);
 
-    const ref = db()
-    .collection(game.collection)
-    .doc();
-    game.id = ref.id;
-    await ref.set(game.data());
+        dispatch(GamesActions.join, { gameId: game.id });
+        return game;
+    },
+    async [GamesActions.observeAll]({ dispatch }): Promise<void> {
+        logger.info("observe game called");
 
-    dispatch(GamesActions.join, { gameId: game.id });
-    return game;
-  },
-  async [GamesActions.observeAll]({ commit }): Promise<void> {
-    // return await auth().signInAnonymously();
-    logger.info("observe game called");
-    // commit(GamesMutations.addGame)
+        if (gamesUnsubscriber) {
+            logger.info("Already observing");
+        }
 
-    if (gamesUnsubscriber) {
-      logger.info("Already observing");
-    }
+        gamesUnsubscriber = db()
+            .collection(Collection.games)
+            .onSnapshot(snapshot => {
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    const game = Game.fromData(data);
+                    dispatch(GamesActions.addGame, { game });
+                });
+            });
 
-    gamesUnsubscriber = db()
-    .collection(Collection.games)
-    .onSnapshot(snapshot => {
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        data.id = doc.id;
-        const game = Game.fromData(data);
+        return;
+    },
+    [GamesActions.leaveGame]({ commit }) {
+        commit(GamesMutations.leave);
+    },
+    [GamesActions.addGame]({ commit, getters }, payload: { game: Game }) {
+        const { game } = payload;
         commit(GamesMutations.addGame, game);
-      });
-    });
+        const currentGame = getters[GamesGetters.currentGame];
+        const userId = getters[AuthGetters.currentUserId];
 
-    return;
-  },
-  [GamesActions.leaveGame]({ commit }) {
-    commit(GamesMutations.leave);
-  },
-  async [GamesActions.join]({ commit }, payload: JoinGameParams) {
-    const { gameId } = payload;
-    commit(GamesMutations.join, payload);
-    await router.push(RouteBuilder.game(gameId))
-  }
+        if (game.id === currentGame?.id) {
+            const player = game.getPlayer(userId);
+            if (player?.displayName) {
+                commit(AuthMutations.setDisplayName, {
+                    displayName: player.displayName
+                });
+            }
+        }
+    },
+    async [GamesActions.join]({ commit, dispatch }, payload: JoinGameParams) {
+        commit(GamesMutations.join, payload);
+        await dispatch(GamesActions.updatePlayer);
+    },
+    async [GamesActions.updatePlayer]({ getters, rootState }) {
+        const userId = rootState.auth.user?.uid;
+        if (userId) {
+            const game: Game | undefined = getters[GamesGetters.currentGame];
+            if (game) {
+                let player = game.getPlayer(userId);
+                const displayName = getters[AuthGetters.displayName];
+                if (!player) {
+                    player = new Player(userId);
+                }
+                player.displayName = displayName;
 
+                game.addPlayer(player);
+                await FirestoreService.shared.save(game);
+            }
+        }
+    }
 };

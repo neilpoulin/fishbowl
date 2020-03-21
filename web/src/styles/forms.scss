@@ -5,8 +5,10 @@ $inputRadius: 4px;
 .input-field {
   display: flex;
   flex-direction: column;
+  margin-bottom: spacing($lg);
   label {
-    @include font($md, $bold)
+    @include font($md, $bold);
+    margin-bottom: 0;
   }
 
   input {
@@ -16,16 +18,11 @@ $inputRadius: 4px;
     border: 1px solid color($border-color, $variant-base);
     outline: none;
     transition: all .1s linear;
-    &:hover {
-      //border-color: color($border-color, $color-variant-dark);
-    }
 
     &:focus {
-      //box-shadow: 0 0 3px 2pt color($accent, $dark);
-      //border-color: color($border-color, $color-variant-dark);
-      box-shadow: 0 0 5px  color($border-color, $base);
-      //outline: $color-variant-base;
+      box-shadow: 0 0 5px color($border-color, $base);
     }
 
   }
+
 }

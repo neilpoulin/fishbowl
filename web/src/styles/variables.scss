@@ -66,7 +66,7 @@ $theme-colors: (
 }
 
 $base-font-size: 1.6rem;
-$base-line-height: 1.25 * $base-font-size;
+$base-line-height: 1.2 * $base-font-size;
 $font-stack-normal: Avenir, Helvetica, Arial, sans-serif;
 $font-stack-heading: "Raleway", sans-serif;
 $font-stack-input: "Roboto", sans-serif;
@@ -136,11 +136,11 @@ $cornerRadiusLg: 1rem;
 
 $spacing-settings: (
   $xs: 0.1rem,
-  $sm: 0.2rem,
-  $variant-base: 0.6rem,
-  $md: 0.8rem,
-  $lg: 1.2rem,
-  $xl: 4rem
+  $sm: 0.6rem,
+  $variant-base: 1rem,
+  $md: 1.2rem,
+  $lg: 1.8rem,
+  $xl: 3rem
 );
 
 @function spacing($level) {

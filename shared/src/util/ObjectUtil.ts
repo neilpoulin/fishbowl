@@ -4,67 +4,68 @@ import Logger from "@shared/Logger";
 const logger = new Logger("ObjectUtil.ts");
 
 export function isNull(input: any): boolean {
-  return input === null || input === undefined;
+    return input === null || input === undefined;
 }
 
-
 export function isBlank(input: string | null | undefined): boolean {
-  if (!input || !input.trim()) {
-    return true;
-  }
+    if (!input || !input.trim()) {
+        return true;
+    }
 
-  return false;
+    return false;
 }
 
 export function isNonEmptyObject(input: any): input is Record<string, any> {
-  if (isNull(input)) {
-    return false;
-  }
-  return (
-    typeof input === "object" &&
-    !Array.isArray(input) &&
-    Object.keys(input).length > 0
-  );
+    if (isNull(input)) {
+        return false;
+    }
+    return (
+        typeof input === "object" &&
+        !Array.isArray(input) &&
+        Object.keys(input).length > 0
+    );
 }
 
 export function hasIdField(
-  input: any
+    input: any
 ): input is { id: any; [key: string]: any } {
-  return (
-    isNonEmptyObject(input) && input.hasOwnProperty("id") && (input.id ?? false)
-  );
+    return (
+        isNonEmptyObject(input) &&
+        input.hasOwnProperty("id") &&
+        (input.id ?? false)
+    );
 }
 
 export function isArray(input: any) {
-  if (isNull(input)) {
-    return false;
-  }
-  return Array.isArray(input);
+    if (isNull(input)) {
+        return false;
+    }
+    return Array.isArray(input);
 }
 
 export function isNotNull(input: any): boolean {
-  return !isNull(input);
+    return !isNull(input);
 }
 
 export function isDate(input: any): input is Date {
-  return isNotNull(input) && input instanceof Date;
+    return isNotNull(input) && input instanceof Date;
 }
 
 export function isString(input: any): input is string {
-  try {
-    return isNotNull(input) && typeof input === "string";
-  } catch {
-    return false;
-  }
+    try {
+        return isNotNull(input) && typeof input === "string";
+    } catch {
+        return false;
+    }
 }
 
 export function isNumber(input: any): input is number {
-  try {
-    const number = Number(input);
-    return isNotNull(number) && typeof input === "number";
-  } catch (error) {
-    return false;
-  }
+    try {
+        const number = Number(input);
+        return isNotNull(number) && typeof input === "number";
+    } catch (error) {
+        return false;
+    }
 }
 
 /**
@@ -76,59 +77,60 @@ export function isNumber(input: any): input is number {
  * @param {string} [forKey] the key that is being transformed currently. Mostly for logging purposes.
  * @return {any}
  */
-export function transformObjectSync(
-  input: any,
-  transform: (value: any) => any,
-  depth = 0,
-  forKey?: string
+export function transformObject(
+    input: any,
+    transform: (value: any) => any,
+    depth = 0,
+    forKey?: string
 ): any {
-  if (depth >= 100) {
-    logger.warn(
-      `transformObjectSync method reached a depth greater than 10, Current depth = ${depth}. Key = ${forKey ||
-        "rootKey"} Returning witihout processing`
-    );
+    if (depth >= 100) {
+        logger.warn(
+            `transformObjectSync method reached a depth greater than 10, Current depth = ${depth}. Key = ${forKey ||
+                "rootKey"} Returning witihout processing`
+        );
+        return input;
+    }
+    if (isArray(input)) {
+        return input.map((entry: any) =>
+            transformObject(entry, transform, depth + 1, forKey || "root-Array")
+        );
+    }
+
+    // input = await (transform(input))
+    const rootTransform = transform(input);
+
+    if (rootTransform !== input) {
+        return rootTransform;
+    }
+
+    if (isNonEmptyObject(input)) {
+        input = Object.assign({}, input);
+        Object.keys(input).forEach(key => {
+            let value = input[key];
+
+            //TODO: find a more robust way to detect if the value is a Firebase.DocumentRef (or other firebase object) and skip processing it.
+            if (key === "_fl_meta_") {
+                return value;
+            }
+
+            const transformed = transform(value);
+
+            //if the transformation did something, don't loop through the value
+            if (
+                value === transformed &&
+                (isNonEmptyObject(value) || Array.isArray(value))
+            ) {
+                value = transformObject(value, transform, depth + 1, key);
+            } else {
+                value = transformed;
+            }
+
+            if (value === undefined) {
+                delete input[key];
+            } else {
+                input[key] = value;
+            }
+        });
+    }
     return input;
-  }
-  if (isArray(input)) {
-    return input.map((entry: any) =>
-      transformObjectSync(entry, transform, depth + 1, forKey || "root-Array")
-    );
-  }
-
-  // input = await (transform(input))
-  const rootTransform = transform(input);
-
-  if (rootTransform !== input) {
-    return rootTransform;
-  }
-
-  if (isNonEmptyObject(input)) {
-    Object.keys(input).forEach(key => {
-      let value = input[key];
-
-      //TODO: find a more robust way to detect if the value is a Firebase.DocumentRef (or other firebase object) and skip processing it.
-      if (key === "_fl_meta_") {
-        return value;
-      }
-
-      const transformed = transform(value);
-
-      //if the transformation did something, don't loop through the value
-      if (
-        value === transformed &&
-        (isNonEmptyObject(value) || Array.isArray(value))
-      ) {
-        value = transformObjectSync(value, transform, depth + 1, key);
-      } else {
-        value = transformed;
-      }
-
-      if (value === undefined) {
-        delete input[key];
-      } else {
-        input[key] = value;
-      }
-    });
-  }
-  return input;
 }
