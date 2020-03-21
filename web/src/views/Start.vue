@@ -7,6 +7,10 @@
     <p>Version: {{ this.$store.state.version }}</p>
     <p>Version with getter: {{ version }}</p>
 
+    <section>
+      <create-game />
+    </section>
+
     <hr />
     <div v-if="game">
       <h1>Current Game: {{ game.name }}</h1>
@@ -32,6 +36,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import CreateGame from "@web/components/CreateGame.vue";
 import { Getters } from "@web/store/Getters";
 import Component from "vue-class-component";
 import { Action, Getter, Mutation, State } from "vuex-class";
@@ -41,7 +46,9 @@ import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 import Games from "@web/store/modules/games/GamesModule";
 import { Game } from "@shared/models/Game";
 
-@Component
+@Component({
+  components: { CreateGame }
+})
 export default class Start extends Vue {
   @State auth!: AuthState;
   @Getter(AuthGetters.currentUserId) currentUserId: number | undefined;

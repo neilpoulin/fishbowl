@@ -1,0 +1,31 @@
+@import "variables";
+
+@import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
+
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /*text-align: center;*/
+  color: color($text);
+  @include font($base)
+}
+
+h1 {
+  @include font($xxl, bold)
+}
+
+h2 {
+  @include font($xl, bold)
+}
+
+h3 {
+  @include font($lg, bold)
+}
+
+h4 {
+  @include font($md, bold)
+}
+
+h5 {
+  @include font($md, bold)
+}

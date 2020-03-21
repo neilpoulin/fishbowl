@@ -19,7 +19,10 @@ const logger = new Logger("GameActions");
 let gamesUnsubscriber: Unsubscribe | null = null;
 
 export const actions: ActionTree<GamesState, GlobalState> = {
-  async [GamesActions.createGame]({ commit }, payload: CreateGameParams) {
+  async [GamesActions.createGame](
+    { commit },
+    payload: CreateGameParams
+  ): Promise<Game> {
     const game = new Game();
     game.name = payload?.name ?? new Date().toISOString();
     // game.id = `ts_${ Date.now() }`;
@@ -31,6 +34,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
     await ref.set(game.data());
 
     commit(GamesMutations.join, { gameId: game.id });
+    return game;
   },
   async [GamesActions.observeAll]({ commit }): Promise<void> {
     // return await auth().signInAnonymously();

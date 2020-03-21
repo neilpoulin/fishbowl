@@ -1,0 +1,141 @@
+$textDefault: #2c3e50;
+
+//sizes
+$xs: "xs";
+$sm: "sm";
+$base: "base";
+$md: "md";
+$lg: "lg";
+$xl: "xl";
+$xxl: "xxl";
+
+//color type
+$primary: "primary";
+$accent: "accent";
+$foreground: "foreground";
+$background: "background";
+$text: "text";
+
+//color variants
+$base: "base";
+$light: "light";
+$dark: "dark";
+
+//font variants
+$bold: "bold";
+$italic: "italic";
+$thin: "thin";
+
+$theme-colors: (
+  $primary: (
+    $base: #384ea9,
+    $light: #e4efff,
+    $dark: #273677
+  ),
+  $accent: (
+    $base: #f08110,
+    $light: #ff8100,
+    $dark: #e47f17
+  ),
+  $foreground: (
+    $base: #393939,
+    $light: #6e6e6e,
+    $dark: #111
+  ),
+  $background: (
+    $base: #f8f5f5,
+    $light: #fff,
+    $dark: #ddd
+  ),
+  $text: (
+    $base: #393939,
+    $light: #6e6e6e,
+    $dark: #111
+  )
+);
+
+@function color($key: $primary, $variant: "base") {
+  $map: map-get($theme-colors, $key);
+  @return map-get($map, $variant);
+}
+
+$base-font-size: 1rem;
+$base-line-height: 1.25 * $base-font-size;
+$font-stack-normal: Avenir, Helvetica, Arial, sans-serif;
+$font-stack-heading: "Raleway", sans-serif;
+
+$font-settings: (
+  $xs: (
+    font-size: 0.75rem,
+    line-height: $base-line-height,
+    family: $font-stack-normal
+  ),
+  $sm: (
+    font-size: 0.875rem,
+    line-height: $base-line-height,
+    family: $font-stack-normal
+  ),
+  $base: (
+    font-size: 1rem,
+    line-height: $base-line-height,
+    family: $font-stack-normal
+  ),
+  $md: (
+    font-size: 1.125rem,
+    line-height: $base-line-height * 2,
+    family: $font-stack-normal
+  ),
+  $lg: (
+    font-size: 1.25rem,
+    line-height: $base-line-height * 2,
+    family: $font-stack-heading
+  ),
+  $xl: (
+    font-size: 1.5rem,
+    line-height: $base-line-height * 2,
+    family: $font-stack-heading
+  ),
+  $xxl: (
+    font-size: 2.5rem,
+    line-height: $base-line-height * 2,
+    family: $font-stack-heading
+  )
+);
+
+@function text-scale($level) {
+  @return map-get(map-get($font-settings, $level), "font-size");
+}
+
+@function line-height($level) {
+  @return map-get(map-get($font-settings, $level), "line-height");
+}
+
+@function font-stack($level) {
+  @return map-get(map-get($font-settings, $level), "family")
+}
+
+@mixin font($level, $weight: normal) {
+  font-family: font-stack($level);
+  font-size: text-scale($level);
+  line-height: line-height($level);
+  font-weight: $weight;
+}
+
+//colors
+$errorBg: teal;
+
+$cornerRadius: 0.5rem;
+$cornerRadiusLg: 1rem;
+
+$spacing-settings: (
+  $xs: 0.1rem,
+  $sm: 0.2rem,
+  $base: 0.6rem,
+  $md: 0.8rem,
+  $lg: 1.2rem,
+  $xl: 4rem
+);
+
+@function spacing($level) {
+  @return map-get($spacing-settings, $level);
+}

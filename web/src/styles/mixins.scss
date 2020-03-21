@@ -1,0 +1,10 @@
+@import "variables";
+
+@mixin rounded($size: $cornerRadius) {
+  border-radius: $size;
+}
+
+@mixin container($padding: $base) {
+  padding: spacing($padding);
+  @content
+}

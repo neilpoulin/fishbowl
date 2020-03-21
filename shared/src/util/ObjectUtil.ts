@@ -7,6 +7,15 @@ export function isNull(input: any): boolean {
   return input === null || input === undefined;
 }
 
+
+export function isBlank(input: string | null | undefined): boolean {
+  if (!input || !input.trim()) {
+    return true;
+  }
+
+  return false;
+}
+
 export function isNonEmptyObject(input: any): input is Record<string, any> {
   if (isNull(input)) {
     return false;
