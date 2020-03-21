@@ -4,25 +4,41 @@ import Home from "@web/views/Home.vue";
 
 Vue.use(VueRouter);
 
+export enum RoutePath {
+  HOME = "/",
+  ABOUT = "/about",
+  START = "/start",
+  GAME = "/game/:gameId",
+}
+
+export enum RouteName {
+  HOME = "Home",
+  ABOUT = "About",
+  START = "Start",
+  GAME = "Game"
+}
+
 const routes = [
   {
-    path: "/",
-    name: "Home",
+    path: RoutePath.HOME,
+    name: RouteName.HOME,
     component: Home
   },
   {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+    path: RoutePath.ABOUT,
+    name: RouteName.ABOUT,
     component: () =>
-      import(/* webpackChunkName: "about" */ "@web/views/About.vue")
+    import("@web/views/About.vue")
   },
   {
-    path: "/start",
-    name: "Start",
+    path: RoutePath.START,
+    name: RouteName.START,
     component: () => import("@web/views/Start.vue")
+  },
+  {
+    path: RoutePath.GAME,
+    name: RouteName.GAME,
+    component: () => import("@web/views/GameView.vue")
   }
 ];
 
@@ -33,3 +49,19 @@ const router = new VueRouter({
 });
 
 export default router;
+
+
+export const RouteBuilder = {
+  home() {
+    return RoutePath.HOME
+  },
+  about() {
+    return RoutePath.ABOUT
+  },
+  start() {
+    return RoutePath.START
+  },
+  game(gameId: string) {
+    return { name: RouteName.GAME, params: { gameId } };
+  }
+};

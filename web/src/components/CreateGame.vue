@@ -1,11 +1,15 @@
 <template>
   <div class="create-game">
-    <label for="new-game-name-input">
-      Game Name
-    </label>
-    <input type="text" v-model="name" id="new-game-name-input" />
+    <h1>Start a new Game</h1>
+    <div class="input-field">
+      <label for="new-game-name-input">
+        Game Name
+      </label>
+      <input type="text" v-model="name" id="new-game-name-input" />
+    </div>
+
     <alert :alert="alert" v-if="alert" />
-    <button @click="submit">Create Game</button>
+    <button class="btn" @click="submit">Create Game</button>
   </div>
 </template>
 

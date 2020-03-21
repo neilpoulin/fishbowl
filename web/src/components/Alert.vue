@@ -24,6 +24,7 @@ export default class Alert extends Vue {}
 .alert {
   @include container {
     @include rounded;
+    margin: spacing($lg) 0;
   }
 
   .message {
@@ -32,7 +33,7 @@ export default class Alert extends Vue {}
   }
 
   &.error {
-    background: color($accent, $light);
+    background: color($color-accent, $variant-light);
 
     .message {
       color: white;

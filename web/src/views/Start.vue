@@ -7,9 +7,6 @@
     <p>Version: {{ this.$store.state.version }}</p>
     <p>Version with getter: {{ version }}</p>
 
-    <section>
-      <create-game />
-    </section>
 
     <hr />
     <div v-if="game">
@@ -17,7 +14,7 @@
       <button @click="leaveGame">Leave Game</button>
     </div>
     <div v-else>
-      <button @click="createGame">Create New Game</button>
+      <create-game />
     </div>
     <div v-if="gamesCount > 0">
       <h2>Available Games</h2>
@@ -59,7 +56,7 @@ export default class Start extends Vue {
   @Getter(Games.Getters.all) allGames!: Game[];
 
   @Action(Games.Actions.leaveGame) leaveGame!: () => void;
-  @Mutation(Games.Mutations.join)
+  @Action(Games.Actions.join)
   protected joinGameById!: (params: JoinGameParams) => void;
 
   @Action(Games.Actions.createGame)

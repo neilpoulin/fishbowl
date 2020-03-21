@@ -1,13 +1,18 @@
 @import "variables";
-
+@import "forms";
 @import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+:root {
+  font-size: 62.5%;
+}
 
 html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /*text-align: center;*/
-  color: color($text);
-  @include font($base)
+  color: color($color-text);
+  @include font($variant-base)
 }
 
 h1 {
@@ -28,4 +33,40 @@ h4 {
 
 h5 {
   @include font($md, bold)
+}
+
+
+
+input {
+  @include font($base) {
+    font-family: $font-stack-input;
+  }
+}
+
+.btn {
+  $shadowHeight: 4px;
+  $pressY: 1px;
+  $shadowColor: rgba(0, 0, 0, 0.2);
+  $bgColor: color($color-primary);
+  $bgColorActive: darken($bgColor, 5%);
+  @include font($base);
+  background-color: $bgColor;
+  color: color($color-text, $variant-light);
+  padding: 1rem 1.4rem;
+  border-radius: 1.4rem;
+  border: none;
+  outline: none;
+  box-shadow: inset 0 -1 * $shadowHeight 0 0 $shadowColor;
+  transition: all .1s;
+  //border-bottom: $shadowHeight solid $shadowColor;
+  &:hover {
+    background-color: $bgColorActive;
+    cursor: pointer;
+  }
+  &:active {
+    box-shadow: inset 0 0 0 0 $shadowColor;
+    transform: translateY($pressY);
+    background-color: darken($bgColorActive, 5%);
+  }
+
 }

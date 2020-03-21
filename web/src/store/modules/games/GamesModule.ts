@@ -13,13 +13,9 @@ export interface GamesState {
   gamesById: { [gameId: string]: Game };
 }
 
-const game1 = new Game();
-game1.id = "test";
-game1.name = "Test Game Name";
-
 export const state: GamesState = {
   currentGameId: null,
-  gamesById: { test: game1 }
+  gamesById: {}
 };
 
 export const store = (

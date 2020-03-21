@@ -21,10 +21,10 @@
 
   a {
     font-weight: bold;
-    color: color($primary, $dark);
+    color: color($color-primary, $variant-dark);
 
     &.router-link-exact-active {
-      color: color($accent);
+      color: color($color-accent);
     }
   }
 }
