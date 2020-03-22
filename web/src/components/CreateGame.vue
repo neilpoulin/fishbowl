@@ -1,15 +1,14 @@
 <template>
     <div class="create-game">
         <h1>Start a new Game</h1>
+        <label for="new-game-name-input">
+            Game Name
+        </label>
         <div class="input-field">
-            <label for="new-game-name-input">
-                Game Name
-            </label>
             <input type="text" v-model="name" id="new-game-name-input" />
+            <button class="btn primary" @click="submit">Create Game</button>
         </div>
-
         <alert :alert="alert" v-if="alert" />
-        <button class="btn primary" @click="submit">Create Game</button>
     </div>
 </template>
 
@@ -57,7 +56,7 @@ export default class GameState extends Vue {
 
     validate(): AlertMessage | null {
         if (isBlank(this.name)) {
-            return AlertMessage.error("Please enter a name");
+            return AlertMessage.error("Please enter a game name");
         }
 
         return null;
@@ -72,6 +71,16 @@ export default class GameState extends Vue {
 </script>
 
 <style scoped lang="scss">
+@import "mixins";
+@import "variables";
 .create-game {
+    .input-field {
+        display: flex;
+        flex-direction: row;
+        input {
+            width: 25rem;
+            margin-right: spacing($md);
+        }
+    }
 }
 </style>

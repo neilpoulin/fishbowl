@@ -35,9 +35,23 @@
         transform: translateY($pressY);
         background-color: darken($bgColorActive, 5%);
     }
+
+    &.outlined {
+        border: 1px solid $bgColor;
+        background-color: transparent;
+        color: $bgColor;
+
+        &:hover {
+            background-color: $bgColor;
+            color: $colorText;
+        }
+
+        &:active {
+            background-color: darken($bgColorActive, 5%);
+            color: $colorText;
+        }
+    }
 }
-
-
 
 /* MEDIA QUERIES */
 @mixin maxW($point) {

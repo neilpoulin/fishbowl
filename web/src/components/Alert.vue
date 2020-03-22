@@ -33,7 +33,7 @@ export default class Alert extends Vue {}
     }
 
     &.error {
-        background: color($color-accent, $variant-light);
+        background: color($color-danger);
 
         .message {
             color: white;

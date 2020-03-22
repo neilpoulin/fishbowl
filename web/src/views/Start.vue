@@ -8,9 +8,9 @@
 
                 <div v-if="game">
                     <h3>Current Game</h3>
-                    <h1>{{ game.name }}</h1>
+                    <h2>{{ game.name }}</h2>
                     <div class="actions">
-                        <button class="btn danger" @click="leaveGame">
+                        <button class="btn danger outlined" @click="leaveGame">
                             Leave Game
                         </button>
                         <button class="btn primary" @click="joinGame(game.id)">
@@ -25,7 +25,7 @@
             <section class="available-games">
                 <div v-if="gamesCount > 0">
                     <h2>Available Games</h2>
-                    <ul>
+                    <ul class="games-list">
                         <li
                             v-for="(game, index) in allGames"
                             @click="joinGame(game.id)"
@@ -95,9 +95,14 @@ export default class Start extends Vue {
 @import "mixins";
 @import "variables";
 .actions {
+    display: flex;
+    @include maxW($br-tablet-min) {
+        flex-direction: column-reverse;
+    }
     .btn {
         margin-right: spacing($lg);
         min-width: 20rem;
+        margin-bottom: spacing($md);
     }
 }
 
@@ -114,7 +119,7 @@ export default class Start extends Vue {
     display: flex;
     flex-direction: row;
     @include maxW($br-tablet-max) {
-        flex-direction: column-reverse;
+        flex-direction: column;
     }
 
     .main-section {
@@ -124,6 +129,25 @@ export default class Start extends Vue {
     .available-games {
         background-color: color($color-background);
         @include container($xl);
+
+        .games-list {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+
+            li {
+                $bgColor: color($color-background, $variant-dark);
+                @include container($md);
+                @include rounded;
+                background-color: $bgColor;
+
+                margin-bottom: spacing($md);
+                &:hover {
+                    cursor: pointer;
+                    background-color: darken($bgColor, 5%);
+                }
+            }
+        }
     }
 }
 </style>
