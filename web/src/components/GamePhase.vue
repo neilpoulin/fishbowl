@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <h3>{{ title }}</h3>
-        <p>{{ description }}</p>
+    <div class="phase">
+        <h3 class="title">{{ title }}</h3>
+        <p class="description">{{ description }}</p>
     </div>
 </template>
 
@@ -18,18 +18,21 @@ export default Vue.extend({
         title(): string {
             switch (this.phase) {
                 case Phase.SETUP:
-                    return "Setup";
+                    return "Welcome to Fish Bowl!";
                 case Phase.IN_PROGRESS:
-                    return "Playing";
+                    return "";
                 case Phase.FINISHED:
-                    return "Finished";
+                    return "";
             }
         },
         // eslint-disable-next-line vue/return-in-computed-property
         description(): string {
             switch (this.phase) {
                 case Phase.SETUP:
-                    return "Enter words to add to the Fish Bowl! When you're done, press the ready button";
+                    return (
+                        "First, enter some words into the fishbowl. These words will be used through out the game. " +
+                        "\n\nThe game will start once everyone has pressed\xa0ready"
+                    );
                 case Phase.IN_PROGRESS:
                     return "Game in progress";
                 case Phase.FINISHED:
@@ -40,4 +43,8 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.phase > * {
+    white-space: pre-wrap;
+}
+</style>

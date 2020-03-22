@@ -11,7 +11,13 @@
                     id="display-name-input"
                     placeholder="Enter your name"
                 />
-                <button class="btn secondary" @click="save">Save</button>
+                <button
+                    class="btn secondary"
+                    @click="save"
+                    v-show="showSaveButton"
+                >
+                    Save
+                </button>
             </div>
         </div>
     </div>
@@ -33,6 +39,9 @@ export default class DisplayNameForm extends Vue {
 
     @Prop({ type: Boolean, default: false }) showLabel!: boolean;
 
+    get showSaveButton(): boolean {
+        return this.displayNameValue !== this.displayName;
+    }
     displayNameValue = "";
 
     beforeMount() {

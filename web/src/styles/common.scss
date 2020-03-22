@@ -11,10 +11,12 @@ html,
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /*text-align: center;*/
     color: color($color-text);
+    margin: 0;
     @include font($variant-base);
 }
+
+
 
 h1,
 h2,

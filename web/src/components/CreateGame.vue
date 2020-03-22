@@ -1,11 +1,17 @@
 <template>
     <div class="create-game">
-        <h1>Start a new Game</h1>
+        <h3>Start a new Game</h3>
+        <p>Create a new game to share with your friends.</p>
         <label for="new-game-name-input">
             Game Name
         </label>
         <div class="input-field">
-            <input type="text" v-model="name" id="new-game-name-input" />
+            <input
+                type="text"
+                v-model="name"
+                id="new-game-name-input"
+                placeholder="Enter a name for this game"
+            />
             <button class="btn primary" @click="submit">Create Game</button>
         </div>
         <alert :alert="alert" v-if="alert" />
@@ -80,6 +86,15 @@ export default class GameState extends Vue {
         input {
             width: 25rem;
             margin-right: spacing($md);
+        }
+
+        @include maxW($br-tablet-min) {
+            flex-direction: column;
+            input {
+                margin-bottom: spacing($base);
+                width: unset;
+                margin-right: 0;
+            }
         }
     }
 }

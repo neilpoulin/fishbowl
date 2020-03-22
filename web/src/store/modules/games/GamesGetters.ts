@@ -1,7 +1,7 @@
 import { GetterTree } from "vuex";
 import { GamesState } from "@web/store/modules/games/GamesModule";
 import { GlobalState } from "@web/store/StoreTypes";
-import { Game, WordEntry } from "@shared/models/Game";
+import { Game, Phase, WordEntry } from "@shared/models/Game";
 import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
 import { AlertMessage } from "@web/util/AlertMessage";
 import Player from "@shared/models/Player";
@@ -10,6 +10,7 @@ export enum GamesGetters {
     currentGame = "games.currentGame",
     count = "games.totalCount",
     all = "games.all",
+    availableGames = "games.available",
     gameNames = "games.allNames",
     submittedWords = "games.submittedWords",
     submittedWordsError = "games.submittedWordsError",
@@ -39,6 +40,11 @@ export const getters: GetterTree<GamesState, GlobalState> = {
     },
     [GamesGetters.all](state): Game[] {
         return Object.values(state.gamesById);
+    },
+    [GamesGetters.availableGames](state): Game[] {
+        return Object.values(state.gamesById).filter(
+            game => game.phase == Phase.SETUP
+        );
     },
     [GamesGetters.gameNames](state): (string | undefined)[] {
         return Object.values(state.gamesById)

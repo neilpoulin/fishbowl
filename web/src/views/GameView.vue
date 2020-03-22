@@ -49,18 +49,7 @@
                     </h2>
                 </div>
 
-                <div class="scores">
-                    <div
-                        class="score-container"
-                        v-for="team in teams"
-                        :key="team"
-                    >
-                        <span class="team"> Team {{ team }} </span>:
-                        <span class="score">
-                            {{ game.scores[team] || 0 }}
-                        </span>
-                    </div>
-                </div>
+                <scoreboard />
 
                 <div class="secret-word" v-if="currentWord && currentWord.word">
                     <p>Your word is:</p>
@@ -96,7 +85,7 @@ import Player from "@shared/models/Player";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
 import GameSubmitWords from "@web/components/GameSubmitWords.vue";
 import PlayerReadyButton from "@web/components/PlayerReadyButton.vue";
-
+import Scoreboard from "@web/components/Scoreboard.vue";
 import GamePhase from "@web/components/GamePhase.vue";
 import { CompleteWordPayload } from "@web/store/modules/games/Games";
 import FirestoreService from "@web/services/FirestoreService";
@@ -107,7 +96,8 @@ const logger = new Logger("GameView");
         GameSubmitWords,
         DisplayNameForm,
         PlayerReadyButton,
-        GamePhase
+        GamePhase,
+        Scoreboard
     },
     filters: {
         formatDuration(ms: number | undefined): string {
@@ -127,6 +117,7 @@ export default class GameView extends Vue {
     get players(): Player[] {
         return Object.values(this.game?.players ?? {});
     }
+    loading = false;
     secondsLeftMs: number | null = null;
     tickerInterval: number | undefined;
 
@@ -233,7 +224,7 @@ export default class GameView extends Vue {
         @include minW($br-phone-max) {
             width: 25rem;
         }
-
+        @include rounded($cornerRadiusLg);
         @include container($lg);
         background: color($color-background);
     }

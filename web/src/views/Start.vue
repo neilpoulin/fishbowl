@@ -18,16 +18,16 @@
                         </button>
                     </div>
                 </div>
-                <div v-else>
+                <div v-else class="create-game">
                     <create-game />
                 </div>
             </section>
             <section class="available-games">
                 <div v-if="gamesCount > 0">
-                    <h2>Available Games</h2>
+                    <h2>Recent Games</h2>
                     <ul class="games-list">
                         <li
-                            v-for="(game, index) in allGames"
+                            v-for="(game, index) in availableGames"
                             @click="joinGame(game.id)"
                             :key="index"
                         >
@@ -68,7 +68,7 @@ export default class Start extends Vue {
     @Getter(Getters.appVersion) version!: number;
     @Getter(GamesGetters.count) gamesCount!: number;
     @Getter(Games.Getters.currentGame) game: Game | undefined;
-    @Getter(Games.Getters.all) allGames!: Game[];
+    @Getter(Games.Getters.availableGames) availableGames!: Game[];
 
     @Action(Games.Actions.leaveGame) leaveGame!: () => void;
     @Action(Games.Actions.join)
@@ -109,6 +109,12 @@ export default class Start extends Vue {
 .start {
     max-width: 900px;
     margin: 0 auto;
+}
+
+.create-game {
+    @include container;
+    @include rounded;
+    background-color: color($color-background, $variant-dark);
 }
 
 .name-container {

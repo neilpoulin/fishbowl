@@ -7,37 +7,41 @@ Vue.use(VueRouter);
 export enum RoutePath {
     HOME = "/",
     ABOUT = "/about",
-    START = "/start",
-    GAME = "/game/:gameId"
+    GAMES = "/games",
+    GAME = "/games/:gameId"
 }
 
 export enum RouteName {
     HOME = "Home",
     ABOUT = "About",
-    START = "Start",
+    GAMES = "Games",
     GAME = "Game"
 }
 
-const routes = [
+export const routes = [
     {
+        showInNav: true,
         path: RoutePath.HOME,
         name: RouteName.HOME,
         component: Home
     },
     {
+        showInNav: true,
         path: RoutePath.ABOUT,
         name: RouteName.ABOUT,
         component: () => import("@web/views/About.vue")
     },
     {
-        path: RoutePath.START,
-        name: RouteName.START,
-        component: () => import("@web/views/Start.vue")
+        path: RoutePath.GAMES,
+        name: RouteName.GAMES,
+        component: () => import("@web/views/Start.vue"),
+        showInNav: true
     },
     {
         path: RoutePath.GAME,
         name: RouteName.GAME,
-        component: () => import("@web/views/GameView.vue")
+        component: () => import("@web/views/GameView.vue"),
+        showInNav: false
     }
 ];
 
@@ -57,7 +61,7 @@ export const RouteBuilder = {
         return RoutePath.ABOUT;
     },
     start() {
-        return RoutePath.START;
+        return RoutePath.GAMES;
     },
     game(gameId: string) {
         return { name: RouteName.GAME, params: { gameId } };
