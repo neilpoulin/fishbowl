@@ -16,18 +16,18 @@ export const processGameEvent = functions.firestore
         }
 
         logger.info("Handling game on write with data ", JSON.stringify(data));
-        const previousData = snapshot.before.data();
-        const previousGame =
-            previousData !== undefined
-                ? Game.fromData(previousData)
-                : undefined;
+        // const previousData = snapshot.before.data();
+        // const previousGame =
+        //     previousData !== undefined
+        //         ? Game.fromData(previousData)
+        //         : undefined;
         const game = Game.fromData(data);
         if (!game || game.phase === Phase.SETUP) {
             logger.info("Game is in setup, no need to process it");
             return;
         }
 
-        const turnEnded = game.turnEndsAt && game.turnEndsAt < new Date();
+        // const turnEnded = game.turnEndsAt && game.turnEndsAt < new Date();
 
         if (game.remainingWordsInRound.length === 0) {
             logger.info("going to next round");
@@ -36,12 +36,13 @@ export const processGameEvent = functions.firestore
 
             await snapshot.after.ref.set(game.data(), { merge: true });
             return;
-        } else if (
-            !turnEnded &&
-            previousGame &&
-            game.remainingWordsInRound.length ===
-                previousGame.remainingWordsInRound.length
-        ) {
+        } else {
+            // } else if (
+            // !turnEnded &&
+            // previousGame &&
+            // game.remainingWordsInRound.length ===
+            //     previousGame.remainingWordsInRound.length
+            // ) {
             return;
         }
 
@@ -152,10 +153,15 @@ export const updateGamePhase = functions.firestore
         }
 
         const players = Object.values(game.players);
+        if (players.length === 0) {
+            logger.info("no players in the game yet");
+            return
+        }
+
         const notReady = players.find(player => {
             return player.phase <= game.phase;
         });
-        if (!!notReady) {
+        if (!!notReady ) {
             logger.info("Some players not not ready. can not continue");
             return;
         }

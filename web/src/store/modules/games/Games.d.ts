@@ -21,5 +21,5 @@ declare interface SetPhaseParams {
 }
 
 declare interface CompleteWordPayload {
-    word: WordEntry
+    word: WordEntry;
 }

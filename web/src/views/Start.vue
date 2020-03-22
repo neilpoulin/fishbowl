@@ -1,5 +1,6 @@
 <template>
     <div class="start">
+        <div class="loading" v-if="isLoading"></div>
         <div class="flex-container">
             <section class="main-section">
                 <div class="name-container">
@@ -22,8 +23,8 @@
                     <create-game />
                 </div>
             </section>
-            <section class="available-games">
-                <div v-if="gamesCount > 0">
+            <section class="available-games" v-if="gamesCount > 0">
+                <div>
                     <h2>Recent Games</h2>
                     <ul class="games-list">
                         <li
@@ -80,8 +81,11 @@ export default class Start extends Vue {
     @Action(Games.Actions.observeAll)
     private startGamesObserver!: () => void;
 
+    isLoading = false;
+
     async joinGame(id: string) {
-        // await this.joinGameById({ gameId: id });
+        this.isLoading = true;
+        await this.joinGameById({ gameId: id });
         await router.push(RouteBuilder.game(id));
     }
 
@@ -109,6 +113,16 @@ export default class Start extends Vue {
 .start {
     max-width: 900px;
     margin: 0 auto;
+}
+
+.loading {
+    position: fixed;
+    background-color: red;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
 }
 
 .create-game {
