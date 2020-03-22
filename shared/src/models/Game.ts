@@ -18,7 +18,7 @@ export class Game extends BaseModel {
     name?: string;
     phase: Phase = Phase.SETUP;
     players: { [userId: string]: Player } = {};
-
+    round = 0;
     words: WordEntry[] = [];
 
     addWord(wordEntry: WordEntry): boolean {

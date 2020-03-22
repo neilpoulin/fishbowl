@@ -5,24 +5,26 @@ $inputRadius: 4px;
 .input-field {
   display: flex;
   flex-direction: column;
-  margin-bottom: spacing($lg);
+  //margin-bottom: spacing($lg);
   label {
     @include font($md, $bold);
     margin-bottom: 0;
   }
 
-  input {
-    $border-color: $color-primary;
-    padding: .4rem .6rem;
-    border-radius: $inputRadius;
-    border: 1px solid color($border-color, $variant-base);
-    outline: none;
-    transition: all .1s linear;
 
-    &:focus {
-      box-shadow: 0 0 5px color($border-color, $base);
-    }
 
+}
+
+input {
+  $border-color: $color-primary;
+  padding: .4rem .6rem;
+  border-radius: $inputRadius;
+  border: 1px solid color($border-color, $variant-base);
+  outline: none;
+  transition: all .1s linear;
+
+  &:focus {
+    box-shadow: 0 0 5px color($border-color, $base);
   }
 
 }

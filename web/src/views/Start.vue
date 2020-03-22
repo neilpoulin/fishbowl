@@ -47,6 +47,10 @@ import Games from "@web/store/modules/games/GamesModule";
 import { Game } from "@shared/models/Game";
 import router, { RouteBuilder } from "@web/router";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
+import {
+    CreateGameParams,
+    JoinGameParams
+} from "@web/store/modules/games/Games";
 
 @Component({
     components: { DisplayNameForm, CreateGame }

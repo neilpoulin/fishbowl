@@ -36,3 +36,18 @@
         background-color: darken($bgColorActive, 5%);
     }
 }
+
+
+
+/* MEDIA QUERIES */
+@mixin maxW($point) {
+    @media (max-width: #{$point}px) {
+        @content;
+    }
+}
+
+@mixin minW($point) {
+    @media (min-width: #{$point}px) {
+        @content;
+    }
+}

@@ -16,6 +16,15 @@ body {
     @include font($variant-base);
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0 0 spacing($sm) 0;
+}
+
 h1 {
     @include font($xxl, bold);
 }
@@ -96,5 +105,14 @@ input {
         );
         border: 1px solid color($color-background, $variant-dark);
         box-shadow: none;
+    }
+}
+
+ul {
+    margin: 0 0 spacing($md) 0;
+    padding-left: 2rem;
+    li {
+        margin: 0;
+        padding: spacing($xs) 0;
     }
 }

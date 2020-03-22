@@ -1,5 +1,19 @@
 $textDefault: #2c3e50;
 
+//breakpoints
+$widthXxs: 374;
+$widthXs: 600;
+$widthS: 768;
+$widthM: 960;
+$widthL: 1024;
+$widthXL: 1140;
+$widthXXL: 1500;
+
+$br-phone-max: $widthS;
+$br-tablet-min: $widthM;
+$br-tablet-max: $widthL;
+$br-desktop-min: $widthM;
+
 //sizes
 $xs: "xs";
 $sm: "sm";
@@ -100,22 +114,22 @@ $font-settings: (
     ),
     $md: (
         font-size: 1.125 * $base-font-size,
-        line-height: $base-line-height * 2,
+        line-height: $base-line-height,
         family: $font-stack-normal
     ),
     $lg: (
         font-size: 1.4 * $base-font-size,
-        line-height: $base-line-height * 2,
+        line-height: $base-line-height,
         family: $font-stack-heading
     ),
     $xl: (
         font-size: 2 * $base-font-size,
-        line-height: $base-line-height * 2,
+        line-height: $base-line-height,
         family: $font-stack-heading
     ),
     $xxl: (
         font-size: 3.5 * $base-font-size,
-        line-height: $base-line-height * 2,
+        line-height: $base-line-height,
         family: $font-stack-heading
     )
 );
@@ -135,7 +149,7 @@ $font-settings: (
 @mixin font($level, $weight: normal) {
     font-family: font-stack($level);
     font-size: text-scale($level);
-    line-height: line-height($level);
+    //line-height: line-height($level);
     font-weight: $weight;
     @content;
 }

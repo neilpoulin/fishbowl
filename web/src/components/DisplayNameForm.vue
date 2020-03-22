@@ -1,7 +1,9 @@
 <template>
     <div class="display-name-form">
         <div class="input-field">
-            <label for="display-name-input">Display Name</label>
+            <label v-if="showLabel" for="display-name-input">
+                Display Name
+            </label>
             <div class="actions">
                 <input
                     type="text"
@@ -20,7 +22,7 @@ import Auth from "@web/store/modules/auth/AuthModule";
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Getter } from "vuex-class";
-import { Watch } from "vue-property-decorator";
+import { Prop, Watch } from "vue-property-decorator";
 import Logger from "@shared/Logger";
 
 const logger = new Logger("DisplayNameForm");
@@ -28,6 +30,9 @@ const logger = new Logger("DisplayNameForm");
 @Component
 export default class DisplayNameForm extends Vue {
     @Getter(Auth.Getters.displayName) displayName: string | undefined | null;
+
+    @Prop({ type: Boolean, default: false }) showLabel!: boolean;
+
     displayNameValue = "";
 
     beforeMount() {
@@ -54,10 +59,13 @@ export default class DisplayNameForm extends Vue {
 @import "variables";
 
 .display-name-form {
+    display: flex;
+    /*align-items: space-b;*/
+    /*justify-content: center;*/
     .actions {
         input {
             margin-right: spacing($md);
-            width: 20rem;
+            max-width: 20rem;
         }
         display: flex;
         /*justify-content: center;*/

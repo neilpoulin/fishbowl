@@ -2,6 +2,7 @@ import { MutationTree } from "vuex";
 import { GamesState } from "@web/store/modules/games/GamesModule";
 import { Game } from "@shared/models/Game";
 import { AlertMessage } from "@web/util/AlertMessage";
+import { JoinGameParams } from "@web/store/modules/games/Games";
 
 export enum GamesMutations {
     join = "games.join",

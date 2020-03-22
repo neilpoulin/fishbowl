@@ -13,7 +13,12 @@ import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
 import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 import { AlertMessage } from "@web/util/AlertMessage";
-import { AddWordParams, CreateGameParams, JoinGameParams, SetPhaseParams } from "@web/store/modules/games/Games";
+import {
+    AddWordParams,
+    CreateGameParams,
+    JoinGameParams,
+    SetPhaseParams
+} from "@web/store/modules/games/Games";
 
 export enum GamesActions {
     createGame = "games.createGame",

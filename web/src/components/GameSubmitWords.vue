@@ -1,14 +1,19 @@
 <template>
     <div class="container">
         <div>
-            <h3>Add Words</h3>
-            <div class="word-entry input-field">
-                <input type="text" v-model="wordInput" />
-                <button class="btn primary" @click="submit">Add</button>
-                <alert v-if="alert" :alert="alert" />
+            <div class="input-container">
+                <h3>Add Words</h3>
+                <div class="word-entry input-field">
+                    <input
+                        type="text"
+                        v-model="wordInput"
+                        placeholder="Enter a word"
+                    />
+                    <button class="btn primary" @click="submit">Add</button>
+                    <alert v-if="alert" :alert="alert" />
+                </div>
             </div>
-
-            <h3>Your Words</h3>
+            <h4>Your Words</h4>
             <ul v-if="currentWords.length > 0">
                 <li v-for="(word, i) in currentWords" :key="i">
                     {{ word.word }}
@@ -30,6 +35,7 @@ import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 import { GamesActions } from "@web/store/modules/games/GamesActions";
 import { AlertMessage } from "@web/util/AlertMessage";
 import Alert from "@web/components/Alert.vue";
+import { AddWordParams } from "@web/store/modules/games/Games";
 @Component({
     components: { Alert }
 })
@@ -40,7 +46,7 @@ export default class GameSubmitWords extends Vue {
         | undefined
         | null;
     @Action(GamesActions.addWord) addWord!: (
-        payload: AddWordParams
+        CreateGpayload: AddWordParams
     ) => Promise<void>;
 
     wordInput = "";
@@ -56,6 +62,13 @@ export default class GameSubmitWords extends Vue {
 <style scoped lang="scss">
 @import "variables";
 @import "mixins";
+
+.input-container {
+    background-color: color($color-background, $variant-dark);
+    @include container($lg);
+    @include rounded();
+    margin-bottom: spacing($lg);
+}
 .word-entry {
     display: flex;
     flex-direction: row;

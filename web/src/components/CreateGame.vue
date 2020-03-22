@@ -23,6 +23,7 @@ import Logger from "@shared/Logger";
 import { AlertMessage } from "@web/util/AlertMessage";
 import Alert from "@web/components/Alert.vue";
 import { isBlank } from "@shared/util/ObjectUtil";
+import { CreateGameParams } from "@web/store/modules/games/Games";
 
 const logger = new Logger("CreateGame.vue");
 

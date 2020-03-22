@@ -1,8 +1,11 @@
-import {Phase} from '@shared/models/Game'
 <template>
     <div>
-        <button class="btn" @click="togglePhase">
-            {{ isReady ? "Un Ready" : "Ready!" }}
+        <button
+            class="btn"
+            :class="{ danger: isReady, primary: !isReady }"
+            @click="togglePhase"
+        >
+            {{ isReady ? "Not Ready" : "Ready!" }}
         </button>
     </div>
 </template>
@@ -52,7 +55,7 @@ export default class PlayerReadyButton extends Vue {
 
     get isReady(): boolean {
         return (
-            (this.game?.phase ?? Phase.SETUP) >
+            (this.game?.phase ?? Phase.SETUP) <
             (this.player?.phase ?? Phase.SETUP)
         );
     }
