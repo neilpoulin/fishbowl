@@ -19,6 +19,7 @@
   },
   "compileOnSave": true,
   "include": [
-    "src"
+    "src/**/*.ts",
+    "../../shared/**/*.ts"
   ]
 }

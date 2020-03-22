@@ -1,35 +1,41 @@
 <template>
     <div class="start">
-        <h1>Start</h1>
-        <display-name-form />
+        <div class="flex-container">
+            <section class="main-section">
+                <div class="name-container">
+                    <display-name-form :show-label="true" />
+                </div>
 
-        <hr />
-        <div v-if="game">
-            <h3>Current Game</h3>
-            <h1>{{ game.name }}</h1>
-            <div class="actions">
-                <button class="btn danger" @click="leaveGame">
-                    Leave Game
-                </button>
-                <button class="btn primary" @click="joinGame(game.id)">
-                    Join
-                </button>
-            </div>
-        </div>
-        <div v-else>
-            <create-game />
-        </div>
-        <div v-if="gamesCount > 0">
-            <h2>Available Games</h2>
-            <ul>
-                <li
-                    v-for="(game, index) in allGames"
-                    @click="joinGame(game.id)"
-                    :key="index"
-                >
-                    {{ game.name }}
-                </li>
-            </ul>
+                <div v-if="game">
+                    <h3>Current Game</h3>
+                    <h1>{{ game.name }}</h1>
+                    <div class="actions">
+                        <button class="btn danger" @click="leaveGame">
+                            Leave Game
+                        </button>
+                        <button class="btn primary" @click="joinGame(game.id)">
+                            Join
+                        </button>
+                    </div>
+                </div>
+                <div v-else>
+                    <create-game />
+                </div>
+            </section>
+            <section class="available-games">
+                <div v-if="gamesCount > 0">
+                    <h2>Available Games</h2>
+                    <ul>
+                        <li
+                            v-for="(game, index) in allGames"
+                            @click="joinGame(game.id)"
+                            :key="index"
+                        >
+                            {{ game.name }}
+                        </li>
+                    </ul>
+                </div>
+            </section>
         </div>
     </div>
 </template>
@@ -92,6 +98,32 @@ export default class Start extends Vue {
     .btn {
         margin-right: spacing($lg);
         min-width: 20rem;
+    }
+}
+
+.start {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.name-container {
+    margin-bottom: spacing($lg);
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    @include maxW($br-tablet-max) {
+        flex-direction: column-reverse;
+    }
+
+    .main-section {
+        @include container($xl);
+    }
+
+    .available-games {
+        background-color: color($color-background);
+        @include container($xl);
     }
 }
 </style>

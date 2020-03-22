@@ -13,13 +13,46 @@ export enum Phase {
     FINISHED = 2
 }
 
+enum Field {
+    phase = "phase",
+    players = "players",
+    round = "round"
+}
+
 export class Game extends BaseModel {
     readonly collection = Collection.games;
+    static Field = Field;
     name?: string;
     phase: Phase = Phase.SETUP;
+    numberOfTeams = 2;
     players: { [userId: string]: Player } = {};
-    round = 0;
     words: WordEntry[] = [];
+    round = 0;
+
+    remainingWordsInRound: WordEntry[] = [];
+    currentTeam = 0;
+    currentPlayerByTeam: { [team: number]: string } = {};
+
+    scores: { [team: number]: number } = {};
+
+    turnEndsAt: Date | undefined;
+
+    completeWord(wordEntry: WordEntry, userId: string) {
+        const player = this.players[userId];
+        const team = player.team;
+        if (team === undefined) {
+            return;
+        }
+        const updatedWords = [
+            ...this.remainingWordsInRound.filter(
+                w => wordEntry.word !== w.word && w.userId !== wordEntry.userId
+            )
+        ];
+        if (updatedWords.length < this.remainingWordsInRound.length) {
+            this.scores[team] = (this.scores[team] ?? 0) + 1;
+        }
+        this.remainingWordsInRound = updatedWords;
+    }
 
     addWord(wordEntry: WordEntry): boolean {
         const _word = wordEntry.word.toLowerCase().toLowerCase();
@@ -36,6 +69,21 @@ export class Game extends BaseModel {
         this.words.push(wordEntry);
 
         return true;
+    }
+
+    getActivePlayer(): Player | undefined {
+        const team = this.currentTeam;
+        const currentPlayerId = this.currentPlayerByTeam[team];
+        if (!currentPlayerId) {
+            return Object.values(this.players).find(p => p.team === team);
+        }
+
+        return this.players[currentPlayerId];
+    }
+
+    getCurrentWord(): WordEntry {
+        const length = this.remainingWordsInRound.length;
+        return this.remainingWordsInRound[Math.floor(Math.random() * length)];
     }
 
     /**

@@ -1,4 +1,7 @@
-import { toFirestoreData } from "@shared/util/FirestoreUtil";
+import {
+    convertTimestampToDate,
+    toFirestoreData
+} from "@shared/util/FirestoreUtil";
 
 export enum Collection {
     games = "games"
@@ -25,7 +28,8 @@ export abstract class BaseModel implements Model {
         if (id) {
             data.id = id;
         }
-        const m = Object.assign(new Type(), data);
+
+        const m = Object.assign(new Type(), convertTimestampToDate(data));
 
         m.prepareFromFirestore(data);
         return m;

@@ -78,11 +78,12 @@ export function isNumber(input: any): input is number {
  * @return {any}
  */
 export function transformObject(
-    input: any,
+    _input: any,
     transform: (value: any) => any,
     depth = 0,
     forKey?: string
 ): any {
+    let input = _input;
     if (depth >= 100) {
         logger.warn(
             `transformObjectSync method reached a depth greater than 10, Current depth = ${depth}. Key = ${forKey ||

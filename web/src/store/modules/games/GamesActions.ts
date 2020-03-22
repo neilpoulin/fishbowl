@@ -15,6 +15,7 @@ import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 import { AlertMessage } from "@web/util/AlertMessage";
 import {
     AddWordParams,
+    CompleteWordPayload,
     CreateGameParams,
     JoinGameParams,
     SetPhaseParams
@@ -29,7 +30,8 @@ export enum GamesActions {
     updatePlayer = "games.updatePlayer",
     addGame = "games.addGame",
     addWord = "games.addWord",
-    setPlayerPhase = "games.setReadyStatus"
+    setPlayerPhase = "games.setReadyStatus",
+    completeWord = "games.completeWord"
 }
 
 const logger = new Logger("GameActions");
@@ -142,6 +144,19 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         player.phase = phase;
         logger.info(`Set player phage to ${phase}`);
         game.addPlayer(player);
+        await FirestoreService.shared.save(game);
+    },
+    async [GamesActions.completeWord](
+        { getters },
+        payload: CompleteWordPayload
+    ) {
+        const { word } = payload;
+        const userId = getters[AuthGetters.currentUserId] as string | undefined;
+        const game = getters[GamesGetters.currentGame] as Game | undefined;
+        if (!game || !word || !userId) {
+            return;
+        }
+        game.completeWord(word, userId);
         await FirestoreService.shared.save(game);
     }
 };

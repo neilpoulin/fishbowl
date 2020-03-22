@@ -1,4 +1,4 @@
-import { Phase } from "@shared/models/Game";
+import { Phase, WordEntry } from "@shared/models/Game";
 
 declare interface JoinGameParams {
     gameId: string;
@@ -13,9 +13,13 @@ declare interface CreateGameParams {
 }
 
 declare interface AddWordParams {
-    word: string,
+    word: string;
 }
 
 declare interface SetPhaseParams {
-    phase: Phase
+    phase: Phase;
+}
+
+declare interface CompleteWordPayload {
+    word: WordEntry
 }
