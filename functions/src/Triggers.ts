@@ -155,13 +155,13 @@ export const updateGamePhase = functions.firestore
         const players = Object.values(game.players);
         if (players.length === 0) {
             logger.info("no players in the game yet");
-            return
+            return;
         }
 
         const notReady = players.find(player => {
             return player.phase <= game.phase;
         });
-        if (!!notReady ) {
+        if (!!notReady) {
             logger.info("Some players not not ready. can not continue");
             return;
         }

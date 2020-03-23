@@ -49,7 +49,7 @@
                     </h2>
                 </div>
 
-                <scoreboard />
+                <scoreboard :game="game" />
 
                 <div class="secret-word" v-if="currentWord && currentWord.word">
                     <p>Your word is:</p>
@@ -88,7 +88,7 @@ import PlayerReadyButton from "@web/components/PlayerReadyButton.vue";
 import Scoreboard from "@web/components/Scoreboard.vue";
 import GamePhase from "@web/components/GamePhase.vue";
 import { CompleteWordPayload } from "@web/store/modules/games/Games";
-import FirestoreService from "@web/services/FirestoreService";
+import { GamesActions } from "@web/store/modules/games/GamesActions";
 
 const logger = new Logger("GameView");
 @Component({
@@ -203,9 +203,7 @@ export default class GameView extends Vue {
         if (!game) {
             return;
         }
-
-        game.turnEndsAt = new Date(Date.now() + 2 * 60 * 1000);
-        await FirestoreService.shared.save(game);
+        await this.$store.dispatch(GamesActions.turnEnded);
     }
 }
 </script>

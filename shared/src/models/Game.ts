@@ -106,6 +106,32 @@ export class Game extends BaseModel {
         return this.players[userId];
     }
 
+    updateNextTeams() {
+        const currentTeam = this.currentTeam;
+        let nextTeam = currentTeam + 1;
+        if (nextTeam > this.numberOfTeams) {
+            nextTeam = 0;
+        }
+        this.currentTeam = nextTeam;
+        Object.keys(this.currentPlayerByTeam)
+            .map(Number)
+            .forEach(team => {
+                const userId = this.currentPlayerByTeam[team];
+                const playersOnTeam = Object.values(this.players).filter(
+                    p => p.team === team
+                );
+                const currentIndex = playersOnTeam.findIndex(
+                    p => p.userId === userId
+                );
+                const nextIndex = Math.min(
+                    playersOnTeam.length - 1,
+                    Math.max(0, currentIndex + 1)
+                );
+                const nextPlayer = playersOnTeam[nextIndex];
+                this.currentPlayerByTeam[team] = nextPlayer.userId;
+            });
+    }
+
     static fromData(data: FirestoreData): Game {
         return super.create(data, Game);
     }

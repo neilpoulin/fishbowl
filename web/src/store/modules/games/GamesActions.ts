@@ -31,7 +31,8 @@ export enum GamesActions {
     addGame = "games.addGame",
     addWord = "games.addWord",
     setPlayerPhase = "games.setReadyStatus",
-    completeWord = "games.completeWord"
+    completeWord = "games.completeWord",
+    turnEnded = "games.turnEnded"
 }
 
 const logger = new Logger("GameActions");
@@ -157,6 +158,16 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             return;
         }
         game.completeWord(word, userId);
+        await FirestoreService.shared.save(game);
+    },
+    async [GamesActions.turnEnded]({ getters }) {
+        const game = getters[GamesGetters.currentGame] as Game | undefined;
+        if (!game) {
+            return;
+        }
+
+        game.updateNextTeams();
+        game.turnEndsAt = new Date(Date.now() + 2 * 60 * 1000);
         await FirestoreService.shared.save(game);
     }
 };
