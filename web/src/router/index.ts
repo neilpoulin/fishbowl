@@ -31,6 +31,7 @@ interface MetaRoute extends RouteConfig {
     showInNav: boolean;
     meta?: {
         requiresAuth?: boolean;
+        hideNav?: boolean;
     };
 }
 
@@ -68,7 +69,8 @@ export const routes: MetaRoute[] = [
         component: () => import("@web/views/GameView.vue"),
         showInNav: false,
         meta: {
-            requiresAuth: true
+            requiresAuth: true,
+            hideNav: true
         }
     }
 ];

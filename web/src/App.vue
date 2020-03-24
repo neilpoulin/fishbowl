@@ -1,21 +1,17 @@
 <template>
     <div id="app">
         <div id="nav">
-            <template v-for="route in routes">
-                <router-link
-                    :to="route.path"
-                    :key="route.path"
-                    :class="{ home: route.path === '/' }"
-                >
-                    {{ route.name }}
-                </router-link>
+            <template v-if="!$route.meta.hideNav">
+                <template v-for="route in routes">
+                    <router-link
+                        :to="route.path"
+                        :key="route.path"
+                        :class="{ home: route.path === '/' }"
+                    >
+                        {{ route.name }}
+                    </router-link>
+                </template>
             </template>
-
-            <!--            <router-link to="/">Home</router-link>-->
-            <!--            |-->
-            <!--            <router-link to="/about">About</router-link>-->
-            <!--            |-->
-            <!--            <router-link to="/start">Start</router-link>-->
         </div>
         <router-view />
     </div>
