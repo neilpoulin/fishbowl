@@ -1,6 +1,5 @@
-import firebase from "firebase";
+import firebase, { firestore } from "firebase";
 import { BaseModel, Collection } from "@shared/models/Model";
-// export import Query = firebase.firestore.Query;
 
 export default class FirestoreService {
     public static shared: FirestoreService;
@@ -42,19 +41,9 @@ export default class FirestoreService {
         return model;
     }
 
-    // async executeQuery(query: Query) {
-    //     return this.firestoreService.executeQuery(query, Firebase);
-    // }
-    //
-    // async getFirst(query: Query) {
-    //     return this.firestoreService.getFirst(query, Firebase);
-    // }
-    //
-    // async save(model: Firebase): Promise<Firebase> {
-    //     return this.firestoreService.save(model);
-    // }
-    //
-    // async getById(id: string): Promise<Firebase | undefined> {
-    //     return await this.firestoreService.getById(id, Firebase);
-    // }
+    async deleteField<T extends BaseModel>(model: T, fieldPath: string) {
+        const doc = this.getCollectionRef(model.collection).doc(model.id);
+        await doc.update({ [fieldPath]: firestore.FieldValue.delete() });
+        return;
+    }
 }

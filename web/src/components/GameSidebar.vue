@@ -15,29 +15,11 @@
             </h4>
             <ul>
                 <li v-for="player in sortedPlayers" :key="player.userId">
-                    <div
-                        class="player"
-                        :class="{
-                            activePlayer: currentPlayer === player.userId,
-                            activeTeam:
-                                currentTeam !== undefined &&
-                                player.team === currentTeam
-                        }"
-                    >
-                        <span class="name">{{ player.displayName }}</span>
-                        <span
-                            class="ready"
-                            v-if="playerIsReady(player) && !showTeams"
-                        >
-                            Ready
-                        </span>
-                        <span
-                            class="team"
-                            v-if="showTeams && player.team !== undefined"
-                        >
-                            Team {{ player.team + 1 }}
-                        </span>
-                    </div>
+                    <player-list-item
+                        :game="game"
+                        :player="player"
+                        @deleted="deletePlayer"
+                    />
                 </li>
             </ul>
         </section>
@@ -53,12 +35,17 @@ import Vue from "vue";
 import Player from "@shared/models/Player";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
-import { Game, Phase } from "@shared/models/Game";
+import { Game } from "@shared/models/Game";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
 import GameVideoChatUrl from "@web/components/GameVideoChatUrl.vue";
 import PlayerReadyButton from "@web/components/PlayerReadyButton.vue";
+import PlayerListItem from "@web/components/PlayerListItem.vue";
+import { Action } from "vuex-class";
+import GameStore from "@web/store/modules/games/GamesModule";
+
 @Component({
     components: {
+        PlayerListItem,
         GameVideoChatUrl,
         DisplayNameForm,
         PlayerReadyButton
@@ -67,10 +54,9 @@ import PlayerReadyButton from "@web/components/PlayerReadyButton.vue";
 export default class GameSidebar extends Vue {
     @Prop({ type: Array as () => Player[], required: true }) players!: Player[];
     @Prop({ type: Object as () => Player[], required: true }) game!: Game;
-    playerIsReady(player: Player): boolean {
-        const gamePhase = this.game?.phase ?? Phase.SETUP;
-        return (player.phase ?? Phase.SETUP) > gamePhase;
-    }
+    @Action(GameStore.Actions.deletePlayer) deletePlayerAction!: (params: {
+        player: Player;
+    }) => Promise<void>;
 
     get sortedPlayers(): Player[] {
         const sorted = [...this.players];
@@ -86,16 +72,16 @@ export default class GameSidebar extends Vue {
         return sorted;
     }
 
-    get currentTeam(): number | undefined {
-        return this.game?.currentTeam;
-    }
-
-    get currentPlayer(): string | undefined {
-        return this.game?.getActivePlayer()?.userId;
-    }
-
-    get showTeams(): boolean {
-        return (this.game?.phase ?? Phase.SETUP) > Phase.SETUP;
+    async deletePlayer(player?: Player) {
+        if (!player) {
+            return;
+        }
+        const c = window.confirm(
+            `Are you sure you want to delete "${player.displayName}" from the game?`
+        );
+        if (c) {
+            await this.deletePlayerAction({ player: player });
+        }
     }
 }
 </script>
@@ -112,23 +98,6 @@ export default class GameSidebar extends Vue {
         li {
             margin: 0;
             padding: spacing($sm);
-            .player {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-
-                @include container($md);
-                @include rounded;
-                background-color: color($color-background, $variant-dark);
-
-                &.activeTeam {
-                    background-color: color($color-accent, $variant-light);
-                }
-
-                &.activePlayer {
-                    border: 2px solid color($color-foreground);
-                }
-            }
         }
     }
 }

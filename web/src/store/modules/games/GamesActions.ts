@@ -35,7 +35,8 @@ export enum GamesActions {
     completeWord = "games.completeWord",
     startTurn = "games.startTurn",
     turnEnded = "games.turnEnded",
-    setVideoChatUrl = "games.setVideoChatUrl"
+    setVideoChatUrl = "games.setVideoChatUrl",
+    deletePlayer = "games.deletePlayer"
 }
 
 const logger = new Logger("GameActions");
@@ -233,5 +234,23 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         game.videoChatUrl = payload.url;
 
         await FirestoreService.shared.save(game);
+    },
+    async [GamesActions.deletePlayer](
+        { getters },
+        payload: { player: Player }
+    ) {
+        const game = getters[GamesGetters.currentGame] as Game | undefined;
+        if (!game) {
+            return;
+        }
+        const { player } = payload;
+        if (player.userId) {
+            game.removePlayer(player.userId);
+            await FirestoreService.shared.deleteField(
+                game,
+                `${Game.Field.players}.${player.userId}`
+            );
+            logger.info("removed player", player);
+        }
     }
 };

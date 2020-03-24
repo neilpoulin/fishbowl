@@ -132,7 +132,9 @@ export class Game extends BaseModel {
     }
 
     removePlayer(userId: string) {
-        delete this.players[userId];
+        const updatedPlayers = { ...this.players };
+        delete updatedPlayers[userId];
+        this.players = updatedPlayers;
     }
 
     getPlayer(userId: string): Player | undefined {
