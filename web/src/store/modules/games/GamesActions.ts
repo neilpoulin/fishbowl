@@ -20,6 +20,7 @@ import {
     JoinGameParams,
     SetPhaseParams
 } from "@web/store/modules/games/Games";
+import { isBlank } from "@shared/util/ObjectUtil";
 
 export enum GamesActions {
     createGame = "games.createGame",
@@ -36,7 +37,7 @@ export enum GamesActions {
 }
 
 const logger = new Logger("GameActions");
-
+export const minWordLength = 3;
 let gamesUnsubscriber: Unsubscribe | null = null;
 
 export const actions: ActionTree<GamesState, GlobalState> = {
@@ -120,6 +121,21 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         }
 
         const { word } = payload;
+        if (!word || isBlank(word)) {
+            commit(GamesMutations.addWordError, {
+                error: AlertMessage.warn("You can not add a blank word.")
+            });
+            return;
+        }
+        if (word.length < minWordLength) {
+            commit(GamesMutations.addWordError, {
+                error: AlertMessage.warn(
+                    `Words must be at least ${minWordLength} letters long.`
+                )
+            });
+            return;
+        }
+
         const wordEntry: WordEntry = { word, userId };
         const added = game.addWord(wordEntry);
         if (added) {

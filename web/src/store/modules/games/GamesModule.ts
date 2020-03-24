@@ -17,7 +17,8 @@ export interface GamesState {
 
 export const state: GamesState = {
     currentGameId: null,
-    gamesById: {}
+    gamesById: {},
+    addWordError: null
 };
 
 export const store = (

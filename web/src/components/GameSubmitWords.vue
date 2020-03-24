@@ -10,8 +10,8 @@
                         placeholder="Enter a word"
                     />
                     <button class="btn primary" @click="submit">Add</button>
-                    <alert v-if="alert" :alert="alert" />
                 </div>
+                <alert v-if="alert" :alert="alert" />
             </div>
             <h4>Your Words</h4>
             <ul v-if="currentWords.length > 0">
@@ -36,6 +36,7 @@ import { GamesActions } from "@web/store/modules/games/GamesActions";
 import { AlertMessage } from "@web/util/AlertMessage";
 import Alert from "@web/components/Alert.vue";
 import { AddWordParams } from "@web/store/modules/games/Games";
+
 @Component({
     components: { Alert }
 })
@@ -44,17 +45,20 @@ export default class GameSubmitWords extends Vue {
     @Getter(GamesGetters.submittedWordsError) alert:
         | AlertMessage
         | undefined
-        | null;
+        | null = undefined;
     @Action(GamesActions.addWord) addWord!: (
-        CreateGpayload: AddWordParams
+        payload: AddWordParams
     ) => Promise<void>;
 
     wordInput = "";
 
     async submit() {
         const word = this.wordInput;
-        await this.addWord({ word: word });
         this.wordInput = "";
+        await this.addWord({ word: word });
+        if (this.alert) {
+            this.wordInput = word;
+        }
     }
 }
 </script>
@@ -69,9 +73,11 @@ export default class GameSubmitWords extends Vue {
     @include rounded();
     margin-bottom: spacing($lg);
 }
+
 .word-entry {
     display: flex;
     flex-direction: row;
+
     input {
         width: 20rem;
         margin-right: spacing($lg);

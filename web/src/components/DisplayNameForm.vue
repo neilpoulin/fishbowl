@@ -16,7 +16,7 @@
                     @click="save"
                     v-show="showSaveButton"
                 >
-                    Save
+                    {{ saveLabel }}
                 </button>
             </div>
         </div>
@@ -39,13 +39,18 @@ export default class DisplayNameForm extends Vue {
 
     @Prop({ type: Boolean, default: false }) showLabel!: boolean;
 
-    get showSaveButton(): boolean {
-        return this.displayNameValue !== this.displayName;
-    }
+    @Prop({ type: Boolean, default: false }) alwaysShowSave!: boolean;
+    @Prop({ type: String, default: "Save" }) saveLabel!: string;
     displayNameValue = "";
 
     beforeMount() {
         this.displayNameValue = this.displayName ?? "";
+    }
+
+    get showSaveButton(): boolean {
+        return (
+            this.displayNameValue !== this.displayName || this.alwaysShowSave
+        );
     }
 
     @Watch("displayName")
@@ -54,10 +59,11 @@ export default class DisplayNameForm extends Vue {
         this.displayNameValue = name;
     }
 
-    save() {
-        this.$store.dispatch(Auth.Actions.setDisplayName, {
+    async save() {
+        await this.$store.dispatch(Auth.Actions.setDisplayName, {
             displayName: this.displayNameValue
         });
+        this.$emit("saved");
     }
 }
 </script>

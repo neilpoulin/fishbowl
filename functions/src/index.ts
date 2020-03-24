@@ -8,6 +8,7 @@ import { initialize as initFirestoreUtil } from "@shared/util/FirestoreUtil";
 
 initFirestoreUtil({ timestamp: admin.firestore.Timestamp });
 import * as Triggers from "@api/Triggers";
+import GameEndpoints from "@api/GameEndpoints";
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 //
@@ -24,5 +25,8 @@ module.exports = {
     helloWorld,
     updateGamePhase: Triggers.updateGamePhase,
     setupTeams: Triggers.setupTeams,
-    processGameEvent: Triggers.processGameEvent
+    processGameEvent: Triggers.processGameEvent,
+
+    //https
+    games: functions.https.onRequest(GameEndpoints)
 };

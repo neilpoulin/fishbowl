@@ -24,10 +24,15 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
+import Auth from "@web/store/modules/auth/AuthModule";
 import { routes } from "@web/router";
+import { Getter } from "vuex-class";
+
 @Component
 export default class App extends Vue {
     routes = routes.filter(r => r.showInNav);
+    @Getter(Auth.Getters.authLoaded) authLoaded!: boolean;
+    @Getter(Auth.Getters.currentUserId) userId!: boolean;
 }
 </script>
 
@@ -41,14 +46,17 @@ export default class App extends Vue {
     display: flex;
     background-color: $defaultBg;
     flex: 1;
+
     > * {
         padding: spacing($lg);
     }
+
     a {
         transition: all 0.2s ease-in;
         font-weight: bold;
         color: color($color-primary, $variant-dark);
         text-decoration: none;
+
         &.router-link-exact-active,
         &.router-link-active:not(.home) {
             color: color($color-accent);
