@@ -4,15 +4,15 @@
             <label v-if="showLabel" for="video-chat-input">
                 Video Chat Link
             </label>
-            <div class="actions" v-if="editing || !url">
+            <div class="actions" v-if="editing">
                 <input
                     type="text"
                     v-model="url"
                     id="video-chat-input"
                     placeholder="Add a link to a video chat"
                 />
-                <button class="btn secondary small" @click="save">
-                    {{ saveLabel }}
+                <button class="btn secondary small" @click.prevent="save">
+                    {{ doneButtonLabel }}
                 </button>
             </div>
             <div v-else class="link-container">
@@ -31,8 +31,10 @@ import Component from "vue-class-component";
 import { Prop, Watch } from "vue-property-decorator";
 import { Game } from "@shared/models/Game";
 import { GamesActions } from "@web/store/modules/games/GamesActions";
+import { isBlank } from "@shared/util/ObjectUtil";
+import Logger from "@shared/Logger";
 
-// const logger = new Logger("VideoChatUrl");
+const logger = new Logger("VideoChatUrl");
 
 @Component
 export default class GameVideoChatUrl extends Vue {
@@ -46,6 +48,7 @@ export default class GameVideoChatUrl extends Vue {
 
     beforeMount() {
         this.url = this.game.videoChatUrl ?? "";
+        this.editing = isBlank(this.url);
     }
 
     get showSaveButton(): boolean {
@@ -55,10 +58,21 @@ export default class GameVideoChatUrl extends Vue {
     @Watch("game")
     onValueChanged(game: Game | undefined) {
         this.url = game?.videoChatUrl ?? "";
+        this.editing = isBlank(this.url);
+    }
+
+    get doneButtonLabel(): string {
+        if (isBlank(this.game.videoChatUrl)) {
+            return "Add\xa0Link";
+        } else {
+            return this.saveLabel;
+        }
     }
 
     async save() {
+        logger.info("Saved called");
         this.editing = false;
+
         await this.$store.dispatch(GamesActions.setVideoChatUrl, {
             url: this.url
         });
@@ -89,6 +103,7 @@ export default class GameVideoChatUrl extends Vue {
             margin-right: spacing($md);
             /*max-width: 20rem;*/
             flex: 1;
+            min-width: 0;
             background-color: transparent;
 
             &:focus,
@@ -96,12 +111,19 @@ export default class GameVideoChatUrl extends Vue {
                 background-color: white;
             }
         }
+        .btn {
+            flex-shrink: 0;
+        }
     }
 
     .link-container {
         display: flex;
         align-items: center;
 
+        .btn {
+            /*flex: 1;*/
+            /*flex-shrink: 0;*/
+        }
         .link {
             margin-right: spacing($lg);
             overflow: hidden;

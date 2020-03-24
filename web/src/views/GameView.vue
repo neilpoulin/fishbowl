@@ -315,7 +315,7 @@ export default class GameView extends Vue {
 
     .sidebar {
         @include minW($br-phone-max) {
-            width: 25rem;
+            width: 30rem;
         }
         //@include rounded($cornerRadiusLg);
         @include container($lg);
