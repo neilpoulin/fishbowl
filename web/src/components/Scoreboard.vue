@@ -1,12 +1,22 @@
 <template>
     <div class="container">
         <div class="scores">
-            <div class="score-container" v-for="team in teams" :key="team">
-                <span class="team"> Team {{ team }} </span>:
-                <span class="score">
-                    {{ scores[team] || 0 }}
-                </span>
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th v-for="team in teams" :key="`team_header${team}`">
+                            Team {{ team }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td v-for="team in teams" :key="`team_score_${team}`">
+                            {{ scores[team] || 0 }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
@@ -38,4 +48,30 @@ export default class Scoreboard extends Vue {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@import "variables";
+@import "mixins";
+$border-stack: 2px solid color($color-primary);
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    th {
+        @include font($lg, normal);
+        text-align: center;
+        border-bottom: $border-stack;
+        padding: spacing($sm) spacing($lg);
+        border-top: $border-stack;
+        border-left: $border-stack;
+        border-right: $border-stack;
+        border-bottom: $border-stack;
+    }
+    td {
+        @include font($xl, $bold);
+        text-align: center;
+        border-top: $border-stack;
+        border-left: $border-stack;
+        border-right: $border-stack;
+        border-bottom: $border-stack;
+    }
+}
+</style>

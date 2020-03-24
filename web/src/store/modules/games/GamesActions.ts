@@ -20,7 +20,7 @@ import {
     JoinGameParams,
     SetPhaseParams
 } from "@web/store/modules/games/Games";
-import { isBlank } from "@shared/util/ObjectUtil";
+import { isBlank, isNumber } from "@shared/util/ObjectUtil";
 
 export enum GamesActions {
     createGame = "games.createGame",
@@ -178,7 +178,12 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         if (!game || !word || !userId) {
             return;
         }
+        const player = game.getPlayer(userId);
+        const team = player?.team;
         game.completeWord(word, userId);
+        if (isNumber(team)) {
+            game.incrementScore(team);
+        }
         await FirestoreService.shared.save(game);
     },
     async [GamesActions.turnEnded]({ getters }) {

@@ -25,7 +25,7 @@ module.exports = {
     helloWorld,
     updateGamePhase: Triggers.updateGamePhase,
     setupTeams: Triggers.setupTeams,
-    processGameEvent: Triggers.processGameEvent,
+    // processGameEvent: Triggers.processGameEvent,
 
     //https
     games: functions.https.onRequest(GameEndpoints)

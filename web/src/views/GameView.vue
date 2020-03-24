@@ -1,10 +1,5 @@
 <template>
-    <div class="loading" v-if="loading">
-        <div>
-            <span class="fish"><span>🐠</span></span>
-            <span class="message">LOADING...</span>
-        </div>
-    </div>
+    <fish-loader class="loading" v-if="loading" />
     <div class="container" v-else>
         <div class="sidebar">
             <section class="players">
@@ -13,7 +8,9 @@
                 </section>
                 <display-name-form :show-label="true" />
                 <hr />
-                <h4>Players</h4>
+                <h4>
+                    Players <span class="count">({{ players.length }})</span>
+                </h4>
                 <ul>
                     <li v-for="player in players" :key="player.userId">
                         <div class="player">
@@ -36,9 +33,15 @@
             </section>
         </div>
         <div class="gameboard" v-if="game">
-            <game-phase :phase="game.phase" v-if="game.phase === 0" />
+            <game-phase
+                :phase="game.phase"
+                v-if="game.phase === 0 && !loadingNextPhase"
+            />
+            <fish-loader v-if="loadingNextPhase" message="Loading Next Round" />
 
-            <h4 v-if="game.phase === 1">Round {{ game.round }}</h4>
+            <div class="centered round-label">
+                <h4 v-if="game.phase === 1">Round {{ game.round + 1 }}</h4>
+            </div>
 
             <template v-if="game.phase === 0">
                 <div class="ready-container">
@@ -48,14 +51,17 @@
             </template>
 
             <template v-if="game.phase === 1">
-                <div v-if="currentPlayer" class="current-player">
-                    <h3>Now Playing:</h3>
-                    <h2>
-                        {{ currentPlayer.displayName }} (Team {{ currentTeam }})
-                    </h2>
+                <div class="centered">
+                    <scoreboard :game="game" />
                 </div>
 
-                <scoreboard :game="game" />
+                <div v-if="currentPlayer" class="current-player centered">
+                    <span class="now-playing-label">Now Playing:</span>
+                    <span class="player-name">
+                        {{ currentPlayer.displayName }}
+                    </span>
+                    <span class="team-name">Team {{ currentTeam }}</span>
+                </div>
 
                 <div class="secret-word" v-if="currentWord && currentWord.word">
                     <p>Your word is:</p>
@@ -95,6 +101,7 @@ import Scoreboard from "@web/components/Scoreboard.vue";
 import GamePhase from "@web/components/GamePhase.vue";
 import { CompleteWordPayload } from "@web/store/modules/games/Games";
 import { GamesActions } from "@web/store/modules/games/GamesActions";
+import FishLoader from "@web/components/FishLoader.vue";
 import { Watch } from "vue-property-decorator";
 
 const logger = new Logger("GameView");
@@ -104,7 +111,8 @@ const logger = new Logger("GameView");
         DisplayNameForm,
         PlayerReadyButton,
         GamePhase,
-        Scoreboard
+        Scoreboard,
+        FishLoader
     },
     filters: {
         formatDuration(ms: number | undefined): string {
@@ -126,10 +134,18 @@ export default class GameView extends Vue {
         return Object.values(this.game?.players ?? {});
     }
 
-    spinnerDismissed = true;
+    get loadingNextPhase(): boolean {
+        if (!this.game) {
+            return false;
+        }
+        return (
+            this.game.phase === Phase.SETUP &&
+            this.game.allPlayersInPhase(Phase.IN_PROGRESS)
+        );
+    }
 
     get loading(): boolean {
-        return !this.game || !this.hasJoined || !this.spinnerDismissed;
+        return !this.game || !this.hasJoined;
     }
 
     get hasJoined(): boolean {
@@ -140,17 +156,12 @@ export default class GameView extends Vue {
         return !!this.game?.players[this.userId];
     }
 
-    fishTimeout: number | null = null;
-
     @Watch("game")
     onLoadingChanged(game: boolean) {
         if (game && !this.hasJoined) {
             const gameId = this.$route.params.gameId;
             if (gameId) {
                 this.$store.dispatch(Games.Actions.join, { gameId });
-                // this.fishTimeout = setTimeout(() => {
-                //     this.spinnerDismissed = true;
-                // }, 1000);
             }
 
             logger.info(`Game ID = ${gameId}`);
@@ -197,7 +208,7 @@ export default class GameView extends Vue {
         return (player.phase ?? Phase.SETUP) > gamePhase;
     }
 
-    showTeams(): boolean {
+    get showTeams(): boolean {
         return (this.game?.phase ?? Phase.SETUP) > Phase.SETUP;
     }
 
@@ -251,31 +262,11 @@ export default class GameView extends Vue {
 <style scoped lang="scss">
 @import "mixins";
 
-.loading {
+.centered {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: spacing($xxl);
-    margin: spacing($xxl);
-
-    .message {
-        @include font($lg);
-        padding: spacing($lg);
-    }
-
-    .fish {
-        animation: rotate 1s linear infinite;
-        /*display: inline-block;*/
-        height: 2rem;
-        transform-origin: center;
-        width: 2rem;
-        background-size: 2rem;
-        z-index: 1;
-        display: inline-flex;
-        flex: 1;
-        justify-content: center;
-        align-items: center;
-    }
 }
 
 .container {
@@ -298,11 +289,15 @@ export default class GameView extends Vue {
         display: flex;
         flex-direction: column;
         @include container($lg);
+
+        .round-label {
+            margin-bottom: spacing($md);
+        }
     }
 }
 
 .ready {
-    color: red;
+    color: color($color-accent, $variant-dark);
 }
 
 .header {
@@ -325,17 +320,19 @@ export default class GameView extends Vue {
 .players {
     ul {
         margin: 0;
-        padding-left: 2rem;
-        /*list-style:;*/
+        padding-left: 0;
+        list-style: none;
         li {
             margin: 0;
-
             padding: spacing($sm);
-
             .player {
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
+
+                @include container($md);
+                @include rounded;
+                background-color: color($color-background, $variant-dark);
             }
         }
     }
@@ -343,5 +340,20 @@ export default class GameView extends Vue {
 
 .current-player {
     padding: spacing($lg) 0;
+
+    .now-playing-label {
+        @include font($sm, $bold);
+        color: color($color-text);
+    }
+
+    .player-name {
+        @include font($lg, $bold);
+        color: color($color-accent);
+    }
+
+    .team-name {
+        @include font($md);
+        color: color($color-accent, $variant-light);
+    }
 }
 </style>

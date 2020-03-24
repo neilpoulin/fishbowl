@@ -6,6 +6,7 @@ import Player from "@shared/models/Player";
 
 const logger = new Logger("Triggers");
 
+//NOT BEING USED
 export const processGameEvent = functions.firestore
     .document(`${Collection.games}/{gameId}`)
     .onWrite(async snapshot => {
@@ -16,33 +17,17 @@ export const processGameEvent = functions.firestore
         }
 
         logger.info("Handling game on write with data ", JSON.stringify(data));
-        // const previousData = snapshot.before.data();
-        // const previousGame =
-        //     previousData !== undefined
-        //         ? Game.fromData(previousData)
-        //         : undefined;
+
         const game = Game.fromData(data);
         if (!game || game.phase === Phase.SETUP) {
             logger.info("Game is in setup, no need to process it");
             return;
         }
 
-        // const turnEnded = game.turnEndsAt && game.turnEndsAt < new Date();
-
         if (game.remainingWordsInRound.length === 0) {
             logger.info("going to next round");
-            game.remainingWordsInRound = [...game.words];
-            game.round = game.round + 1;
-
+            game.moveToNextRound();
             await snapshot.after.ref.set(game.data(), { merge: true });
-            return;
-        } else {
-            // } else if (
-            // !turnEnded &&
-            // previousGame &&
-            // game.remainingWordsInRound.length ===
-            //     previousGame.remainingWordsInRound.length
-            // ) {
             return;
         }
 
@@ -168,8 +153,7 @@ export const updateGamePhase = functions.firestore
 
         logger.info("All players are ready, continuing");
 
-        const newPhase = Math.min((game.phase += 1), Phase.FINISHED);
-        game.phase = newPhase;
+        game.phase = Math.min((game.phase += 1), Phase.FINISHED);
 
         game.remainingWordsInRound = [...game.words];
 

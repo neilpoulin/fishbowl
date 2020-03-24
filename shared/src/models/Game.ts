@@ -37,21 +37,29 @@ export class Game extends BaseModel {
 
     turnEndsAt: Date | undefined;
 
+    get playersList(): Player[] {
+        return Object.values(this.players);
+    }
+
+    incrementScore(team: number) {
+        this.scores[team] = (this.scores[team] ?? 0) + 1;
+    }
+
+    allPlayersInPhase(phase: Phase): boolean {
+        return this.playersList.some(p => p.phase !== phase);
+    }
+
     completeWord(wordEntry: WordEntry, userId: string) {
         const player = this.players[userId];
         const team = player.team;
         if (team === undefined) {
             return;
         }
-        const updatedWords = [
+        this.remainingWordsInRound = [
             ...this.remainingWordsInRound.filter(
                 w => wordEntry.word !== w.word && w.userId !== wordEntry.userId
             )
         ];
-        if (updatedWords.length < this.remainingWordsInRound.length) {
-            this.scores[team] = (this.scores[team] ?? 0) + 1;
-        }
-        this.remainingWordsInRound = updatedWords;
     }
 
     addWord(wordEntry: WordEntry): boolean {
@@ -130,6 +138,11 @@ export class Game extends BaseModel {
                 const nextPlayer = playersOnTeam[nextIndex];
                 this.currentPlayerByTeam[team] = nextPlayer.userId;
             });
+    }
+
+    moveToNextRound() {
+        this.remainingWordsInRound = [...this.words];
+        this.round = this.round + 1;
     }
 
     static fromData(data: FirestoreData): Game {
