@@ -2,6 +2,7 @@ import { BaseModel, Collection, FirestoreData } from "@shared/models/Model";
 import { DocumentSnapshot } from "@shared/util/FirestoreUtil";
 import Player from "@shared/models/Player";
 import Logger from "@shared/Logger";
+import { shuffleArray } from "@shared/util/ObjectUtil";
 
 export interface WordEntry {
     word: string;
@@ -61,7 +62,7 @@ export class Game extends BaseModel {
         }
 
         this.isPlaying = true;
-        const countdown = 20000;
+        const countdown = 10000;
         this.turnStartsAt = new Date(Date.now() + countdown);
         this.turnEndsAt = new Date(Date.now() + 2 * 60 * 1000 + countdown);
     }
@@ -109,9 +110,11 @@ export class Game extends BaseModel {
         return this.players[currentPlayerId];
     }
 
-    getCurrentWord(): WordEntry {
-        const length = this.remainingWordsInRound.length;
-        return this.remainingWordsInRound[Math.floor(Math.random() * length)];
+    getCurrentWord(): WordEntry | undefined {
+        if (this.remainingWordsInRound.length > 0) {
+            return this.remainingWordsInRound[0];
+        }
+        return undefined;
     }
 
     /**
@@ -161,7 +164,7 @@ export class Game extends BaseModel {
     }
 
     moveToNextRound() {
-        this.remainingWordsInRound = [...this.words];
+        this.remainingWordsInRound = shuffleArray([...this.words]);
         this.round = this.round + 1;
     }
 

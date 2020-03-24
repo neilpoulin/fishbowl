@@ -5,7 +5,7 @@
                 <thead>
                     <tr>
                         <th v-for="team in teams" :key="`team_header${team}`">
-                            Team {{ team }}
+                            Team {{ team + 1 }}
                         </th>
                     </tr>
                 </thead>
@@ -68,10 +68,12 @@ table {
     td {
         @include font($xl, $bold);
         text-align: center;
+        padding: spacing($md);
         border-top: $border-stack;
         border-left: $border-stack;
         border-right: $border-stack;
         border-bottom: $border-stack;
+        font-family: $font-stack-mono;
     }
 }
 </style>

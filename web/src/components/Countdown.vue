@@ -1,12 +1,15 @@
 <template>
-    <div class="countdown" v-if="secondsLeftMs">
+    <div
+        class="countdown"
+        :class="{ hidden: !secondsLeftMs, preTurn: !turnStarted }"
+    >
         <span class="countdown-label" v-if="!turnStarted">
             The next turn will begin in
         </span>
         <span class="countdown-label" v-if="turnStarted">
             Time remaining in turn
         </span>
-        <h1>{{ secondsLeftMs | formatDuration }}</h1>
+        <h1 class="ticker">{{ secondsLeftMs | formatDuration }}</h1>
     </div>
 </template>
 
@@ -89,4 +92,17 @@ export default class Countdown extends Vue {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@import "variables";
+.ticker {
+    font-family: $font-stack-mono;
+
+    &.preTurn {
+        color: color($color-danger);
+    }
+}
+
+.hidden {
+    opacity: 0;
+}
+</style>

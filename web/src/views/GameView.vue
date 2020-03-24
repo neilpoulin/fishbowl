@@ -98,26 +98,18 @@
                         </button>
                     </div>
 
-                    <div>
-                        Words Remaining: {{ game.remainingWordsInRound.length }}
-                        <ul>
-                            <li
-                                v-for="(word, i) in game.remainingWordsInRound"
-                                :key="i"
-                            >
-                                {{ word.word }} - {{ word.userId }}
-                            </li>
-                        </ul>
-                    </div>
-
-                    <button class="btn danger" @click="endTurn">
+                    <button class="btn danger" @click="endTurn" v-if="isAdmin">
                         End Turn
                     </button>
 
-                    <div class="centered round-label">
+                    <div class="centered round-label round-info">
                         <h4 v-if="game.phase === 1">
                             Round {{ game.round + 1 }}
                         </h4>
+                        <span>
+                            Words Remaining:
+                            {{ game.remainingWordsInRound.length }}
+                        </span>
                     </div>
                     <div class="centered">
                         <scoreboard :game="game" />
@@ -249,7 +241,7 @@ export default class GameView extends Vue {
         return this.game?.remainingWordsInRound.length === 0;
     }
 
-    get showNextTurn(): boolean {
+    get isAdmin(): boolean {
         return !!localStorage.getItem("admin");
     }
 
@@ -342,15 +334,14 @@ export default class GameView extends Vue {
             flex-direction: column;
             @include container($lg);
             padding-bottom: 40rem;
-            .round-label {
-                margin-bottom: spacing($md);
+            .round-info {
+                margin-bottom: spacing($xl);
+            }
+
+            @include maxW($br-tablet-min) {
+                padding-bottom: 10rem;
             }
         }
-    }
-}
-
-.timer {
-    .countdown-label {
     }
 }
 
@@ -397,18 +388,19 @@ export default class GameView extends Vue {
 .current-player {
     background-color: color($color-primary, $variant-light);
     .now-playing-label {
-        @include font($sm, $bold);
+        @include font($sm);
         color: color($color-text);
+        margin-bottom: spacing($lg);
     }
 
     .player-name {
         @include font($lg, $bold);
-        color: color($color-accent);
+        //color: color($color-accent);
     }
 
     .team-name {
         @include font($md);
-        color: color($color-accent, $variant-light);
+        //color: color($color-accent, $variant-light);
     }
 }
 </style>
