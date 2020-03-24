@@ -15,7 +15,7 @@
                     {{ saveLabel }}
                 </button>
             </div>
-            <div v-else>
+            <div v-else class="link-container">
                 <a :href="url" target="_blank" class="link">{{ url }}</a>
                 <button class="btn secondary small" @click="editing = true">
                     Edit
@@ -54,7 +54,7 @@ export default class GameVideoChatUrl extends Vue {
 
     @Watch("game")
     onValueChanged(game: Game | undefined) {
-        this.url = game?.videoChatUrl;
+        this.url = game?.videoChatUrl ?? "";
     }
 
     async save() {
@@ -78,10 +78,12 @@ export default class GameVideoChatUrl extends Vue {
     .input-field {
         display: flex;
         flex: 1;
+        max-width: 100%;
     }
     .actions {
         flex: 1;
         display: flex;
+        overflow: hidden;
         input {
             margin-right: spacing($md);
             /*max-width: 20rem;*/
@@ -95,8 +97,17 @@ export default class GameVideoChatUrl extends Vue {
         }
     }
 
-    .link {
-        margin-right: spacing($lg);
+    .link-container {
+        display: flex;
+        align-items: center;
+
+        .link {
+            margin-right: spacing($lg);
+            overflow: hidden;
+            flex: 1;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
     }
 }
 </style>

@@ -8,6 +8,7 @@
                         type="text"
                         v-model="wordInput"
                         placeholder="Enter a word"
+                        @keyup.enter="submit"
                     />
                     <button class="btn primary" @click="submit">Add</button>
                 </div>

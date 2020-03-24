@@ -54,7 +54,7 @@ export class Game extends BaseModel {
     }
 
     allPlayersInPhase(phase: Phase): boolean {
-        return this.playersList.some(p => p.phase !== phase);
+        return !this.playersList.some(p => p.phase !== phase);
     }
 
     startTurn() {

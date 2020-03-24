@@ -42,7 +42,7 @@ export const processGameEvent = functions.firestore
             .map(Number)
             .forEach(team => {
                 const userId = game.currentPlayerByTeam[team];
-                let playersOnTeam = Object.values(game.players).filter(
+                const playersOnTeam = Object.values(game.players).filter(
                     p => p.team === team
                 );
                 const currentIndex = playersOnTeam.findIndex(
@@ -138,8 +138,8 @@ export const updateGamePhase = functions.firestore
         }
 
         const players = Object.values(game.players);
-        if (players.length === 0) {
-            logger.info("no players in the game yet");
+        if (players.length < 2) {
+            logger.info("not enough players in the game yet");
             return;
         }
 

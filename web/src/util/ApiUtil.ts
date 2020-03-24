@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-explicit-any: 0, no-prototype-builtins: 0 */
 import Logger from "@shared/Logger";
 import { isBlank } from "@shared/util/ObjectUtil";
 import { AxiosError } from "axios";
@@ -9,6 +10,23 @@ const datePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 export function isAxiosError<T>(error: any): error is AxiosError<T> {
     return error.isAxiosError;
+}
+
+function isString(value: any) {
+    return {}.toString.call(value) === "[object String]";
+}
+
+// I determine if the given value is a string that matches the serialized-date pattern.
+function isSerializedDate(value: any): boolean {
+    return isString(value) && datePattern.test(value);
+}
+
+function jsonReviver(key: any, value: any) {
+    if (isSerializedDate(value)) {
+        return new Date(value);
+    }
+
+    return value;
 }
 
 export function deserializeJson(payload?: string): any | undefined {
@@ -24,21 +42,4 @@ export function deserializeJson(payload?: string): any | undefined {
         );
         return;
     }
-}
-
-function jsonReviver(key: any, value: any) {
-    if (isSerializedDate(value)) {
-        return new Date(value);
-    }
-
-    return value;
-}
-
-// I determine if the given value is a string that matches the serialized-date pattern.
-function isSerializedDate(value: any): boolean {
-    return isString(value) && datePattern.test(value);
-}
-
-function isString(value: any) {
-    return {}.toString.call(value) === "[object String]";
 }

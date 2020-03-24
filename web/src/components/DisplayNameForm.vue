@@ -15,7 +15,7 @@
                     {{ saveLabel }}
                 </button>
             </div>
-            <div v-else>
+            <div v-else class="inline">
                 <span class="name">{{ displayName }}</span>
                 <button class="secondary btn small" @click="editing = true">
                     Edit
@@ -82,6 +82,7 @@ export default class DisplayNameForm extends Vue {
     .input-field {
         display: flex;
         flex: 1;
+        max-width: 100%;
     }
 
     .name {
@@ -101,6 +102,16 @@ export default class DisplayNameForm extends Vue {
             &:hover {
                 background-color: white;
             }
+        }
+    }
+
+    .inline {
+        display: flex;
+        flex: 1;
+        align-items: center;
+
+        .name {
+            flex: 1;
         }
     }
 }
