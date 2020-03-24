@@ -11,12 +11,14 @@ import { AlertMessage } from "@web/util/AlertMessage";
 
 export interface GamesState {
     currentGameId?: string | null;
+    gameActive: boolean;
     addWordError?: AlertMessage | null;
     gamesById: { [gameId: string]: Game };
 }
 
 export const state: GamesState = {
     currentGameId: null,
+    gameActive: false,
     gamesById: {},
     addWordError: null
 };

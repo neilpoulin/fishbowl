@@ -33,6 +33,7 @@ export enum GamesActions {
     addWord = "games.addWord",
     setPlayerPhase = "games.setReadyStatus",
     completeWord = "games.completeWord",
+    startTurn = "games.startTurn",
     turnEnded = "games.turnEnded"
 }
 
@@ -82,6 +83,10 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         const userId = getters[AuthGetters.currentUserId];
 
         if (game.id === currentGame?.id) {
+            if (!game.isPlaying) {
+                commit(GamesMutations.setGameActive, { isActive: false });
+            }
+
             const player = game.getPlayer(userId);
             if (player?.displayName) {
                 commit(AuthMutations.setDisplayName, {
@@ -180,20 +185,40 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         }
         const player = game.getPlayer(userId);
         const team = player?.team;
-        game.completeWord(word, userId);
+        game.completeWord(word);
         if (isNumber(team)) {
             game.incrementScore(team);
         }
+
+        if (game.remainingWordsInRound.length === 0) {
+            game.endTurn();
+        }
+
         await FirestoreService.shared.save(game);
     },
-    async [GamesActions.turnEnded]({ getters }) {
+
+    async [GamesActions.startTurn]({ getters }) {
         const game = getters[GamesGetters.currentGame] as Game | undefined;
         if (!game) {
             return;
         }
 
-        game.updateNextTeams();
-        game.turnEndsAt = new Date(Date.now() + 2 * 60 * 1000);
+        game.startTurn();
         await FirestoreService.shared.save(game);
+    },
+
+    async [GamesActions.turnEnded]({ getters, commit }) {
+        const game = getters[GamesGetters.currentGame] as Game | undefined;
+        if (!game) {
+            return;
+        }
+
+        const userId = getters[AuthGetters.currentUserId];
+        const isActivePlayer = game.getActivePlayer()?.userId === userId;
+        game.endTurn();
+        commit(GamesMutations.setGameActive, { isActive: false });
+        if (isActivePlayer || game.getActivePlayer() === undefined) {
+            await FirestoreService.shared.save(game);
+        }
     }
 };

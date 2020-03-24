@@ -1,6 +1,7 @@
 import { BaseModel, Collection, FirestoreData } from "@shared/models/Model";
 import { DocumentSnapshot } from "@shared/util/FirestoreUtil";
 import Player from "@shared/models/Player";
+import Logger from "@shared/Logger";
 
 export interface WordEntry {
     word: string;
@@ -19,6 +20,8 @@ enum Field {
     round = "round"
 }
 
+const logger = new Logger("Game.ts");
+
 export class Game extends BaseModel {
     readonly collection = Collection.games;
     static Field = Field;
@@ -35,7 +38,9 @@ export class Game extends BaseModel {
 
     scores: { [team: number]: number } = {};
 
-    turnEndsAt: Date | undefined;
+    isPlaying = false;
+    turnEndsAt: Date | undefined | null;
+    turnStartsAt: Date | undefined | null;
 
     get playersList(): Player[] {
         return Object.values(this.players);
@@ -49,17 +54,32 @@ export class Game extends BaseModel {
         return this.playersList.some(p => p.phase !== phase);
     }
 
-    completeWord(wordEntry: WordEntry, userId: string) {
-        const player = this.players[userId];
-        const team = player.team;
-        if (team === undefined) {
+    startTurn() {
+        if (this.remainingWordsInRound.length === 0) {
+            this.moveToNextRound();
             return;
         }
-        this.remainingWordsInRound = [
-            ...this.remainingWordsInRound.filter(
-                w => wordEntry.word !== w.word && w.userId !== wordEntry.userId
-            )
-        ];
+
+        this.isPlaying = true;
+        const countdown = 20000;
+        this.turnStartsAt = new Date(Date.now() + countdown);
+        this.turnEndsAt = new Date(Date.now() + 2 * 60 * 1000 + countdown);
+    }
+
+    endTurn() {
+        logger.info("Ending turn");
+        this.isPlaying = false;
+        this.turnEndsAt = null;
+        this.turnStartsAt = null;
+
+        this.updateNextTeams();
+    }
+
+    completeWord(wordEntry: WordEntry) {
+        logger.info("Completing word ", wordEntry);
+        this.remainingWordsInRound = [...this.remainingWordsInRound].filter(
+            w => wordEntry.word !== w.word || w.userId !== wordEntry.userId
+        );
     }
 
     addWord(wordEntry: WordEntry): boolean {
@@ -117,7 +137,7 @@ export class Game extends BaseModel {
     updateNextTeams() {
         const currentTeam = this.currentTeam;
         let nextTeam = currentTeam + 1;
-        if (nextTeam > this.numberOfTeams) {
+        if (nextTeam >= this.numberOfTeams) {
             nextTeam = 0;
         }
         this.currentTeam = nextTeam;

@@ -1,86 +1,129 @@
 <template>
     <fish-loader class="loading" v-if="loading" />
     <div class="container" v-else>
-        <div class="sidebar">
-            <section class="players">
-                <section class="header" v-if="game">
-                    <h2>{{ game.name }}</h2>
-                </section>
-                <display-name-form :show-label="true" />
-                <hr />
-                <h4>
-                    Players <span class="count">({{ players.length }})</span>
-                </h4>
-                <ul>
-                    <li v-for="player in players" :key="player.userId">
-                        <div class="player">
-                            <span class="name">{{ player.displayName }}</span>
-                            <span
-                                class="ready"
-                                v-if="playerIsReady(player) && !showTeams"
-                            >
-                                Ready
+        <game-sidebar :players="players" :game="game" />
+        <div class="main">
+            <div class="gameboard" v-if="game">
+                <game-phase
+                    :phase="game.phase"
+                    v-if="game.phase === 0 && !loadingNextPhase"
+                />
+                <fish-loader
+                    v-if="loadingNextPhase"
+                    message="Loading Next Round"
+                />
+
+                <template v-if="game.phase === 0">
+                    <div class="ready-container">
+                        <player-ready-button />
+                    </div>
+                    <game-submit-words />
+                </template>
+
+                <div class="timer" v-if="game.phase === 1">
+                    <div
+                        class="timer centered"
+                        v-if="
+                            game.turnStartsAt &&
+                                game.turnEndsAt &&
+                                game.isPlaying
+                        "
+                    >
+                        <countdown
+                            :turn-end-time="game.turnEndsAt"
+                            :turn-start-time="game.turnStartsAt"
+                            @started="activateTurn"
+                            @ended="endTurn"
+                        />
+                    </div>
+
+                    <template v-if="isGameActive">
+                        <div
+                            v-if="activePlayer && !currentWord"
+                            class="current-player centered"
+                        >
+                            <span class="now-playing-label">Now Playing:</span>
+                            <span class="player-name">
+                                {{ activePlayer.displayName }}
                             </span>
-                            <span
-                                class="team"
-                                v-if="showTeams && player.team !== undefined"
+                            <span class="team-name"
+                                >Team {{ currentTeam }}</span
                             >
-                                Team {{ player.team }}
-                            </span>
                         </div>
-                    </li>
-                </ul>
-            </section>
-        </div>
-        <div class="gameboard" v-if="game">
-            <game-phase
-                :phase="game.phase"
-                v-if="game.phase === 0 && !loadingNextPhase"
-            />
-            <fish-loader v-if="loadingNextPhase" message="Loading Next Round" />
 
-            <div class="centered round-label">
-                <h4 v-if="game.phase === 1">Round {{ game.round + 1 }}</h4>
+                        <div
+                            class="secret-word"
+                            v-if="currentWord && currentWord.word"
+                        >
+                            <p class="label">Your word is:</p>
+                            <h2 class="word">{{ currentWord.word }}</h2>
+                            <button class="btn primary" @click="completeWord">
+                                Complete
+                            </button>
+                        </div>
+                    </template>
+                    <div class="centered intermission" v-else-if="!isRoundOver">
+                        <template v-if="!isCurrentPlayer">
+                            <span>Up next is</span>
+                            <h3 class="player-name">
+                                {{ activePlayer.displayName }}
+                            </h3>
+                        </template>
+
+                        <h3 class="player-name" v-if="isCurrentPlayer">
+                            {{
+                                game.isPlaying
+                                    ? "Get Ready..."
+                                    : "You're up next!"
+                            }}
+                        </h3>
+                        <span class="team-name" v-show="!isCurrentPlayer"
+                            >Team {{ currentTeam + 1 }}</span
+                        >
+                        <button
+                            @click="startTurn"
+                            class="btn secondary start-game"
+                            v-if="isCurrentPlayer && !game.isPlaying"
+                        >
+                            Start Turn
+                        </button>
+                    </div>
+                    <div class="centered intermission" v-else-if="isRoundOver">
+                        <h2>
+                            The round is over - there are no more words. Ready
+                            For the next round?
+                        </h2>
+                        <button @click="startTurn" class="btn secondary">
+                            Start Round {{ game.round + 2 }}
+                        </button>
+                    </div>
+
+                    <div>
+                        Words Remaining: {{ game.remainingWordsInRound.length }}
+                        <ul>
+                            <li
+                                v-for="(word, i) in game.remainingWordsInRound"
+                                :key="i"
+                            >
+                                {{ word.word }} - {{ word.userId }}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button class="btn danger" @click="endTurn">
+                        End Turn
+                    </button>
+
+                    <div class="centered round-label">
+                        <h4 v-if="game.phase === 1">
+                            Round {{ game.round + 1 }}
+                        </h4>
+                    </div>
+                    <div class="centered">
+                        <scoreboard :game="game" />
+                    </div>
+                </div>
             </div>
-
-            <template v-if="game.phase === 0">
-                <div class="ready-container">
-                    <player-ready-button />
-                </div>
-                <game-submit-words />
-            </template>
-
-            <template v-if="game.phase === 1">
-                <div class="centered">
-                    <scoreboard :game="game" />
-                </div>
-
-                <div v-if="currentPlayer" class="current-player centered">
-                    <span class="now-playing-label">Now Playing:</span>
-                    <span class="player-name">
-                        {{ currentPlayer.displayName }}
-                    </span>
-                    <span class="team-name">Team {{ currentTeam }}</span>
-                </div>
-
-                <div class="secret-word" v-if="currentWord && currentWord.word">
-                    <p>Your word is:</p>
-                    <h1>{{ currentWord.word }}</h1>
-
-                    <button @click="completeWord">Complete</button>
-                </div>
-                <div class="timer" v-if="secondsLeftMs">
-                    <h1>{{ secondsLeftMs | formatDuration }}</h1>
-                </div>
-
-                <button
-                    v-if="showNextTurn"
-                    class="btn danger"
-                    @click="nextTurn"
-                >
-                    Next Turn
-                </button>
-            </template>
         </div>
     </div>
 </template>
@@ -103,24 +146,20 @@ import { CompleteWordPayload } from "@web/store/modules/games/Games";
 import { GamesActions } from "@web/store/modules/games/GamesActions";
 import FishLoader from "@web/components/FishLoader.vue";
 import { Watch } from "vue-property-decorator";
+import GameSidebar from "@web/components/GameSidebar.vue";
+import Countdown from "@web/components/Countdown.vue";
 
 const logger = new Logger("GameView");
 @Component({
     components: {
+        Countdown,
         GameSubmitWords,
         DisplayNameForm,
         PlayerReadyButton,
         GamePhase,
         Scoreboard,
-        FishLoader
-    },
-    filters: {
-        formatDuration(ms: number | undefined): string {
-            if (ms === undefined) {
-                return "0:00";
-            }
-            return new Date(ms).toISOString().substr(15, 4);
-        }
+        FishLoader,
+        GameSidebar
     }
 })
 export default class GameView extends Vue {
@@ -129,6 +168,20 @@ export default class GameView extends Vue {
     @Action(Games.Actions.completeWord) markCompleted!: (
         payload: CompleteWordPayload
     ) => void;
+    @Getter(Games.Getters.currentPlayer) myPlayer: Player | undefined;
+    @Action(Games.Actions.startTurn) startTurn!: () => Promise<void>;
+    // @Action(Games.Actions.turnEnded) endTurn!: () => Promise<void>;
+    @Getter(Games.Getters.isGameActive) _gameActive!: boolean;
+
+    get isGameActive(): boolean {
+        return this._gameActive;
+    }
+
+    set isGameActive(isActive: boolean) {
+        this.$store.commit(Games.Mutations.setGameActive, {
+            isActive: isActive
+        });
+    }
 
     get players(): Player[] {
         return Object.values(this.game?.players ?? {});
@@ -168,9 +221,6 @@ export default class GameView extends Vue {
         }
     }
 
-    secondsLeftMs: number | null = null;
-    tickerInterval: number | undefined;
-
     beforeMount() {
         const gameId = this.$route.params.gameId;
         if (gameId) {
@@ -179,28 +229,15 @@ export default class GameView extends Vue {
         } else {
             logger.info("No game id found on route");
         }
-
-        this.tickerInterval = setInterval(() => {
-            this.updateTimeRemaining();
-        }, 1000);
     }
 
-    updateTimeRemaining() {
-        const turnEndsAt = this.game?.turnEndsAt;
-        if (!turnEndsAt) {
-            return;
-        }
-
-        const diff = turnEndsAt.getTime() - Date.now();
-        if (diff < 0) {
-            this.secondsLeftMs = null;
-            return;
-        }
-        this.secondsLeftMs = diff;
+    activateTurn() {
+        this.isGameActive = true;
     }
 
-    destroyed() {
-        clearInterval(this.tickerInterval);
+    deactivateTurn() {
+        this.isGameActive = false;
+        this.$store.dispatch(GamesActions.turnEnded);
     }
 
     playerIsReady(player: Player): boolean {
@@ -208,26 +245,34 @@ export default class GameView extends Vue {
         return (player.phase ?? Phase.SETUP) > gamePhase;
     }
 
-    get showTeams(): boolean {
-        return (this.game?.phase ?? Phase.SETUP) > Phase.SETUP;
+    get isRoundOver(): boolean {
+        return this.game?.remainingWordsInRound.length === 0;
     }
 
     get showNextTurn(): boolean {
         return !!localStorage.getItem("admin");
     }
 
+    get isCurrentPlayer(): boolean {
+        return this.activePlayer?.userId === this.userId;
+    }
+
     get currentWord(): WordEntry | undefined {
-        if (this.currentPlayer && this.currentPlayer?.userId == this.userId) {
+        if (this.isCurrentPlayer) {
             return this.game?.getCurrentWord();
         }
         return undefined;
+    }
+
+    get isCurrentTeam(): boolean {
+        return this.currentTeam === this.myPlayer?.team;
     }
 
     get currentTeam(): number {
         return this.game?.currentTeam ?? 0;
     }
 
-    get currentPlayer(): Player | undefined {
+    get activePlayer(): Player | undefined {
         return this.game?.getActivePlayer();
     }
 
@@ -249,11 +294,12 @@ export default class GameView extends Vue {
         }
     }
 
-    async nextTurn() {
+    async endTurn() {
         const game = this.game;
         if (!game) {
             return;
         }
+        this.deactivateTurn();
         await this.$store.dispatch(GamesActions.turnEnded);
     }
 }
@@ -267,6 +313,7 @@ export default class GameView extends Vue {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
 .container {
@@ -280,34 +327,31 @@ export default class GameView extends Vue {
         @include minW($br-phone-max) {
             width: 25rem;
         }
-        @include rounded($cornerRadiusLg);
+        //@include rounded($cornerRadiusLg);
         @include container($lg);
         background: color($color-background);
     }
 
-    .gameboard {
-        display: flex;
-        flex-direction: column;
-        @include container($lg);
-
-        .round-label {
-            margin-bottom: spacing($md);
+    .main {
+        flex: 1;
+        .gameboard {
+            display: flex;
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            flex-direction: column;
+            @include container($lg);
+            padding-bottom: 40rem;
+            .round-label {
+                margin-bottom: spacing($md);
+            }
         }
     }
 }
 
-.ready {
-    color: color($color-accent, $variant-dark);
-}
-
-.header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    flex-direction: row;
-    align-content: center;
-    align-items: center;
-    margin-bottom: spacing($lg);
+.timer {
+    .countdown-label {
+    }
 }
 
 .ready-container {
@@ -317,30 +361,41 @@ export default class GameView extends Vue {
     }
 }
 
-.players {
-    ul {
-        margin: 0;
-        padding-left: 0;
-        list-style: none;
-        li {
-            margin: 0;
-            padding: spacing($sm);
-            .player {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
+.secret-word,
+.current-player,
+.intermission {
+    @include shadowbox;
+    @include container($xl);
+    @include rounded($cornerRadiusXl);
+    margin: spacing($lg) 0 spacing($xxl);
+}
 
-                @include container($md);
-                @include rounded;
-                background-color: color($color-background, $variant-dark);
-            }
-        }
+.intermission {
+    background-color: color($color-background, $variant-dark);
+
+    .start-game {
+        margin-top: spacing($lg);
+    }
+}
+
+.secret-word {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: color($color-primary, $variant-light);
+
+    .label {
+        margin: 0;
+    }
+
+    .word {
+        padding: spacing($lg);
     }
 }
 
 .current-player {
-    padding: spacing($lg) 0;
-
+    background-color: color($color-primary, $variant-light);
     .now-playing-label {
         @include font($sm, $bold);
         color: color($color-text);
