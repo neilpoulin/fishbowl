@@ -1,11 +1,11 @@
 <template>
     <div>
         <button
-            class="btn"
+            class="btn secondary light"
             :class="{ danger: isReady, primary: !isReady }"
             @click="togglePhase"
         >
-            {{ isReady ? "Not Ready" : "Ready!" }}
+            {{ isReady ? "Not Ready" : "Ready" }}
         </button>
     </div>
 </template>

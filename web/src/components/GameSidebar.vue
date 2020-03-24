@@ -4,6 +4,7 @@
             <section class="header" v-if="game">
                 <span class="game-label">Game</span>
                 <h2>{{ game.name }}</h2>
+                <player-ready-button />
             </section>
 
             <display-name-form :show-label="true" class="display-name-form" />
@@ -51,11 +52,12 @@ import { Prop } from "vue-property-decorator";
 import { Game, Phase } from "@shared/models/Game";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
 import GameVideoChatUrl from "@web/components/GameVideoChatUrl.vue";
-
+import PlayerReadyButton from "@web/components/PlayerReadyButton.vue";
 @Component({
     components: {
         GameVideoChatUrl,
-        DisplayNameForm
+        DisplayNameForm,
+        PlayerReadyButton
     }
 })
 export default class GameSidebar extends Vue {

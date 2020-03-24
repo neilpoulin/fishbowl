@@ -107,6 +107,13 @@ input {
         );
         border: 1px solid color($color-background, $variant-dark);
         box-shadow: none;
+
+        &.light {
+            @include button(
+                            color($color-primary, $variant-light),
+                            color($color-text, $variant-dark)
+            );
+        }
     }
 }
 

@@ -31,7 +31,7 @@ export default Vue.extend({
                 case Phase.SETUP:
                     return (
                         "First, enter some words into the fishbowl. These words will be used through out the game. " +
-                        "\n\nThe game will start once everyone has pressed\xa0ready"
+                        "\n\nThe game will start once everyone has pressed their ready\xa0button."
                     );
                 case Phase.IN_PROGRESS:
                     return "Game in progress";

@@ -13,12 +13,7 @@
                     message="Loading Next Round"
                 />
 
-                <template v-if="game.phase === 0">
-                    <div class="ready-container">
-                        <player-ready-button />
-                    </div>
-                    <game-submit-words />
-                </template>
+                <game-submit-words v-if="game.phase === 0" />
 
                 <div class="timer" v-if="game.phase === 1">
                     <div

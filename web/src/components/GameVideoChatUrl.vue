@@ -11,7 +11,7 @@
                     id="video-chat-input"
                     placeholder="Add a link to a video chat"
                 />
-                <button class="btn secondary" @click="save">
+                <button class="btn secondary small" @click="save">
                     {{ saveLabel }}
                 </button>
             </div>
@@ -84,6 +84,7 @@ export default class GameVideoChatUrl extends Vue {
         flex: 1;
         display: flex;
         overflow: hidden;
+        align-items: center;
         input {
             margin-right: spacing($md);
             /*max-width: 20rem;*/

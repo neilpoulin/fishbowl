@@ -1,19 +1,19 @@
 <template>
-    <div class="container">
-        <div>
-            <div class="input-container">
-                <h3>Add Words</h3>
-                <div class="word-entry input-field">
-                    <input
-                        type="text"
-                        v-model="wordInput"
-                        placeholder="Enter a word"
-                        @keyup.enter="submit"
-                    />
-                    <button class="btn primary" @click="submit">Add</button>
-                </div>
-                <alert v-if="alert" :alert="alert" />
+    <div class="word-container">
+        <div class="input-container">
+            <h3>Add Words</h3>
+            <div class="word-entry input-field">
+                <input
+                    type="text"
+                    v-model="wordInput"
+                    placeholder="Enter a word"
+                    @keyup.enter="submit"
+                />
+                <button class="btn primary" @click="submit">Add</button>
             </div>
+            <alert v-if="alert" :alert="alert" />
+        </div>
+        <div class="your-words">
             <h4>Your Words</h4>
             <ul v-if="currentWords.length > 0">
                 <li v-for="(word, i) in currentWords" :key="i">
@@ -21,7 +21,7 @@
                 </li>
             </ul>
             <div v-else>
-                <p>No words submitted yet!</p>
+                <p>No words submitted yet</p>
             </div>
         </div>
     </div>
@@ -68,20 +68,33 @@ export default class GameSubmitWords extends Vue {
 @import "variables";
 @import "mixins";
 
+.word-container {
+    display: flex;
+    flex-direction: column;
+}
+
 .input-container {
     background-color: color($color-background, $variant-dark);
     @include container($lg);
     @include rounded();
     margin-bottom: spacing($lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .word-entry {
     display: flex;
     flex-direction: row;
-
+    flex: 1;
     input {
         width: 20rem;
+        flex: 1;
         margin-right: spacing($lg);
     }
+}
+
+.your-words {
+    @include container;
 }
 </style>
