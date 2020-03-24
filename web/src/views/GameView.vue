@@ -90,9 +90,12 @@
                     </div>
                     <div class="centered intermission" v-else-if="isRoundOver">
                         <h2>
-                            The round is over - there are no more words. Ready
-                            For the next round?
+                            The Fish Bowl is empty.
                         </h2>
+                        <p>
+                            We're all out of words. Time to start the next
+                            round.
+                        </p>
                         <button @click="startTurn" class="btn secondary">
                             Start Round {{ game.round + 2 }}
                         </button>

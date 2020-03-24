@@ -2,15 +2,18 @@
     <div class="sidebar">
         <section class="players">
             <section class="header" v-if="game">
+                <span class="game-label">Game</span>
                 <h2>{{ game.name }}</h2>
             </section>
-            <display-name-form :show-label="true" />
+
+            <display-name-form :show-label="true" class="display-name-form" />
+            <game-video-chat-url :game="game" />
             <hr />
             <h4>
-                Players <span class="count">({{ players.length }})</span>
+                Players <span class="count">({{ sortedPlayers.length }})</span>
             </h4>
             <ul>
-                <li v-for="player in players" :key="player.userId">
+                <li v-for="player in sortedPlayers" :key="player.userId">
                     <div
                         class="player"
                         :class="{
@@ -47,9 +50,11 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { Game, Phase } from "@shared/models/Game";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
+import GameVideoChatUrl from "@web/components/GameVideoChatUrl.vue";
 
 @Component({
     components: {
+        GameVideoChatUrl,
         DisplayNameForm
     }
 })
@@ -59,6 +64,20 @@ export default class GameSidebar extends Vue {
     playerIsReady(player: Player): boolean {
         const gamePhase = this.game?.phase ?? Phase.SETUP;
         return (player.phase ?? Phase.SETUP) > gamePhase;
+    }
+
+    get sortedPlayers(): Player[] {
+        const sorted = [...this.players];
+        sorted.sort((p1, p2) => {
+            if (p1.team === p2.team) {
+                return (p1.displayName ?? "")?.localeCompare(
+                    p2.displayName ?? ""
+                );
+            } else {
+                return (p1.team ?? 0) - (p2.team ?? 0);
+            }
+        });
+        return sorted;
     }
 
     get currentTeam(): number | undefined {
@@ -112,12 +131,14 @@ export default class GameSidebar extends Vue {
 }
 
 .header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    flex-direction: row;
-    align-content: center;
-    align-items: center;
-    margin-bottom: spacing($lg);
+    margin-bottom: spacing($xl);
+}
+
+.display-name-form {
+    margin-bottom: spacing($xl);
+}
+
+hr {
+    margin: spacing($xl) 0;
 }
 </style>

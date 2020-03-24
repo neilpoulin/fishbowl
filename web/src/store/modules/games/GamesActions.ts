@@ -34,7 +34,8 @@ export enum GamesActions {
     setPlayerPhase = "games.setReadyStatus",
     completeWord = "games.completeWord",
     startTurn = "games.startTurn",
-    turnEnded = "games.turnEnded"
+    turnEnded = "games.turnEnded",
+    setVideoChatUrl = "games.setVideoChatUrl"
 }
 
 const logger = new Logger("GameActions");
@@ -220,5 +221,17 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         if (isActivePlayer || game.getActivePlayer() === undefined) {
             await FirestoreService.shared.save(game);
         }
+    },
+    async [GamesActions.setVideoChatUrl](
+        { getters },
+        payload: { url: string | undefined }
+    ) {
+        const game = getters[GamesGetters.currentGame] as Game | undefined;
+        if (!game) {
+            return;
+        }
+        game.videoChatUrl = payload.url;
+
+        await FirestoreService.shared.save(game);
     }
 };

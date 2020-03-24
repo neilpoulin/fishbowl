@@ -1,23 +1,23 @@
 <template>
-    <div class="display-name-form">
+    <div class="video-chat-link-form">
         <div class="input-field">
-            <label v-if="showLabel" for="display-name-input">
-                Your Display Name
+            <label v-if="showLabel" for="video-chat-input">
+                Video Chat Link
             </label>
-            <div class="actions" v-if="editing">
+            <div class="actions" v-if="editing || !url">
                 <input
                     type="text"
-                    v-model="displayNameValue"
-                    id="display-name-input"
-                    placeholder="Enter your name"
+                    v-model="url"
+                    id="video-chat-input"
+                    placeholder="Add a link to a video chat"
                 />
                 <button class="btn secondary" @click="save">
                     {{ saveLabel }}
                 </button>
             </div>
             <div v-else>
-                <span class="name">{{ displayName }}</span>
-                <button class="secondary btn small" @click="editing = true">
+                <a :href="url" target="_blank" class="link">{{ url }}</a>
+                <button class="btn secondary small" @click="editing = true">
                     Edit
                 </button>
             </div>
@@ -26,47 +26,43 @@
 </template>
 
 <script lang="ts">
-import Auth from "@web/store/modules/auth/AuthModule";
 import Vue from "vue";
 import Component from "vue-class-component";
-import { Getter } from "vuex-class";
 import { Prop, Watch } from "vue-property-decorator";
-import Logger from "@shared/Logger";
+import { Game } from "@shared/models/Game";
+import { GamesActions } from "@web/store/modules/games/GamesActions";
 
-const logger = new Logger("DisplayNameForm");
+// const logger = new Logger("VideoChatUrl");
 
 @Component
-export default class DisplayNameForm extends Vue {
-    @Getter(Auth.Getters.displayName) displayName: string | undefined | null;
+export default class GameVideoChatUrl extends Vue {
+    @Prop({ type: Object as () => Game, required: true }) game!: Game;
 
-    @Prop({ type: Boolean, default: false }) showLabel!: boolean;
-
+    @Prop({ type: Boolean, default: true }) showLabel!: boolean;
     @Prop({ type: Boolean, default: false }) alwaysShowSave!: boolean;
     @Prop({ type: String, default: "Save" }) saveLabel!: string;
-    displayNameValue = "";
-
+    url = "";
     editing = false;
+
     beforeMount() {
-        this.displayNameValue = this.displayName ?? "";
+        this.url = this.game.videoChatUrl ?? "";
     }
 
     get showSaveButton(): boolean {
-        return (
-            this.displayNameValue !== this.displayName || this.alwaysShowSave
-        );
+        return this.url !== this.game.videoChatUrl || this.alwaysShowSave;
     }
 
-    @Watch("displayName")
-    onDisplayNameChanged(name: string) {
-        logger.info("Display Name changed to " + name);
-        this.displayNameValue = name;
+    @Watch("game")
+    onValueChanged(game: Game | undefined) {
+        this.url = game?.videoChatUrl;
     }
 
     async save() {
         this.editing = false;
-        await this.$store.dispatch(Auth.Actions.setDisplayName, {
-            displayName: this.displayNameValue
+        await this.$store.dispatch(GamesActions.setVideoChatUrl, {
+            url: this.url
         });
+
         this.$emit("saved");
     }
 }
@@ -77,20 +73,15 @@ export default class DisplayNameForm extends Vue {
 @import "mixins";
 @import "variables";
 
-.display-name-form {
+.video-chat-link-form {
     display: flex;
     .input-field {
         display: flex;
         flex: 1;
     }
-
-    .name {
-        margin-right: spacing($lg);
-    }
-
     .actions {
-        display: flex;
         flex: 1;
+        display: flex;
         input {
             margin-right: spacing($md);
             /*max-width: 20rem;*/
@@ -102,6 +93,10 @@ export default class DisplayNameForm extends Vue {
                 background-color: white;
             }
         }
+    }
+
+    .link {
+        margin-right: spacing($lg);
     }
 }
 </style>

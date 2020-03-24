@@ -43,6 +43,8 @@ export class Game extends BaseModel {
     turnEndsAt: Date | undefined | null;
     turnStartsAt: Date | undefined | null;
 
+    videoChatUrl: string | undefined;
+
     get playersList(): Player[] {
         return Object.values(this.players);
     }

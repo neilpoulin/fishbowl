@@ -9,15 +9,13 @@
     @content;
 }
 
-
 @mixin shadowbox {
     //background-color: white;
     @include rounded($lg);
     box-shadow: 0 6.9px 21px -24px rgba(0, 0, 0, 0.012),
-    0 11.5px 32.3px -24px rgba(0, 0, 0, 0.036),
-    0 13.9px 37.7px -24px rgba(0, 0, 0, 0.074),
-    0 24px 63px -24px rgba(0, 0, 0, 0.15);
-
+        0 11.5px 32.3px -24px rgba(0, 0, 0, 0.036),
+        0 13.9px 37.7px -24px rgba(0, 0, 0, 0.074),
+        0 24px 63px -24px rgba(0, 0, 0, 0.15);
 }
 @mixin button($bgColor, $colorText) {
     $shadowHeight: 4px;
@@ -35,6 +33,11 @@
     box-shadow: inset 0 -1 * $shadowHeight 0 0 $shadowColor;
     transition: all 0.1s;
     //border-bottom: $shadowHeight solid $shadowColor;
+
+    &.small {
+        @include font($sm);
+        padding: 0.6rem 1rem;
+    }
 
     &:hover {
         background-color: $bgColorActive;
@@ -75,7 +78,6 @@
         @content;
     }
 }
-
 
 @keyframes rotate {
     100% {

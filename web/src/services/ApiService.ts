@@ -7,7 +7,8 @@ import { auth } from "@web/config/FirebaseConfig";
 type EndpointGetter = () => string;
 
 export const Endpoint = {
-    gameNextTurn: (gameId: string): EndpointGetter => () => `/games/${ gameId }/next-turn`,
+    gameNextTurn: (gameId: string): EndpointGetter => () =>
+        `/games/${gameId}/next-turn`
 };
 
 export default class ApiService {
@@ -19,13 +20,15 @@ export default class ApiService {
     constructor() {
         this.logger.info("AppConfig = ", JSON.stringify(Config));
         const domain = Config.apiDomain;
-        axios.defaults.baseURL = `${ domain }`;
+        axios.defaults.baseURL = `${domain}`;
         axios.defaults.timeout = 30000; //30 second timeout
         this.request = axios.create({
             baseURL: Config.apiDomain,
-            transformResponse: [(data: string) => {
-                return deserializeJson(data)
-            }]
+            transformResponse: [
+                (data: string) => {
+                    return deserializeJson(data);
+                }
+            ]
         });
     }
 
@@ -35,41 +38,59 @@ export default class ApiService {
             return {};
         }
         const token = await user.getIdToken();
-        return { Authorization: `Bearer ${ token }` };
+        return { Authorization: `Bearer ${token}` };
     }
 
-    async post<Req, Resp>(endpoint: EndpointGetter, payload: Req): Promise<Resp | undefined> {
+    async post<Req, Resp>(
+        endpoint: EndpointGetter,
+        payload: Req
+    ): Promise<Resp | undefined> {
         try {
             const authHeaders = await this.getAuthHeaders();
-            const response = await axios.post<Resp>(endpoint(), payload, { headers: { ...authHeaders } });
+            const response = await axios.post<Resp>(endpoint(), payload, {
+                headers: { ...authHeaders }
+            });
             return response.data;
         } catch (error) {
             if (isAxiosError<Resp>(error)) {
                 const data = error.response?.data;
-                this.logger.error(`Request to ${ endpoint() } returned status ${ error.response?.status }. ${ JSON.stringify(data) }`)
+                this.logger.error(
+                    `Request to ${endpoint()} returned status ${
+                        error.response?.status
+                    }. ${JSON.stringify(data)}`
+                );
             } else {
-                this.logger.error(`Failed to process request to "${ endpoint() }"`, error);
+                this.logger.error(
+                    `Failed to process request to "${endpoint()}"`,
+                    error
+                );
                 return;
             }
-
         }
     }
 
     async get<Resp>(endpoint: EndpointGetter): Promise<Resp | undefined> {
         try {
             const authHeaders = await this.getAuthHeaders();
-            const response = await axios.get<Resp>(endpoint(), { headers: { ...authHeaders } });
+            const response = await axios.get<Resp>(endpoint(), {
+                headers: { ...authHeaders }
+            });
             return response.data;
         } catch (error) {
             if (isAxiosError<Resp>(error)) {
                 const data = error.response?.data;
-                this.logger.error(`Request to ${ endpoint() } returned status ${ error.response?.status }. ${ JSON.stringify(data) }`)
+                this.logger.error(
+                    `Request to ${endpoint()} returned status ${
+                        error.response?.status
+                    }. ${JSON.stringify(data)}`
+                );
             } else {
-                this.logger.error(`Failed to process request to "${ endpoint() }"`, error);
+                this.logger.error(
+                    `Failed to process request to "${endpoint()}"`,
+                    error
+                );
                 return;
             }
-
         }
     }
-
 }
