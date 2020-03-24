@@ -1,13 +1,11 @@
 <template>
-    <div>
-        <button
-            class="btn secondary light"
-            :class="{ danger: isReady, primary: !isReady }"
-            @click="togglePhase"
-        >
-            {{ isReady ? "Not Ready" : "Ready" }}
-        </button>
-    </div>
+    <button
+        class="btn secondary light"
+        :class="{ danger: isReady, primary: !isReady }"
+        @click="togglePhase"
+    >
+        {{ isReady ? "Not Ready" : "Ready" }}
+    </button>
 </template>
 
 <script lang="ts">

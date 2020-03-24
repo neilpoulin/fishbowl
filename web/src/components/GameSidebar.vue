@@ -4,7 +4,7 @@
             <section class="header" v-if="game">
                 <span class="game-label">Game</span>
                 <h2>{{ game.name }}</h2>
-                <player-ready-button />
+                <player-ready-button class="ready-button" />
             </section>
 
             <display-name-form :show-label="true" class="display-name-form" />
@@ -41,6 +41,10 @@
                 </li>
             </ul>
         </section>
+
+        <div class="links">
+            <router-link to="/games">&larr; All Games</router-link>
+        </div>
     </div>
 </template>
 
@@ -100,6 +104,7 @@ export default class GameSidebar extends Vue {
 @import "variables";
 @import "mixins";
 .players {
+    margin-bottom: spacing($lg);
     ul {
         margin: 0;
         padding-left: 0;
@@ -134,6 +139,12 @@ export default class GameSidebar extends Vue {
 
 .header {
     margin-bottom: spacing($xl);
+    display: flex;
+    flex-direction: column;
+    .ready-button {
+        margin-top: spacing($lg);
+        flex: 1;
+    }
 }
 
 .display-name-form {
@@ -142,5 +153,8 @@ export default class GameSidebar extends Vue {
 
 hr {
     margin: spacing($xl) 0;
+}
+.links {
+    @include container;
 }
 </style>
