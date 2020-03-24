@@ -1,5 +1,11 @@
 <template>
-    <div class="container">
+    <div class="loading" v-if="loading">
+        <div>
+            <span class="fish"><span>🐠</span></span>
+            <span class="message">LOADING...</span>
+        </div>
+    </div>
+    <div class="container" v-else>
         <div class="sidebar">
             <section class="players">
                 <section class="header" v-if="game">
@@ -89,6 +95,7 @@ import Scoreboard from "@web/components/Scoreboard.vue";
 import GamePhase from "@web/components/GamePhase.vue";
 import { CompleteWordPayload } from "@web/store/modules/games/Games";
 import { GamesActions } from "@web/store/modules/games/GamesActions";
+import { Watch } from "vue-property-decorator";
 
 const logger = new Logger("GameView");
 @Component({
@@ -112,22 +119,55 @@ export default class GameView extends Vue {
     @Getter(Games.Getters.currentGame) game?: Game | undefined;
     @Getter(Auth.Getters.currentUserId) userId?: string | undefined;
     @Action(Games.Actions.completeWord) markCompleted!: (
-        paylaod: CompleteWordPayload
+        payload: CompleteWordPayload
     ) => void;
+
     get players(): Player[] {
         return Object.values(this.game?.players ?? {});
     }
-    loading = false;
+
+    spinnerDismissed = true;
+
+    get loading(): boolean {
+        return !this.game || !this.hasJoined || !this.spinnerDismissed;
+    }
+
+    get hasJoined(): boolean {
+        if (!this.userId) {
+            return false;
+        }
+
+        return !!this.game?.players[this.userId];
+    }
+
+    fishTimeout: number | null = null;
+
+    @Watch("game")
+    onLoadingChanged(game: boolean) {
+        if (game && !this.hasJoined) {
+            const gameId = this.$route.params.gameId;
+            if (gameId) {
+                this.$store.dispatch(Games.Actions.join, { gameId });
+                // this.fishTimeout = setTimeout(() => {
+                //     this.spinnerDismissed = true;
+                // }, 1000);
+            }
+
+            logger.info(`Game ID = ${gameId}`);
+        }
+    }
+
     secondsLeftMs: number | null = null;
     tickerInterval: number | undefined;
 
     beforeMount() {
         const gameId = this.$route.params.gameId;
         if (gameId) {
-            this.$store.dispatch(Games.Actions.join, { gameId });
+            logger.info("Setting current game id to ", gameId);
+            this.$store.commit(Games.Mutations.setCurrentGame, { gameId });
+        } else {
+            logger.info("No game id found on route");
         }
-
-        logger.info(`Game ID = ${gameId}`);
 
         this.tickerInterval = setInterval(() => {
             this.updateTimeRemaining();
@@ -211,6 +251,33 @@ export default class GameView extends Vue {
 <style scoped lang="scss">
 @import "mixins";
 
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: spacing($xxl);
+    margin: spacing($xxl);
+
+    .message {
+        @include font($lg);
+        padding: spacing($lg);
+    }
+
+    .fish {
+        animation: rotate 1s linear infinite;
+        /*display: inline-block;*/
+        height: 2rem;
+        transform-origin: center;
+        width: 2rem;
+        background-size: 2rem;
+        z-index: 1;
+        display: inline-flex;
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
 .container {
     display: flex;
     flex-direction: row;
@@ -273,6 +340,7 @@ export default class GameView extends Vue {
         }
     }
 }
+
 .current-player {
     padding: spacing($lg) 0;
 }

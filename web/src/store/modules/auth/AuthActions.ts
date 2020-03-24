@@ -10,7 +10,7 @@ import UserCredential = firebase.auth.UserCredential;
 import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 import { GamesActions } from "@web/store/modules/games/GamesActions";
 import { isBlank } from "@shared/util/ObjectUtil";
-import { getRandomAnimal } from "@web/util/AnimalNames";
+import { getRandomAnimalDispalyName } from "@web/util/AnimalNames";
 
 export enum AuthActions {
     watchAuth = "auth.watchAuth",
@@ -25,6 +25,9 @@ export const actions: ActionTree<AuthState, GlobalState> = {
             logger.info(`Auth state changed. User = `, user?.toJSON());
             if (!user) {
                 await dispatch(AuthActions.signInAnonymously, null);
+                await dispatch(AuthActions.setDisplayName, {
+                    displayName: getRandomAnimalDispalyName()
+                });
             } else {
                 commit(AuthMutations.authChanged, { user });
             }
@@ -38,7 +41,7 @@ export const actions: ActionTree<AuthState, GlobalState> = {
         payload: SetDisplayNamePayload
     ) {
         if (isBlank(payload.displayName)) {
-            payload.displayName = getRandomAnimal();
+            payload.displayName = getRandomAnimalDispalyName();
         }
         commit(AuthMutations.setDisplayName, payload);
         const currentUser = auth().currentUser;

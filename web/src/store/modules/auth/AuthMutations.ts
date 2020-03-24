@@ -5,7 +5,7 @@ import {
     SetDisplayNamePayload
 } from "@web/store/modules/auth/AuthModuleTypes";
 import Player from "@shared/models/Player";
-import { getRandomAnimal } from "@web/util/AnimalNames";
+import { getRandomAnimalDispalyName } from "@web/util/AnimalNames";
 
 export enum AuthMutations {
     authChanged = "auth.changed",
@@ -20,7 +20,7 @@ export const mutations: MutationTree<AuthState> = {
         const displayName = user?.displayName;
         if (user && state.player?.userId !== user.uid) {
             const player = new Player(user.uid);
-            player.displayName = displayName ?? getRandomAnimal();
+            player.displayName = displayName ?? getRandomAnimalDispalyName();
             state.player = player;
         } else {
             state.player = null;

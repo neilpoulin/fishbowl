@@ -60,9 +60,9 @@ $theme-colors: (
         $variant-dark: darken(#d85033, 15%)
     ),
     $color-success: (
-        $variant-base: #0D8D7F,
-        $variant-light: lighten(#0D8D7F, 15%),
-        $variant-dark: darken(#0D8D7F, 15%)
+        $variant-base: #0d8d7f,
+        $variant-light: lighten(#0d8d7f, 15%),
+        $variant-dark: darken(#0d8d7f, 15%)
     ),
     $color-foreground: (
         $variant-base: #393939,
@@ -166,7 +166,8 @@ $spacing-settings: (
     $variant-base: 1rem,
     $md: 1.2rem,
     $lg: 1.8rem,
-    $xl: 3rem
+    $xl: 3rem,
+    $xxl: 5rem
 );
 
 @function spacing($level) {

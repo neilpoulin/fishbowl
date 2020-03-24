@@ -91,8 +91,13 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         }
     },
     async [GamesActions.join]({ commit, dispatch }, payload: JoinGameParams) {
-        commit(GamesMutations.join, payload);
-        await dispatch(GamesActions.updatePlayer);
+        const game = this.getters[GamesGetters.getById](payload.gameId);
+        if (!game) {
+            //todo: add failed status
+        } else {
+            commit(GamesMutations.setCurrentGame, payload);
+            await dispatch(GamesActions.updatePlayer);
+        }
     },
     async [GamesActions.updatePlayer]({ getters, rootState }) {
         const userId = rootState.auth.user?.uid;

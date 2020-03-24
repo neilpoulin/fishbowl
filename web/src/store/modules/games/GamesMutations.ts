@@ -5,7 +5,7 @@ import { AlertMessage } from "@web/util/AlertMessage";
 import { JoinGameParams } from "@web/store/modules/games/Games";
 
 export enum GamesMutations {
-    join = "games.join",
+    setCurrentGame = "games.join",
     leave = "games.leave",
     addGame = "games.addGame",
     addWordError = "games.addWordError",
@@ -13,7 +13,7 @@ export enum GamesMutations {
 }
 
 export const mutations: MutationTree<GamesState> = {
-    [GamesMutations.join](state, payload: JoinGameParams) {
+    [GamesMutations.setCurrentGame](state, payload: JoinGameParams) {
         state.currentGameId = payload.gameId;
     },
     [GamesMutations.leave](state) {

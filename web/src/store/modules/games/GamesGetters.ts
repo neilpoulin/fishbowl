@@ -14,7 +14,8 @@ export enum GamesGetters {
     gameNames = "games.allNames",
     submittedWords = "games.submittedWords",
     submittedWordsError = "games.submittedWordsError",
-    currentPlayer = "games.currentPlayer"
+    currentPlayer = "games.currentPlayer",
+    getById = "games.getById"
 }
 
 // type GetterType =
@@ -25,6 +26,9 @@ export const getters: GetterTree<GamesState, GlobalState> = {
             return undefined;
         }
         return state.gamesById[gameId];
+    },
+    [GamesGetters.getById]: state => (id: string): Game | undefined => {
+        return state.gamesById[id];
     },
     [GamesGetters.submittedWords](state, getters): WordEntry[] {
         const userId = getters[AuthGetters.currentUserId];
@@ -41,6 +45,7 @@ export const getters: GetterTree<GamesState, GlobalState> = {
     [GamesGetters.all](state): Game[] {
         return Object.values(state.gamesById);
     },
+
     [GamesGetters.availableGames](state): Game[] {
         return Object.values(state.gamesById).filter(
             game => game.phase == Phase.SETUP
