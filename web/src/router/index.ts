@@ -70,7 +70,7 @@ export const routes: MetaRoute[] = [
         showInNav: false,
         meta: {
             requiresAuth: true,
-            hideNav: true
+            hideNav: false
         }
     }
 ];

@@ -70,7 +70,6 @@
         background-color: $colorText;
         border-color: $bgColorActive;
         color: $bgColor;
-
     }
 }
 
@@ -91,4 +90,8 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+@mixin logo {
+    font-family: $font-stack-logo;
 }

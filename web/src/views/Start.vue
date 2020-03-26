@@ -1,16 +1,17 @@
 <template>
     <div class="start">
         <div class="loading" v-if="isLoading"></div>
-        <div class="name-container">
-            <display-name-form :show-label="true" />
-        </div>
+
         <div class="flex-container">
             <section class="main-section">
+                <div class="name-container">
+                    <span class="name">Your Name</span>
+                    <display-name-form :show-label="false" />
+                </div>
                 <div class="game-container">
-                    <div class="mask"></div>
                     <div class="content">
-                        <div v-if="game" class="current-game">
-                            <span class="current-game">Current Game</span>
+                        <span class="current-game">Current Game</span>
+                        <div v-if="game">
                             <h2>{{ game.name }}</h2>
                             <div class="actions">
                                 <button
@@ -20,7 +21,7 @@
                                     Leave Game
                                 </button>
                                 <button
-                                    class="btn primary"
+                                    class="btn secondary light"
                                     @click="joinGame(game.id)"
                                 >
                                     Join
@@ -146,8 +147,14 @@ export default class Start extends Vue {
 
 .name-container {
     @include container($xl);
-    max-width: 30rem;
+    @include shadowbox;
+    @include rounded($cornerRadiusLg);
     margin: spacing($lg) 0;
+    background-color: color($color-background, $variant-light);
+    .name {
+        @include font($md, $bold);
+        margin-bottom: spacing($xl);
+    }
 }
 
 .flex-container {
@@ -164,7 +171,8 @@ export default class Start extends Vue {
             @include shadowbox;
             @include container($xl);
             @include rounded($cornerRadiusLg);
-            background-color: color($color-primary, $variant-light);
+            background-color: color($color-primary, $variant-base);
+            color: color($color-text, $variant-light);
             .actions {
                 margin-top: spacing($xl);
             }

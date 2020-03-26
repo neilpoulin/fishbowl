@@ -1,51 +1,65 @@
 <template>
     <div class="home">
-        <div class="header">
-            <h1>Fish Bowl</h1>
-            <p>
-                Play your favorite party game &mdash; now with less CVOD-19!
-            </p>
-            <div class="actions">
-                <router-link tag="button" class="btn secondary" :to="playRoute">
-                    Play Now
-                </router-link>
-            </div>
-        </div>
-
-        <figure class="drawing">
-            <div class="frame">
-                <img
-                    alt="Afflatus fo the Fishbowl"
-                    src="/images/fishbowl_final.png"
-                />
-            </div>
-            <figcaption class="caption">
-                <h3 class="title">Afflatus of the Fishbowl</h3>
-                <span class="artist">Brooke Berry</span>
-                <span class="medium">Crayon on Parchment</span>
-                <p class="description">
-                    This piece speaks to the innate human desire that
-                    inspiration be unfettered by the burden of definition. The
-                    artist hints at the connection of inspiration to the
-                    tangible with a stock representation of a basal “fishbowl”
-                    as the base of the piece. A trio of Disney-esque fish glide
-                    within the bowl, not drawn by the artist, rather an
-                    assistant; a subtle allusion to the dogma that true
-                    inspiration can be fathomed. These callow understandings of
-                    inspiration are undercut with harsh and jagged strikes of
-                    orange and violet leading, even forcing, the eye downward to
-                    the right. They seem to scream, “No! Not here! Elsewhere!”.
-                    Here, out of the confines of the bowl, the uplifting red
-                    strokes buoy the eye to the true nature of inspiration. But
-                    the artist leaves the sense of having lacked examination of
-                    the entire piece. The crimson spirals above, the enigmatic
-                    maroon to the bottom left: conveying that inspiration has no
-                    one path, just as “Fishbowl” has no one game.
+        <section class="header-section">
+            <div class="header content">
+                <h1>Fish Bowl</h1>
+                <p class="subtitle">
+                    Play your favorite party game &mdash; now with less COVD-19!
                 </p>
-            </figcaption>
-        </figure>
-
-        <about :inline="true" class="about-section" />
+                <div class="actions">
+                    <router-link
+                        tag="button"
+                        class="btn primary"
+                        :to="playRoute"
+                    >
+                        Play Now
+                    </router-link>
+                </div>
+            </div>
+        </section>
+        <section class="artwork">
+            <div class="">
+                <figure class="drawing">
+                    <div class="frame">
+                        <img
+                            alt="Afflatus fo the Fishbowl"
+                            src="/images/fishbowl_final.png"
+                        />
+                    </div>
+                    <figcaption class="caption">
+                        <h3 class="title">Afflatus of the Fishbowl</h3>
+                        <span class="artist">Brooke Berry</span>
+                        <span class="medium">Crayon on Parchment</span>
+                        <p class="description">
+                            This piece speaks to the innate human desire that
+                            inspiration be unfettered by the burden of
+                            definition. The artist hints at the connection of
+                            inspiration to the tangible with a stock
+                            representation of a basal “fishbowl” as the base of
+                            the piece. A trio of Disney-esque fish glide within
+                            the bowl, not drawn by the artist, rather an
+                            assistant; a subtle allusion to the dogma that true
+                            inspiration can be fathomed. These callow
+                            understandings of inspiration are undercut with
+                            harsh and jagged strikes of orange and violet
+                            leading, even forcing, the eye downward to the
+                            right. They seem to scream, “No! Not here!
+                            Elsewhere!”. Here, out of the confines of the bowl,
+                            the uplifting red strokes buoy the eye to the true
+                            nature of inspiration. But the artist leaves the
+                            sense of having lacked examination of the entire
+                            piece. The crimson spirals above, the enigmatic
+                            maroon to the bottom left: conveying that
+                            inspiration has no one path, just as “Fishbowl” has
+                            no one game.
+                        </p>
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+        <section class="about-section">
+            <about :inline="true" class="content" />
+        </section>
     </div>
 </template>
 
@@ -71,58 +85,90 @@ export default {
 @import "mixins";
 .home {
     text-align: center;
-    max-width: $pageMaxWidth;
-    margin: spacing($xl) auto 0;
-    padding-bottom: 30rem;
+
+    section {
+        margin-bottom: 0;
+        padding: spacing($xxl);
+        @include maxW($br-tablet-min) {
+            padding: spacing($xxl) 0;
+        }
+    }
+}
+.header-section {
+    background-color: color($color-primary, $variant-light);
 }
 
 .header {
-    @include container($lg);
-    @include rounded($cornerRadiusXl);
-    @include shadowbox;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    $padding: spacing($xl);
-    padding: $padding;
-    background-color: rgba(color($color-background, $variant-light), 0.8);
-    margin-bottom: spacing($xxl);
+
     h1 {
         font-family: $font-stack-logo;
         font-size: 10rem;
         font-weight: normal;
         color: color($color-primary);
         display: inline-block;
+        margin: 0;
     }
 
     .actions {
         position: relative;
         display: inline-block;
     }
+
+    .subtitle {
+        @include font($lg);
+    }
+}
+
+.content {
+    margin: 0 auto 0;
+    max-width: $pageMaxWidth;
 }
 
 .about {
-    margin-top: spacing($xxl);
+    //margin-top: spacing($xxl);
     @include container($lg);
 }
 
+.artwork {
+    background-color: color($color-accent, $variant-dark);
+    padding: spacing($xxl);
+}
+
 .drawing {
-    background-color: color($color-background, $variant-dark);
     margin: 0;
     @include container($xl);
     @include rounded;
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
     .frame {
+        flex-basis: 50%;
+        margin-right: spacing($lg);
         background-color: white;
-        border: 15px solid color($color-foreground);
+        border: 25px solid color($color-foreground);
+        border-radius: 12px;
         margin-bottom: spacing($lg);
+        box-shadow: inset 1px 1px 10px 0px color($color-shadow);
         img {
             max-width: 100%;
+        }
+    }
+
+    @include maxW($br-tablet-min) {
+        flex-direction: column;
+        .frame {
+            margin-right: 0;
         }
     }
 
     .caption {
         @include container($lg);
         @include rounded;
+        flex-basis: 50%;
         background-color: color($color-primary, $variant-light);
         text-align: left;
         .description {
@@ -136,5 +182,11 @@ export default {
             font-weight: bold;
         }
     }
+}
+
+.about-section {
+    background-color: color($color-primary);
+    color: color($color-text, $variant-light);
+    padding: spacing($xxl);
 }
 </style>

@@ -3,12 +3,12 @@
 @import url("https://fonts.googleapis.com/css?family=Raleway&display=swap");
 @import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
 @font-face {
-    font-family: 'Bemydor';
+    font-family: "Bemydor";
     src: url("/fonts/Bemydor-wmyw.ttf") format("truetype");
 }
 
 @font-face {
-    font-family: 'CocktailBubbly';
+    font-family: "CocktailBubbly";
     src: url("/fonts/CocktailBubbly-47z4.ttf") format("truetype");
 }
 :root {
@@ -24,8 +24,6 @@ body {
     background-color: color($color-background);
     @include font($variant-base);
 }
-
-
 
 h1,
 h2,
@@ -117,15 +115,15 @@ input {
 
         &.light {
             @include button(
-                            color($color-primary, $variant-light),
-                            color($color-text, $variant-dark)
+                color($color-primary, $variant-light),
+                color($color-text, $variant-dark)
             );
         }
 
         &.dark {
             @include button(
-                            color($color-primary, $variant-base),
-                            color($color-text, $variant-light)
+                color($color-primary, $variant-base),
+                color($color-text, $variant-light)
             );
         }
     }

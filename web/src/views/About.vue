@@ -81,12 +81,10 @@ h3 {
     display: flex;
 
     ul {
-        /*list-style-type: circle;*/
         padding: 0;
     }
 
     li {
-        /*display: inline-block;*/
         margin: 0 10px;
         text-align: left;
     }
@@ -94,9 +92,10 @@ h3 {
 
 .round-info {
     margin-bottom: spacing($lg);
-
     @include container($lg);
     @include shadowbox;
     @include rounded($cornerRadiusLg);
+    background-color: color($color-background);
+    color: color($color-text);
 }
 </style>
