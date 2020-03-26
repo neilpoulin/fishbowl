@@ -1,5 +1,5 @@
 <template>
-    <div class="about">
+    <div class="about" :class="{ inline: inline }">
         <h1>About</h1>
         <p>
             Want to play your favorite game, without getting CVOD-19? Now you
@@ -39,6 +39,9 @@ import { RoutePath } from "@web/router";
     components: {
         GameRoundInfo
     },
+    props: {
+        inline: Boolean
+    },
     data() {
         return {
             playRoute: RoutePath.GAMES
@@ -57,10 +60,13 @@ h3 {
 
 .about {
     display: flex;
-    //justify-content: center;
     flex-direction: column;
-    //align-items: center;
-    @include container($xl);
+    text-align: left;
+    &:not(.inline) {
+        @include container($xl);
+        max-width: $pageMaxWidth;
+        margin: 0 auto;
+    }
 
     h1 {
         @include font($xl, $bold);

@@ -1,7 +1,6 @@
 <template>
     <div class="hello">
         <h1>Fish Bowl</h1>
-        <span>On online odyssey</span>
         <div class="actions">
             <router-link tag="button" class="btn primary" :to="playRoute">
                 Play Now

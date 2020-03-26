@@ -49,7 +49,7 @@ export const routes: MetaRoute[] = [
         component: () => import("@web/views/Signup.vue")
     },
     {
-        showInNav: true,
+        showInNav: false,
         path: RoutePath.ABOUT,
         name: RouteName.ABOUT,
         component: () => import("@web/views/About.vue")

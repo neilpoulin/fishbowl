@@ -2,7 +2,7 @@
     <div class="video-chat-link-form">
         <div class="input-field">
             <label v-if="showLabel" for="video-chat-input">
-                Video Chat Link
+                Video Chat
             </label>
             <div class="actions" v-if="editing">
                 <input
@@ -16,7 +16,9 @@
                 </button>
             </div>
             <div v-else class="link-container">
-                <a :href="url" target="_blank" class="link">{{ url }}</a>
+                <a :href="url" target="_blank" class="link">{{
+                    "Join the chatroom"
+                }}</a>
                 <button class="btn secondary small" @click="editing = true">
                     Edit
                 </button>

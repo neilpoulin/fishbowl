@@ -29,7 +29,7 @@ export default class Alert extends Vue {}
 
     .message {
         color: black;
-        @include font($lg);
+        @include font($md);
     }
 
     &.error {

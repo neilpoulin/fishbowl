@@ -2,8 +2,8 @@
     <div class="button-container">
         <button
             v-if="showButton"
-            class="btn secondary light"
-            :class="{ danger: isReady, primary: !isReady }"
+            class="btn light"
+            :class="{ danger: isReady, primary: !isReady, outlined: isReady }"
             @click="togglePhase"
         >
             {{ isReady ? "Not Ready" : "Ready" }}

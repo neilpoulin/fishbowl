@@ -1,26 +1,33 @@
 <template>
     <div class="start">
         <div class="loading" v-if="isLoading"></div>
+        <div class="name-container">
+            <display-name-form :show-label="true" />
+        </div>
         <div class="flex-container">
             <section class="main-section">
-                <div class="name-container">
-                    <display-name-form :show-label="true" />
-                </div>
-
-                <div v-if="game">
-                    <h3>Current Game</h3>
-                    <h2>{{ game.name }}</h2>
-                    <div class="actions">
-                        <button class="btn danger outlined" @click="leaveGame">
-                            Leave Game
-                        </button>
-                        <button class="btn primary" @click="joinGame(game.id)">
-                            Join
-                        </button>
+                <div class="game-container">
+                    <div v-if="game" class="current-game">
+                        <span class="current-game">Current Game</span>
+                        <h2>{{ game.name }}</h2>
+                        <div class="actions">
+                            <button
+                                class="btn danger outlined"
+                                @click="leaveGame"
+                            >
+                                Leave Game
+                            </button>
+                            <button
+                                class="btn primary"
+                                @click="joinGame(game.id)"
+                            >
+                                Join
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div v-else class="create-game">
-                    <create-game />
+                    <div v-else class="create-game">
+                        <create-game />
+                    </div>
                 </div>
             </section>
             <section class="available-games" v-if="gamesCount > 0">
@@ -32,7 +39,8 @@
                             @click="joinGame(game.id)"
                             :key="index"
                         >
-                            {{ game.name }}
+                            <span class="name">{{ game.name }}</span>
+                            <span class="players">{{ playerLabel }}</span>
                         </li>
                     </ul>
                 </div>
@@ -89,6 +97,19 @@ export default class Start extends Vue {
         await router.push(RouteBuilder.game(id));
     }
 
+    get playerLabel(): string {
+        const count = this.game?.playersList.length ?? 0;
+        if (count === 0) {
+            return "No players";
+        }
+
+        if (count === 1) {
+            return "1 player";
+        }
+
+        return `${count} players`;
+    }
+
     beforeMount() {
         this.startGamesObserver();
     }
@@ -98,11 +119,13 @@ export default class Start extends Vue {
 <style scoped lang="scss">
 @import "mixins";
 @import "variables";
+
 .actions {
     display: flex;
     @include maxW($br-tablet-min) {
         flex-direction: column-reverse;
     }
+
     .btn {
         margin-right: spacing($lg);
         min-width: 20rem;
@@ -111,18 +134,17 @@ export default class Start extends Vue {
 }
 
 .start {
-    max-width: 900px;
+    max-width: $pageMaxWidthXl;
     margin: 0 auto;
 }
 
 .create-game {
-    @include container;
-    @include rounded;
-    background-color: color($color-background, $variant-dark);
 }
 
 .name-container {
-    margin-bottom: spacing($lg);
+    @include container($xl);
+    max-width: 30rem;
+    margin: spacing($lg) 0;
 }
 
 .flex-container {
@@ -134,15 +156,26 @@ export default class Start extends Vue {
 
     .main-section {
         @include container($xl);
+
+        .game-container {
+            @include shadowbox;
+            @include container($xl);
+            @include rounded($cornerRadiusLg);
+            background-color: color($color-primary, $variant-light);
+            .actions {
+                margin-top: spacing($xl);
+            }
+        }
     }
 
     .available-games {
-        background-color: color($color-background);
+        //background-color: color($color-background);
         @include container($xl);
-
+        @include rounded;
+        min-width: 30rem;
         .games-list {
             padding: 0;
-            margin: 0;
+            margin: 2rem 0 0 0;
             list-style: none;
 
             li {
@@ -150,11 +183,23 @@ export default class Start extends Vue {
                 @include container($md);
                 @include rounded;
                 background-color: $bgColor;
-
                 margin-bottom: spacing($md);
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+
                 &:hover {
                     cursor: pointer;
                     background-color: darken($bgColor, 5%);
+                }
+
+                .name {
+                    @include font($lg, $bold);
+                    margin-bottom: spacing($md);
+                }
+
+                .players {
+                    @include font($sm);
                 }
             }
         }

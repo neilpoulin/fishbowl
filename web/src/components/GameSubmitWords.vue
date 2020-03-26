@@ -1,7 +1,7 @@
 <template>
     <div class="word-container">
         <div class="input-container">
-            <h3>Add Words</h3>
+            <h3 class="title">Add Words</h3>
             <div class="word-entry input-field">
                 <input
                     type="text"
@@ -9,19 +9,21 @@
                     placeholder="Enter a word"
                     @keyup.enter="submit"
                 />
-                <button class="btn primary" @click="submit">Add</button>
+                <button class="btn secondary" @click="submit">
+                    Add
+                </button>
             </div>
             <alert v-if="alert" :alert="alert" />
-        </div>
-        <div class="your-words">
-            <h4>Your Words</h4>
-            <ul v-if="currentWords.length > 0">
-                <li v-for="(word, i) in currentWords" :key="i">
-                    {{ word.word }}
-                </li>
-            </ul>
-            <div v-else>
-                <p>No words submitted yet</p>
+            <div class="your-words">
+                <h4>Your Words</h4>
+                <ul v-if="currentWords.length > 0">
+                    <li v-for="(word, i) in currentWords" :key="i">
+                        {{ word.word }}
+                    </li>
+                </ul>
+                <div v-else>
+                    <p>No words submitted yet</p>
+                </div>
             </div>
         </div>
     </div>
@@ -74,13 +76,19 @@ export default class GameSubmitWords extends Vue {
 }
 
 .input-container {
-    background-color: color($color-background, $variant-dark);
+    background-color: color($color-primary, $variant-base);
     @include container($lg);
-    @include rounded();
+    @include rounded($cornerRadiusLg);
+    @include shadowbox;
     margin-bottom: spacing($lg);
+    color: color($color-text, $variant-light);
     flex: 1;
     display: flex;
     flex-direction: column;
+
+    .title {
+        margin-bottom: spacing($lg);
+    }
 }
 
 .word-entry {
@@ -95,6 +103,6 @@ export default class GameSubmitWords extends Vue {
 }
 
 .your-words {
-    @include container;
+    margin-top: spacing($xl);
 }
 </style>
