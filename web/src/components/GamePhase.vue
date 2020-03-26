@@ -11,9 +11,9 @@
                 <span>Invite friends by sending them this link:</span>
             </p>
             <div class="link-container">
-                <div class="inner">
+                <p class="inner">
                     <span class="game-link">{{ gameUrl }}</span>
-                </div>
+                </p>
             </div>
 
             <p>
@@ -80,6 +80,7 @@ export default Vue.extend({
     background-color: color($color-background, $variant-light);
     .inner {
         overflow: auto;
+        margin: 0;
         @include container($md);
     }
 }
