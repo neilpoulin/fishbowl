@@ -7,7 +7,7 @@
             The next turn will begin in
         </span>
         <span class="countdown-label" v-if="turnStarted">
-            Time remaining in turn
+            Time left
         </span>
         <h1 class="ticker">{{ secondsLeftMs | formatDuration }}</h1>
     </div>

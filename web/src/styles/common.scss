@@ -96,18 +96,18 @@ input {
 
     &.primary {
         @include button(
-            color($color-success, $variant-light),
+            color($color-success, $variant-base),
             color($color-text, $variant-light)
         );
     }
 
     &.secondary {
         @include button(
-            color($color-background, $variant-light),
+            color($color-primary, $variant-light),
             color($color-text, $variant-dark)
         );
-        border: 1px solid color($color-background, $variant-dark);
-        box-shadow: none;
+        //border: 1px solid color($color-background, $variant-dark);
+        //box-shadow: none;
 
         &.light {
             @include button(

@@ -71,7 +71,7 @@ table {
         padding: spacing($sm) spacing($lg);
         border-top: none;
         border-right: $border-stack;
-        background-color: color($color-primary, $variant-light);
+        //background-color: color($color-primary, $variant-light);
     }
     td {
         @include font($xl);

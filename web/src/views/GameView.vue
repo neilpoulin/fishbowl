@@ -1,3 +1,4 @@
+import {Phase} from '@shared/models/Game'
 <template>
     <fish-loader class="loading" v-if="loading" />
     <div class="container" v-else>
@@ -13,7 +14,9 @@
                     message="Loading Next Round"
                 />
 
-                <game-submit-words v-if="game.phase === 0" />
+                <game-submit-words
+                    v-if="game.phase === 0 && !loadingNextPhase"
+                />
 
                 <div class="timer" v-if="game.phase === 1">
                     <div
@@ -57,24 +60,37 @@
                             </button>
                         </div>
                     </template>
-                    <div class="centered intermission" v-else-if="!isRoundOver">
-                        <template v-if="!isCurrentPlayer">
-                            <span>Up next is</span>
-                            <h3 class="player-name">
-                                {{ activePlayer.displayName }}
-                            </h3>
-                        </template>
+                    <div
+                        class="centered intermission"
+                        :class="{ showRoundInfo: showFirstRoundInfo }"
+                        v-else-if="!isRoundOver"
+                    >
+                        <div class="up-next">
+                            <template v-if="!isCurrentPlayer">
+                                <span>Up next is</span>
+                                <h3 class="player-name" v-if="activePlayer">
+                                    {{ activePlayer.displayName }}
+                                </h3>
+                            </template>
 
-                        <h3 class="player-name" v-if="isCurrentPlayer">
-                            {{
-                                game.isPlaying
-                                    ? "Get Ready..."
-                                    : "You're up next!"
-                            }}
-                        </h3>
-                        <span class="team-name" v-show="!isCurrentPlayer"
-                            >Team {{ currentTeam + 1 }}</span
+                            <h3 class="player-name" v-if="isCurrentPlayer">
+                                {{
+                                    game.isPlaying
+                                        ? "Get Ready..."
+                                        : "You're up next!"
+                                }}
+                            </h3>
+                            <span class="team-name" v-if="!isCurrentPlayer"
+                                >Team {{ currentTeam + 1 }}</span
+                            >
+                        </div>
+                        <div
+                            class="round-info-container"
+                            v-if="showFirstRoundInfo"
                         >
+                            <game-round-info :round="game.round" />
+                        </div>
+
                         <button
                             @click="startTurn"
                             class="btn secondary start-game"
@@ -139,6 +155,7 @@ import { Watch } from "vue-property-decorator";
 import GameSidebar from "@web/components/GameSidebar.vue";
 import Countdown from "@web/components/Countdown.vue";
 import GameRoundInfo from "@web/components/GameRoundInfo.vue";
+
 const logger = new Logger("GameView");
 @Component({
     components: {
@@ -199,6 +216,16 @@ export default class GameView extends Vue {
         }
 
         return !!this.game?.players[this.userId];
+    }
+
+    get showFirstRoundInfo() {
+        return (
+            this.game?.round === 0 &&
+            !this.isGameActive &&
+            !this.game.isPlaying &&
+            this.game?.phase === Phase.IN_PROGRESS &&
+            this.game.words.length === this.game.remainingWordsInRound.length
+        );
     }
 
     @Watch("game")
@@ -375,6 +402,20 @@ export default class GameView extends Vue {
 
     .round-info-container {
         margin-top: spacing($lg);
+    }
+
+    .up-next {
+        @include container;
+        @include rounded($cornerRadiusLg);
+        padding: spacing($lg);
+        &.showRoundInfo {
+            background-color: rgba(color($color-accent, $variant-base), 0.6);
+            color: color($color-text, $variant-light);
+            width: 100%;
+        }
+
+        .player-name {
+        }
     }
 }
 

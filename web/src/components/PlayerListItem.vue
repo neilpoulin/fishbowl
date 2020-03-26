@@ -111,11 +111,11 @@ export default class PlayerListItem extends Vue {
     transition: all 0.2s ease-in-out;
     position: relative;
     &.activeTeam {
-        background-color: color($color-accent, $variant-light);
+        background-color: rgba(color($color-success, $variant-light), 0.2);
     }
 
     &.activePlayer {
-        border: 2px solid color($color-foreground);
+        border: 2px solid rgba(color($color-success), 0.2);
     }
 
     &.editing {
