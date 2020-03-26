@@ -2,7 +2,15 @@
 @import "forms";
 @import url("https://fonts.googleapis.com/css?family=Raleway&display=swap");
 @import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
+@font-face {
+    font-family: 'Bemydor';
+    src: url("/fonts/Bemydor-wmyw.ttf") format("truetype");
+}
 
+@font-face {
+    font-family: 'CocktailBubbly';
+    src: url("/fonts/CocktailBubbly-47z4.ttf") format("truetype");
+}
 :root {
     font-size: 62.5%;
 }
@@ -106,13 +114,18 @@ input {
             color($color-primary, $variant-light),
             color($color-text, $variant-dark)
         );
-        //border: 1px solid color($color-background, $variant-dark);
-        //box-shadow: none;
 
         &.light {
             @include button(
                             color($color-primary, $variant-light),
                             color($color-text, $variant-dark)
+            );
+        }
+
+        &.dark {
+            @include button(
+                            color($color-primary, $variant-base),
+                            color($color-text, $variant-light)
             );
         }
     }

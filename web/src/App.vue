@@ -1,7 +1,7 @@
 <template>
     <div id="app">
-        <div id="nav">
-            <template v-if="!$route.meta.hideNav">
+        <div id="nav" v-if="!$route.meta.hideNav">
+            <template>
                 <template v-for="route in routes">
                     <router-link
                         :to="route.path"
@@ -42,7 +42,7 @@ export default class App extends Vue {
     display: flex;
     //background-color: $defaultBg;
     flex: 1;
-
+    height: $nav-height;
     > * {
         padding: spacing($lg);
     }

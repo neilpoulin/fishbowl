@@ -42,6 +42,8 @@ $variant-base: "base";
 $variant-light: "light";
 $variant-dark: "dark";
 
+$nav-height: 5.8rem;
+
 //font variants
 $bold: bold;
 $italic: italic;
@@ -101,6 +103,7 @@ $font-stack-normal: Avenir, Helvetica, Arial, sans-serif;
 $font-stack-heading: "Raleway", sans-serif;
 $font-stack-input: "Roboto", sans-serif;
 $font-stack-mono: "Roboto", sans-serif;
+$font-stack-logo: "CocktailBubbly", sans-serif;
 $font-settings: (
     $xs: (
         font-size: 0.75 * $base-font-size,

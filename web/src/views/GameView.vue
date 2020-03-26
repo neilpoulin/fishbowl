@@ -1,132 +1,146 @@
-import {Phase} from '@shared/models/Game'
 <template>
     <fish-loader class="loading" v-if="loading" />
-    <div class="container" v-else>
-        <game-sidebar :players="players" :game="game" />
-        <div class="main">
-            <div class="gameboard" v-if="game">
-                <game-phase
-                    :phase="game.phase"
-                    v-if="game.phase === 0 && !loadingNextPhase"
-                />
-                <fish-loader
-                    v-if="loadingNextPhase"
-                    message="Loading Next Round"
-                />
+    <div v-else>
+        <div class="brooke header"></div>
+        <div class="container">
+            <game-sidebar :players="players" :game="game" />
+            <div class="main">
+                <div class="gameboard" v-if="game">
+                    <game-phase
+                        :phase="game.phase"
+                        v-if="game.phase === 0 && !loadingNextPhase"
+                    />
+                    <fish-loader
+                        v-if="loadingNextPhase"
+                        message="Loading Next Round"
+                    />
 
-                <game-submit-words
-                    v-if="game.phase === 0 && !loadingNextPhase"
-                />
+                    <game-submit-words
+                        v-if="game.phase === 0 && !loadingNextPhase"
+                    />
 
-                <div class="timer" v-if="game.phase === 1">
-                    <div
-                        class="timer centered"
-                        v-if="
-                            game.turnStartsAt &&
-                                game.turnEndsAt &&
-                                game.isPlaying
-                        "
-                    >
-                        <countdown
-                            :turn-end-time="game.turnEndsAt"
-                            :turn-start-time="game.turnStartsAt"
-                            @started="activateTurn"
-                            @ended="endTurn"
-                        />
-                    </div>
-
-                    <template v-if="isGameActive">
+                    <div class="timer" v-if="game.phase === 1">
                         <div
-                            v-if="activePlayer && !currentWord"
-                            class="current-player centered"
+                            class="timer centered"
+                            v-if="
+                                game.turnStartsAt &&
+                                    game.turnEndsAt &&
+                                    game.isPlaying
+                            "
                         >
-                            <span class="now-playing-label">Now Playing:</span>
-                            <span class="player-name">
-                                {{ activePlayer.displayName }}
-                            </span>
-                            <span class="team-name"
-                                >Team {{ currentTeam }}</span
-                            >
+                            <countdown
+                                :turn-end-time="game.turnEndsAt"
+                                :turn-start-time="game.turnStartsAt"
+                                @started="activateTurn"
+                                @ended="endTurn"
+                            />
                         </div>
 
+                        <template v-if="isGameActive">
+                            <div
+                                v-if="activePlayer && !currentWord"
+                                class="current-player centered"
+                            >
+                                <span class="now-playing-label"
+                                    >Now Playing:</span
+                                >
+                                <span class="player-name">
+                                    {{ activePlayer.displayName }}
+                                </span>
+                                <span class="team-name"
+                                    >Team {{ currentTeam }}</span
+                                >
+                            </div>
+
+                            <div
+                                class="secret-word"
+                                v-if="currentWord && currentWord.word"
+                            >
+                                <p class="label">Your word is:</p>
+                                <h2 class="word">{{ currentWord.word }}</h2>
+                                <button
+                                    class="btn primary"
+                                    @click="completeWord"
+                                >
+                                    Complete
+                                </button>
+                            </div>
+                        </template>
                         <div
-                            class="secret-word"
-                            v-if="currentWord && currentWord.word"
+                            class="centered intermission"
+                            :class="{ showRoundInfo: showFirstRoundInfo }"
+                            v-else-if="!isRoundOver"
                         >
-                            <p class="label">Your word is:</p>
-                            <h2 class="word">{{ currentWord.word }}</h2>
-                            <button class="btn primary" @click="completeWord">
-                                Complete
+                            <div class="up-next">
+                                <template v-if="!isCurrentPlayer">
+                                    <span>Up next is</span>
+                                    <h3 class="player-name" v-if="activePlayer">
+                                        {{ activePlayer.displayName }}
+                                    </h3>
+                                </template>
+
+                                <h3 class="player-name" v-if="isCurrentPlayer">
+                                    {{
+                                        game.isPlaying
+                                            ? "Get Ready..."
+                                            : "You're up next!"
+                                    }}
+                                </h3>
+                                <span class="team-name" v-if="!isCurrentPlayer"
+                                    >Team {{ currentTeam + 1 }}</span
+                                >
+                            </div>
+                            <div
+                                class="round-info-container"
+                                v-if="showFirstRoundInfo"
+                            >
+                                <game-round-info :round="game.round" />
+                            </div>
+
+                            <button
+                                @click="startTurn"
+                                class="btn secondary start-game"
+                                v-if="isCurrentPlayer && !game.isPlaying"
+                            >
+                                Start Turn
                             </button>
                         </div>
-                    </template>
-                    <div
-                        class="centered intermission"
-                        :class="{ showRoundInfo: showFirstRoundInfo }"
-                        v-else-if="!isRoundOver"
-                    >
-                        <div class="up-next">
-                            <template v-if="!isCurrentPlayer">
-                                <span>Up next is</span>
-                                <h3 class="player-name" v-if="activePlayer">
-                                    {{ activePlayer.displayName }}
-                                </h3>
-                            </template>
-
-                            <h3 class="player-name" v-if="isCurrentPlayer">
-                                {{
-                                    game.isPlaying
-                                        ? "Get Ready..."
-                                        : "You're up next!"
-                                }}
-                            </h3>
-                            <span class="team-name" v-if="!isCurrentPlayer"
-                                >Team {{ currentTeam + 1 }}</span
-                            >
-                        </div>
                         <div
-                            class="round-info-container"
-                            v-if="showFirstRoundInfo"
+                            class="centered intermission"
+                            v-else-if="isRoundOver"
                         >
-                            <game-round-info :round="game.round" />
+                            <span class="emoji huge">🎣</span>
+                            <h4>
+                                The Fish Bowl is empty.
+                            </h4>
+                            <div class="round-info-container">
+                                <game-round-info :round="game.round + 1" />
+                            </div>
+                            <button @click="startTurn" class="btn secondary">
+                                Start next round
+                            </button>
                         </div>
 
                         <button
-                            @click="startTurn"
-                            class="btn secondary start-game"
-                            v-if="isCurrentPlayer && !game.isPlaying"
+                            class="btn danger"
+                            @click="endTurn"
+                            v-if="isAdmin"
                         >
-                            Start Turn
+                            End Turn
                         </button>
-                    </div>
-                    <div class="centered intermission" v-else-if="isRoundOver">
-                        <span class="emoji huge">🎣</span>
-                        <h4>
-                            The Fish Bowl is empty.
-                        </h4>
-                        <div class="round-info-container">
-                            <game-round-info :round="game.round + 1" />
+
+                        <div
+                            class="centered round-label round-info"
+                            v-if="!isRoundOver"
+                        >
+                            <h4 v-if="game.phase === 1">
+                                Round {{ game.round + 1 }}
+                            </h4>
+                            <span>
+                                Words Remaining:
+                                {{ game.remainingWordsInRound.length }}
+                            </span>
                         </div>
-                        <button @click="startTurn" class="btn secondary">
-                            Start next round
-                        </button>
-                    </div>
-
-                    <button class="btn danger" @click="endTurn" v-if="isAdmin">
-                        End Turn
-                    </button>
-
-                    <div
-                        class="centered round-label round-info"
-                        v-if="!isRoundOver"
-                    >
-                        <h4 v-if="game.phase === 1">
-                            Round {{ game.round + 1 }}
-                        </h4>
-                        <span>
-                            Words Remaining:
-                            {{ game.remainingWordsInRound.length }}
-                        </span>
                     </div>
                 </div>
             </div>
@@ -362,6 +376,7 @@ export default class GameView extends Vue {
             @include container($lg);
             padding-bottom: 40rem;
             padding-top: spacing($xl);
+
             .round-info {
                 margin-bottom: spacing($xl);
             }
@@ -369,7 +384,20 @@ export default class GameView extends Vue {
             @include maxW($br-tablet-min) {
                 padding-bottom: 10rem;
             }
+
+            .phase {
+                margin-bottom: spacing($xl);
+            }
         }
+    }
+}
+
+.brooke {
+    background: url("/images/fishbowl_banner.png") no-repeat center -2rem;
+    background-size: 100%;
+
+    &.header {
+        height: 8rem;
     }
 }
 
