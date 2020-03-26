@@ -1,7 +1,21 @@
 <template>
     <div class="phase">
-        <h3 class="title">{{ title }}</h3>
-        <p class="description">{{ description }}</p>
+        <div v-if="phase === Phase.SETUP" class="description">
+            <h3 class="title">Welcome to <span class="logo">FishBowl</span></h3>
+            <p>
+                First, enter some words into the fishbowl. These words will be
+                used through out the game.
+            </p>
+
+            <p>
+                <span>Invite friends by sending them this link:</span>
+            </p>
+            <span class="game-link">{{ gameUrl }}</span>
+            <p>
+                The game will start once everyone has pressed their
+                ready&nbsp;button
+            </p>
+        </div>
     </div>
 </template>
 
@@ -12,6 +26,11 @@ import { Phase } from "@shared/models/Game";
 export default Vue.extend({
     props: {
         phase: { type: Number as () => Phase, default: Phase.SETUP }
+    },
+    filters: {
+        trim(input?: string | undefined): string | undefined {
+            return input?.trim();
+        }
     },
     computed: {
         // eslint-disable-next-line vue/return-in-computed-property
@@ -25,26 +44,28 @@ export default Vue.extend({
                     return "";
             }
         },
-        // eslint-disable-next-line vue/return-in-computed-property
-        description(): string {
-            switch (this.phase) {
-                case Phase.SETUP:
-                    return (
-                        "First, enter some words into the fishbowl. These words will be used through out the game. " +
-                        "\n\nThe game will start once everyone has pressed their ready\xa0button."
-                    );
-                case Phase.IN_PROGRESS:
-                    return "Game in progress";
-                case Phase.FINISHED:
-                    return "We're done!";
-            }
+        gameUrl(): string {
+            return window.location.href;
+        },
+        Phase(): object {
+            return Phase;
         }
     }
 });
 </script>
 
 <style scoped lang="scss">
-.phase > * {
-    white-space: pre-wrap;
+@import "mixins";
+
+.logo {
+    @include logo;
+}
+
+.game-link {
+    background-color: color($color-background, $variant-light);
+    display: inline-block;
+    border: 1px solid rgba(color($color-shadow), 0.3);
+    @include container($md);
+    @include rounded($cornerRadiusXl);
 }
 </style>

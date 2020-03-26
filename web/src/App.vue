@@ -4,7 +4,7 @@
             <div class="mask"></div>
             <div class="links">
                 <router-link to="/" class="logo"
-                    ><h1>Fish Bowl</h1>
+                    ><h1>FishBowl</h1>
                 </router-link>
                 <template v-for="route in routes">
                     <router-link
