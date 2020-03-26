@@ -37,10 +37,10 @@ export default class App extends Vue {
 @import "styles/variables";
 
 #nav {
-    $defaultBg: color($color-background, $variant-dark);
-    $selectedBg: color($color-background, $variant-light);
+    //$defaultBg: color($color-background, $variant-dark);
+    //$selectedBg: color($color-background, $variant-light);
     display: flex;
-    background-color: $defaultBg;
+    //background-color: $defaultBg;
     flex: 1;
 
     > * {
@@ -48,19 +48,42 @@ export default class App extends Vue {
     }
 
     a {
-        transition: all 0.2s ease-in;
+        transition: background-size cubic-bezier(0, 0.5, 0, 1) 0.3s;
         font-weight: bold;
         color: color($color-primary, $variant-dark);
         text-decoration: none;
 
-        &.router-link-exact-active,
-        &.router-link-active:not(.home) {
+        background-image: linear-gradient(
+            lighten(color($color-accent), 15%),
+            lighten(color($color-accent), 15%)
+        );
+        background-position: 0 100%;
+        background-repeat: no-repeat;
+        background-size: 100% 0;
+
+        &.router-link-exact-active {
             color: color($color-accent);
-            background-color: $selectedBg;
+            //background-color: $selectedBg;
+
+            background-image: linear-gradient(
+                lighten(color($color-accent), 15%),
+                lighten(color($color-accent), 15%)
+            );
+            background-position: 0 100%;
+            background-repeat: no-repeat;
+            background-size: 100% 0.5rem;
         }
 
         &:hover {
-            background-color: darken($selectedBg, 5%);
+            //background-color: darken($selectedBg, 5%);
+            background-image: linear-gradient(
+                lighten(color($color-accent), 15%),
+                lighten(color($color-accent), 15%)
+            );
+            background-position: 0 100%;
+            background-repeat: no-repeat;
+            background-size: 100% 0.8rem;
+            text-decoration: none;
         }
     }
 }

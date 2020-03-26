@@ -1,6 +1,8 @@
 <template>
     <div class="round-info">
-        <span class="tagline">Next Up: Round {{ round + 1 }}</span>
+        <span class="tagline"
+            ><span v-if="showUpNext">Next Up: </span>Round {{ round + 1 }}</span
+        >
         <div v-if="round === 0">
             <h3>Taboo Round</h3>
             <p>
@@ -24,7 +26,16 @@
             </p>
         </div>
         <div v-else>
-            <p>We're in uncharted waters here.</p>
+            <h3>Bonus Round</h3>
+            <p>
+                We're in uncharted waters here. You can make up your own rules,
+                or start the game over.
+            </p>
+            <p>
+                Some popular options for a 4th round is a
+                <i>sound round</i> where you may not use any words -- only
+                sounds.
+            </p>
         </div>
     </div>
 </template>
@@ -38,7 +49,7 @@ import { ROUND_DURATION_SECONDS } from "@shared/models/Game";
 @Component
 export default class GameRoundInfo extends Vue {
     @Prop({ type: Number, required: true }) round!: number;
-
+    @Prop({ type: Boolean, default: true }) showUpNext!: boolean;
     get roundDurationMinutes(): string {
         const isWholeNumber = ROUND_DURATION_SECONDS % 60 === 0;
         return (ROUND_DURATION_SECONDS / 60).toFixed(isWholeNumber ? 0 : 1);
@@ -50,7 +61,6 @@ export default class GameRoundInfo extends Vue {
 @import "variables";
 @import "mixins";
 .round-info {
-    border: 1px solid gray;
     @include rounded;
     @include container;
 
