@@ -10,7 +10,12 @@
             <p>
                 <span>Invite friends by sending them this link:</span>
             </p>
-            <span class="game-link">{{ gameUrl }}</span>
+            <div class="link-container">
+                <div class="inner">
+                    <span class="game-link">{{ gameUrl }}</span>
+                </div>
+            </div>
+
             <p>
                 The game will start once everyone has pressed their
                 ready&nbsp;button
@@ -61,11 +66,26 @@ export default Vue.extend({
     @include logo;
 }
 
-.game-link {
-    background-color: color($color-background, $variant-light);
-    display: inline-block;
+.phase {
+    width: 100%;
+    overflow: hidden;
+}
+
+.link-container {
     border: 1px solid rgba(color($color-shadow), 0.3);
-    @include container($md);
+    overflow: hidden;
+
     @include rounded($cornerRadiusXl);
+    padding-right: spacing($md);
+    background-color: color($color-background, $variant-light);
+    .inner {
+        overflow: auto;
+        @include container($md);
+    }
+}
+
+.game-link {
+    min-width: 0;
+    overflow: auto;
 }
 </style>
