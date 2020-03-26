@@ -12,13 +12,6 @@
             </p>
             <div class="link-input-container">
                 <span class="game-link" ref="linkInput">{{ gameUrl }}</span>
-                <input
-                    type="text"
-                    :value="gameUrl"
-                    :disabled="true"
-                    ref="linkInput"
-                    class="link-input"
-                />
                 <button
                     class="btn small"
                     :class="{
@@ -93,8 +86,14 @@ export default Vue.extend({
     methods: {
         showCopySuccessAlert() {
             this.copyAlert = AlertMessage.info("Link copied");
+            if (this.copyAlertTimeout) {
+                clearInterval(this.copyAlertTimeout);
+            }
             this.copyAlertTimeout = setTimeout(() => {
                 this.copyAlert = null;
+                if (this.copyAlertTimeout) {
+                    clearInterval(this.copyAlertTimeout);
+                }
             }, 2500);
         },
         copyLink(): void {
@@ -154,7 +153,13 @@ export default Vue.extend({
     position: relative;
     display: flex;
     align-items: center;
+    overflow: hidden;
+    border-radius: 3rem;
+    border: 1px solid color($color-primary, $variant-base);
+
+    @include container($md);
     .link-input {
+        display: none;
         border-radius: 3rem;
         @include container($md);
         padding-right: 6rem;
@@ -165,13 +170,13 @@ export default Vue.extend({
 
     .btn {
         position: absolute;
-        right: 1px;
+        right: 3px;
         border-radius: 3rem;
-        height: calc(100% - 2px);
+        height: calc(100% - 6px);
     }
 
     .game-link {
-        display: none;
+        overflow: auto;
     }
 }
 </style>
