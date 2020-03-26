@@ -1,10 +1,5 @@
 <template>
     <div class="about" :class="{ inline: inline }">
-        <h1>About</h1>
-        <p>
-            Want to play your favorite game, without getting CVOD-19? Now you
-            can play online!
-        </p>
         <h2>How it works</h2>
         <p>
             When you first join a game, you'll add some words to the "fish
@@ -70,6 +65,10 @@ h3 {
 
     h1 {
         @include font($xl, $bold);
+    }
+
+    .intro {
+        @include font($lg);
     }
 }
 

@@ -393,8 +393,8 @@ export default class GameView extends Vue {
 }
 
 .brooke {
-    background: url("/images/fishbowl_banner.png") no-repeat center -2rem;
-    background-size: 100%;
+    background: url("/images/fishbowl_banner.png") repeat-x center -2rem;
+    background-size: 40%;
 
     &.header {
         height: 8rem;

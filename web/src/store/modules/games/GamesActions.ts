@@ -104,6 +104,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             //todo: add failed status
         } else {
             commit(GamesMutations.setCurrentGame, payload);
+            localStorage.setItem("currentGameId", payload.gameId);
             await dispatch(GamesActions.updatePlayer);
         }
     },

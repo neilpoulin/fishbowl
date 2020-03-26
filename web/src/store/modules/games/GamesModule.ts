@@ -17,7 +17,7 @@ export interface GamesState {
 }
 
 export const state: GamesState = {
-    currentGameId: null,
+    currentGameId: localStorage.getItem("currentGameId"),
     gameActive: false,
     gamesById: {},
     addWordError: null

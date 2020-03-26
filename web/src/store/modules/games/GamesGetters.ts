@@ -1,7 +1,7 @@
 import { GetterTree } from "vuex";
 import { GamesState } from "@web/store/modules/games/GamesModule";
 import { GlobalState } from "@web/store/StoreTypes";
-import { Game, Phase, WordEntry } from "@shared/models/Game";
+import { Game, WordEntry } from "@shared/models/Game";
 import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
 import { AlertMessage } from "@web/util/AlertMessage";
 import Player from "@shared/models/Player";
@@ -47,9 +47,10 @@ export const getters: GetterTree<GamesState, GlobalState> = {
         return Object.values(state.gamesById);
     },
 
-    [GamesGetters.availableGames](state): Game[] {
+    [GamesGetters.availableGames](state, getters): Game[] {
+        const userId = getters[AuthGetters.currentUserId];
         return Object.values(state.gamesById).filter(
-            game => game.phase == Phase.SETUP
+            game => !!game.getPlayer(userId)
         );
     },
     [GamesGetters.gameNames](state): (string | undefined)[] {

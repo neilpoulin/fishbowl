@@ -7,26 +7,29 @@
         <div class="flex-container">
             <section class="main-section">
                 <div class="game-container">
-                    <div v-if="game" class="current-game">
-                        <span class="current-game">Current Game</span>
-                        <h2>{{ game.name }}</h2>
-                        <div class="actions">
-                            <button
-                                class="btn danger outlined"
-                                @click="leaveGame"
-                            >
-                                Leave Game
-                            </button>
-                            <button
-                                class="btn primary"
-                                @click="joinGame(game.id)"
-                            >
-                                Join
-                            </button>
+                    <div class="mask"></div>
+                    <div class="content">
+                        <div v-if="game" class="current-game">
+                            <span class="current-game">Current Game</span>
+                            <h2>{{ game.name }}</h2>
+                            <div class="actions">
+                                <button
+                                    class="btn danger outlined"
+                                    @click="leaveGame"
+                                >
+                                    Leave Game
+                                </button>
+                                <button
+                                    class="btn primary"
+                                    @click="joinGame(game.id)"
+                                >
+                                    Join
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div v-else class="create-game">
-                        <create-game />
+                        <div v-else class="create-game">
+                            <create-game />
+                        </div>
                     </div>
                 </div>
             </section>
@@ -40,7 +43,7 @@
                             :key="index"
                         >
                             <span class="name">{{ game.name }}</span>
-                            <span class="players">{{ playerLabel }}</span>
+                            <span class="players">{{ playerLabel(game) }}</span>
                         </li>
                     </ul>
                 </div>
@@ -97,8 +100,8 @@ export default class Start extends Vue {
         await router.push(RouteBuilder.game(id));
     }
 
-    get playerLabel(): string {
-        const count = this.game?.playersList.length ?? 0;
+    playerLabel(game: Game): string {
+        const count = game?.playersList.length ?? 0;
         if (count === 0) {
             return "No players";
         }
@@ -164,6 +167,28 @@ export default class Start extends Vue {
             background-color: color($color-primary, $variant-light);
             .actions {
                 margin-top: spacing($xl);
+            }
+
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-self: center;
+            $padding: spacing($xl);
+            padding: $padding;
+
+            .mask {
+                filter: blur(5px);
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background: url("/images/fishbowl_final.png") no-repeat center
+                    center;
+            }
+            .content {
+                position: relative;
             }
         }
     }
