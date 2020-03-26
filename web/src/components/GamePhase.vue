@@ -10,10 +10,25 @@
             <p>
                 <span>Invite friends by sending them this link:</span>
             </p>
-            <div class="link-container">
-                <p class="inner">
-                    <span class="game-link">{{ gameUrl }}</span>
-                </p>
+            <div class="link-input-container">
+                <span class="game-link" ref="linkInput">{{ gameUrl }}</span>
+                <input
+                    type="text"
+                    :value="gameUrl"
+                    :disabled="true"
+                    ref="linkInput"
+                    class="link-input"
+                />
+                <button
+                    class="btn small"
+                    :class="{
+                        'primary light': copyAlert != null,
+                        secondary: copyAlert == null
+                    }"
+                    @click="copyLink"
+                >
+                    {{ copyAlert !== null ? copyAlert.message : "Copy Link " }}
+                </button>
             </div>
 
             <p>
@@ -27,8 +42,13 @@
 <script lang="ts">
 import Vue from "vue";
 import { Phase } from "@shared/models/Game";
+import Logger from "@shared/Logger";
+import { AlertMessage } from "@web/util/AlertMessage";
+
+const logger = new Logger("GamePhase");
 
 export default Vue.extend({
+    components: {},
     props: {
         phase: { type: Number as () => Phase, default: Phase.SETUP }
     },
@@ -36,6 +56,20 @@ export default Vue.extend({
         trim(input?: string | undefined): string | undefined {
             return input?.trim();
         }
+    },
+    destroyed(): void {
+        if (this.copyAlertTimeout) {
+            clearTimeout(this.copyAlertTimeout);
+        }
+    },
+    data(): {
+        copyAlert: AlertMessage | null;
+        copyAlertTimeout: number | null;
+    } {
+        return {
+            copyAlert: null,
+            copyAlertTimeout: null
+        };
     },
     computed: {
         // eslint-disable-next-line vue/return-in-computed-property
@@ -54,6 +88,37 @@ export default Vue.extend({
         },
         Phase(): object {
             return Phase;
+        }
+    },
+    methods: {
+        showCopySuccessAlert() {
+            this.copyAlert = AlertMessage.info("Link copied");
+            this.copyAlertTimeout = setTimeout(() => {
+                this.copyAlert = null;
+            }, 2500);
+        },
+        copyLink(): void {
+            const range = document.createRange();
+            const node = this.$refs.linkInput as Element;
+            if (!node) {
+                return;
+            }
+            window.getSelection()?.removeAllRanges();
+            range.selectNode(node);
+            window.getSelection()?.addRange(range);
+            try {
+                const success = document.execCommand("copy");
+                if (success) {
+                    logger.info("Copied text to clipboard");
+                    this.showCopySuccessAlert();
+                } else {
+                    logger.warn("unable to copy text");
+                }
+            } catch (error) {
+                logger.error("Failed to copy text");
+            } finally {
+                window.getSelection()?.removeAllRanges();
+            }
         }
     }
 });
@@ -85,8 +150,28 @@ export default Vue.extend({
     }
 }
 
-.game-link {
-    min-width: 0;
-    overflow: auto;
+.link-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    .link-input {
+        border-radius: 3rem;
+        @include container($md);
+        padding-right: 6rem;
+        min-width: 0;
+        flex: 1;
+        @include font($xs);
+    }
+
+    .btn {
+        position: absolute;
+        right: 1px;
+        border-radius: 3rem;
+        height: calc(100% - 2px);
+    }
+
+    .game-link {
+        display: none;
+    }
 }
 </style>
