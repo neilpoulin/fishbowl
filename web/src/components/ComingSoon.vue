@@ -1,37 +1,40 @@
 <template>
     <div class="hello">
-        <h1>Fish Bowl - Online</h1>
-        <p>This great game will be coming soon!</p>
+        <h1>Fish Bowl</h1>
+        <span>On online odyssey</span>
+        <div class="actions">
+            <router-link tag="button" class="btn primary" :to="playRoute">
+                Play Now
+            </router-link>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+import { RoutePath } from "@web/router";
 
 export default Vue.extend({
     name: "HelloWorld",
     props: {
         msg: String
+    },
+    data() {
+        return {
+            playRoute: RoutePath.GAMES
+        };
     }
 });
 </script>
 
 <style scoped lang="scss">
-h3 {
-    margin: 40px 0 0;
-}
+@import "variables";
+@import "mixins";
 
-ul {
-    list-style-type: none;
-    padding: 0;
+h1 {
+    @include font($xxl, $bold);
 }
-
-li {
-    display: inline-block;
-    margin: 0 10px;
-}
-
-a {
-    color: #42b983;
+.actions {
+    @include container($xl);
 }
 </style>

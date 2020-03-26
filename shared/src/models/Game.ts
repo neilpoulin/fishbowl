@@ -21,6 +21,8 @@ enum Field {
     round = "round"
 }
 
+export const ROUND_DURATION_SECONDS = 60;
+
 const logger = new Logger("Game.ts");
 
 export class Game extends BaseModel {
@@ -52,7 +54,7 @@ export class Game extends BaseModel {
     incrementScore(userId: string) {
         const player = this.getPlayer(userId);
         const team = player?.team;
-        if (team !== undefined) {
+        if (team !== undefined && team !== null) {
             this.scores[team] = (this.scores[team] ?? 0) + 1;
         }
 
@@ -72,7 +74,9 @@ export class Game extends BaseModel {
         this.isPlaying = true;
         const countdown = 10000;
         this.turnStartsAt = new Date(Date.now() + countdown);
-        this.turnEndsAt = new Date(Date.now() + 2 * 60 * 1000 + countdown);
+        this.turnEndsAt = new Date(
+            Date.now() + ROUND_DURATION_SECONDS * 1000 + countdown
+        );
     }
 
     endTurn() {
@@ -191,6 +195,23 @@ export class Game extends BaseModel {
 
     wordsByUser(userId: string): WordEntry[] {
         return this.words.filter(w => w.userId === userId);
+    }
+
+    restart() {
+        this.phase = Phase.SETUP;
+        this.round = 0;
+        this.playersList.forEach(p => {
+            p.reset();
+        });
+
+        this.scores = {};
+        this.currentTeam = 0;
+        this.remainingWordsInRound = [];
+        this.words = [];
+        this.isPlaying = false;
+        this.turnStartsAt = undefined;
+        this.turnEndsAt = undefined;
+        this.currentPlayerByTeam = {};
     }
 
     static fromData(data: FirestoreData): Game {

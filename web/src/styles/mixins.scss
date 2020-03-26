@@ -64,6 +64,13 @@
             color: $colorText;
         }
     }
+
+    .outlined {
+        background-color: $colorText;
+        border-color: $bgColorActive;
+        color: $bgColor;
+
+    }
 }
 
 /* MEDIA QUERIES */

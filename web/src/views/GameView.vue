@@ -85,15 +85,14 @@
                     </div>
                     <div class="centered intermission" v-else-if="isRoundOver">
                         <span class="emoji huge">🎣</span>
-                        <h2>
+                        <h4>
                             The Fish Bowl is empty.
-                        </h2>
-                        <p>
-                            We're all out of words. Time to start the next
-                            round.
-                        </p>
+                        </h4>
+                        <div class="round-info-container">
+                            <game-round-info :round="game.round + 1" />
+                        </div>
                         <button @click="startTurn" class="btn secondary">
-                            Start Round {{ game.round + 2 }}
+                            Start next round
                         </button>
                     </div>
 
@@ -101,7 +100,10 @@
                         End Turn
                     </button>
 
-                    <div class="centered round-label round-info">
+                    <div
+                        class="centered round-label round-info"
+                        v-if="!isRoundOver"
+                    >
                         <h4 v-if="game.phase === 1">
                             Round {{ game.round + 1 }}
                         </h4>
@@ -109,9 +111,6 @@
                             Words Remaining:
                             {{ game.remainingWordsInRound.length }}
                         </span>
-                    </div>
-                    <div class="centered">
-                        <scoreboard :game="game" />
                     </div>
                 </div>
             </div>
@@ -139,7 +138,7 @@ import FishLoader from "@web/components/FishLoader.vue";
 import { Watch } from "vue-property-decorator";
 import GameSidebar from "@web/components/GameSidebar.vue";
 import Countdown from "@web/components/Countdown.vue";
-
+import GameRoundInfo from "@web/components/GameRoundInfo.vue";
 const logger = new Logger("GameView");
 @Component({
     components: {
@@ -150,7 +149,8 @@ const logger = new Logger("GameView");
         GamePhase,
         Scoreboard,
         FishLoader,
-        GameSidebar
+        GameSidebar,
+        GameRoundInfo
     }
 })
 export default class GameView extends Vue {
@@ -161,7 +161,7 @@ export default class GameView extends Vue {
     ) => void;
     @Getter(Games.Getters.currentPlayer) myPlayer: Player | undefined;
     @Action(Games.Actions.startTurn) startTurn!: () => Promise<void>;
-    // @Action(Games.Actions.turnEnded) endTurn!: () => Promise<void>;
+    @Action(Games.Actions.reset) restartGame!: () => Promise<void>;
     @Getter(Games.Getters.isGameActive) _gameActive!: boolean;
 
     get isGameActive(): boolean {
@@ -334,6 +334,7 @@ export default class GameView extends Vue {
             flex-direction: column;
             @include container($lg);
             padding-bottom: 40rem;
+            padding-top: spacing($xl);
             .round-info {
                 margin-bottom: spacing($xl);
             }
@@ -370,6 +371,10 @@ export default class GameView extends Vue {
 
     .emoji {
         font-size: 8rem;
+    }
+
+    .round-info-container {
+        margin-top: spacing($lg);
     }
 }
 

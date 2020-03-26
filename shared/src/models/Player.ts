@@ -4,7 +4,7 @@ export default class Player {
     userId!: string;
     displayName?: string;
     phase: Phase = Phase.SETUP;
-    team?: number;
+    team?: number | null;
     score = 0;
 
     constructor(userId: string) {
@@ -14,5 +14,11 @@ export default class Player {
 
     incrementScore() {
         this.score += 1;
+    }
+
+    reset() {
+        this.team = null;
+        this.score = 0;
+        this.phase = Phase.SETUP;
     }
 }

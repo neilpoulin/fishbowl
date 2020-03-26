@@ -5,6 +5,10 @@
                 <span class="game-label">Game</span>
                 <h2>{{ game.name }}</h2>
                 <player-ready-button class="ready-button" />
+
+                <div class="scoreboard">
+                    <scoreboard :game="game" />
+                </div>
             </section>
 
             <display-name-form :show-label="true" class="display-name-form" />
@@ -27,6 +31,12 @@
         <div class="links">
             <router-link to="/games">&larr; All Games</router-link>
         </div>
+
+        <div class="reset-container">
+            <button class="btn small danger outlined" @click="restartGame">
+                Reset Game
+            </button>
+        </div>
     </div>
 </template>
 
@@ -42,13 +52,15 @@ import PlayerReadyButton from "@web/components/PlayerReadyButton.vue";
 import PlayerListItem from "@web/components/PlayerListItem.vue";
 import { Action } from "vuex-class";
 import GameStore from "@web/store/modules/games/GamesModule";
+import Scoreboard from "@web/components/Scoreboard.vue";
 
 @Component({
     components: {
         PlayerListItem,
         GameVideoChatUrl,
         DisplayNameForm,
-        PlayerReadyButton
+        PlayerReadyButton,
+        Scoreboard
     }
 })
 export default class GameSidebar extends Vue {
@@ -57,6 +69,7 @@ export default class GameSidebar extends Vue {
     @Action(GameStore.Actions.deletePlayer) deletePlayerAction!: (params: {
         player: Player;
     }) => Promise<void>;
+    @Action(GameStore.Actions.reset) restartGame!: () => Promise<void>;
 
     get sortedPlayers(): Player[] {
         const sorted = [...this.players];
@@ -116,6 +129,13 @@ export default class GameSidebar extends Vue {
     }
 }
 
+.scoreboard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: spacing($lg) 0;
+}
+
 .display-name-form {
     margin-bottom: spacing($xl);
 }
@@ -125,5 +145,9 @@ hr {
 }
 .links {
     @include container;
+}
+
+.reset-container {
+    margin-top: spacing($xl);
 }
 </style>

@@ -43,7 +43,7 @@ export const routes: MetaRoute[] = [
         component: Home
     },
     {
-        showInNav: true,
+        showInNav: false,
         path: RoutePath.SIGNUP,
         name: RouteName.SIGNUP,
         component: () => import("@web/views/Signup.vue")

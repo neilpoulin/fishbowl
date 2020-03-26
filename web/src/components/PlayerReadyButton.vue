@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="button-container">
         <button
             v-if="showButton"
             class="btn secondary light"
@@ -86,4 +86,11 @@ export default class PlayerReadyButton extends Vue {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.button-container {
+    display: flex;
+    button {
+        flex: 1;
+    }
+}
+</style>

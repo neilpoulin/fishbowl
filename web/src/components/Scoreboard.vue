@@ -1,23 +1,21 @@
 <template>
-    <div class="container">
-        <div class="scores">
-            <table>
-                <thead>
-                    <tr>
-                        <th v-for="team in teams" :key="`team_header${team}`">
-                            Team {{ team + 1 }}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td v-for="team in teams" :key="`team_score_${team}`">
-                            {{ scores[team] || 0 }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="scores">
+        <table>
+            <thead>
+                <tr>
+                    <th v-for="team in teams" :key="`team_header${team}`">
+                        Team {{ team + 1 }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td v-for="team in teams" :key="`team_score_${team}`">
+                        {{ scores[team] || 0 }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </template>
 
@@ -51,21 +49,32 @@ export default class Scoreboard extends Vue {
 <style scoped lang="scss">
 @import "variables";
 @import "mixins";
-$border-stack: 2px solid color($color-text);
+$border-stack: 1px solid color($color-text);
+$cornerRadius: 0.8rem;
+.scores {
+    display: flex;
+    /*justify-content: stretch;*/
+}
 table {
+    table-layout: fixed;
+    width: 100%;
+    flex: 1;
     border-spacing: 0;
     border-collapse: separate;
     border: $border-stack;
-    border-radius: $cornerRadiusLg;
+    border-radius: $cornerRadius;
+    overflow: hidden;
+
     th {
-        @include font($lg, normal);
+        @include font($lg, $bold);
         text-align: center;
         padding: spacing($sm) spacing($lg);
         border-top: none;
         border-right: $border-stack;
+        background-color: color($color-primary, $variant-light);
     }
     td {
-        @include font($xl, $bold);
+        @include font($xl);
         text-align: center;
         padding: spacing($md);
         border-top: $border-stack;

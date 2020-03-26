@@ -36,7 +36,8 @@ export enum GamesActions {
     startTurn = "games.startTurn",
     turnEnded = "games.turnEnded",
     setVideoChatUrl = "games.setVideoChatUrl",
-    deletePlayer = "games.deletePlayer"
+    deletePlayer = "games.deletePlayer",
+    reset = "games.resetGame"
 }
 
 const logger = new Logger("GameActions");
@@ -252,5 +253,21 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             );
             logger.info("removed player", player);
         }
+    },
+    async [GamesActions.reset]({ getters }) {
+        const game = getters[GamesGetters.currentGame] as Game | undefined;
+        if (!game) {
+            return;
+        }
+
+        const c = confirm(
+            "Are you sure you want to restart the game? All words and scores will be cleared."
+        );
+        if (!c) {
+            return;
+        }
+
+        game.restart();
+        await FirestoreService.shared.save(game);
     }
 };
