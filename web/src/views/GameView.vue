@@ -366,6 +366,7 @@ export default class GameView extends Vue {
 
     .main {
         flex: 1;
+        background-color: color($color-background, $variant-light);
         .gameboard {
             display: flex;
             flex: 1;
