@@ -1,7 +1,9 @@
 <template>
     <fish-loader class="loading" v-if="loading" />
     <div v-else>
-        <div class="brooke header"></div>
+        <div class="brooke header">
+            <a href="/"><h1 class="logo">Fish Bowl</h1></a>
+        </div>
         <div class="container">
             <game-sidebar :players="players" :game="game" />
             <div class="main">
@@ -395,9 +397,30 @@ export default class GameView extends Vue {
 .brooke {
     background: url("/images/fishbowl_banner.png") repeat-x center -2rem;
     background-size: 40%;
+    height: 8rem;
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+    padding: 0 spacing($lg);
+    @include maxW($br-phone-max) {
+        background-size: 100%;
+        justify-content: center;
+    }
 
-    &.header {
-        height: 8rem;
+    a {
+        text-decoration: none;
+        color: color($color-primary);
+        h1 {
+            margin: 0;
+        }
+
+        &:hover {
+            color: color($color-primary, $variant-dark);
+        }
+    }
+
+    .logo {
+        font-family: $font-stack-logo;
     }
 }
 
