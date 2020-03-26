@@ -84,6 +84,7 @@
                         </button>
                     </div>
                     <div class="centered intermission" v-else-if="isRoundOver">
+                        <span class="emoji huge">🎣</span>
                         <h2>
                             The Fish Bowl is empty.
                         </h2>
@@ -183,7 +184,8 @@ export default class GameView extends Vue {
         }
         return (
             this.game.phase === Phase.SETUP &&
-            this.game.allPlayersInPhase(Phase.IN_PROGRESS)
+            this.game.allPlayersInPhase(Phase.IN_PROGRESS) &&
+            this.game.playersList.length > 1
         );
     }
 
@@ -364,6 +366,10 @@ export default class GameView extends Vue {
 
     .start-game {
         margin-top: spacing($lg);
+    }
+
+    .emoji {
+        font-size: 8rem;
     }
 }
 

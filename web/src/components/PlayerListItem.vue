@@ -9,23 +9,31 @@
         }"
         @click="editing = !editing"
     >
-        <span class="name">{{ player.displayName }}</span>
-        <template v-if="!editing">
+        <div class="content">
+            <span class="name">{{ player.displayName }}</span>
+            <span class="word-count" v-if="!showTeams">{{
+                wordCountLabel
+            }}</span>
+            <span class="score" v-if="showTeams"
+                >{{ player.score || 0 }} points</span
+            >
+        </div>
+        <div class="status" v-if="!editing">
             <span class="ready" v-if="playerIsReady(player) && !showTeams">
                 Ready
             </span>
             <span class="team" v-if="showTeams && player.team !== undefined">
                 Team {{ player.team + 1 }}
             </span>
-        </template>
-        <template v-else>
+        </div>
+        <div v-else class="actions">
             <button
                 class="btn small danger delete-button"
                 @click="deletePlayer"
             >
                 delete
             </button>
-        </template>
+        </div>
     </div>
 </template>
 
@@ -50,6 +58,23 @@ export default class PlayerListItem extends Vue {
     playerIsReady(player: Player): boolean {
         const gamePhase = this.game?.phase ?? Phase.SETUP;
         return (player.phase ?? Phase.SETUP) > gamePhase;
+    }
+
+    get wordCount(): number {
+        return (this.game?.wordsByUser(this.player.userId) ?? []).length;
+    }
+
+    get wordCountLabel(): string {
+        const count = this.wordCount;
+        if (count === 0) {
+            return "No words added";
+        }
+
+        if (count === 1) {
+            return `${count} word added`;
+        }
+
+        return `${count} words added`;
     }
 
     get currentTeam(): number | undefined {
@@ -99,6 +124,36 @@ export default class PlayerListItem extends Vue {
             position: absolute;
             right: spacing($md);
         }
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+
+        .name {
+            @include font($md, $bold);
+        }
+
+        .word-count {
+            @include font($sm);
+        }
+    }
+
+    .status {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ready {
+        color: color($color-success);
+        @include font($base, $bold);
+    }
+
+    .actions {
+        display: flex;
+        position: relative;
+        justify-content: center;
+        align-items: center;
     }
 }
 </style>

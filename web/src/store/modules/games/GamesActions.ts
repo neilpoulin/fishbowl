@@ -20,7 +20,7 @@ import {
     JoinGameParams,
     SetPhaseParams
 } from "@web/store/modules/games/Games";
-import { isBlank, isNumber } from "@shared/util/ObjectUtil";
+import { isBlank } from "@shared/util/ObjectUtil";
 
 export enum GamesActions {
     createGame = "games.createGame",
@@ -185,14 +185,14 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         if (!game || !word || !userId) {
             return;
         }
-        const player = game.getPlayer(userId);
-        const team = player?.team;
-        game.completeWord(word);
-        if (isNumber(team)) {
-            game.incrementScore(team);
+        const completed = game.completeWord(word);
+
+        if (completed) {
+            game.incrementScore(userId);
         }
 
         if (game.remainingWordsInRound.length === 0) {
+            logger.info("No words left, ending turn.");
             game.endTurn();
         }
 

@@ -5,9 +5,14 @@ export default class Player {
     displayName?: string;
     phase: Phase = Phase.SETUP;
     team?: number;
+    score = 0;
 
     constructor(userId: string) {
         this.userId = userId;
         this.phase = Phase.SETUP;
+    }
+
+    incrementScore() {
+        this.score += 1;
     }
 }

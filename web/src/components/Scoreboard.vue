@@ -51,29 +51,44 @@ export default class Scoreboard extends Vue {
 <style scoped lang="scss">
 @import "variables";
 @import "mixins";
-$border-stack: 2px solid color($color-primary);
+$border-stack: 2px solid color($color-text);
 table {
     border-spacing: 0;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border: $border-stack;
+    border-radius: $cornerRadiusLg;
     th {
         @include font($lg, normal);
         text-align: center;
-        border-bottom: $border-stack;
         padding: spacing($sm) spacing($lg);
-        border-top: $border-stack;
-        border-left: $border-stack;
+        border-top: none;
         border-right: $border-stack;
-        border-bottom: $border-stack;
     }
     td {
         @include font($xl, $bold);
         text-align: center;
         padding: spacing($md);
         border-top: $border-stack;
-        border-left: $border-stack;
         border-right: $border-stack;
-        border-bottom: $border-stack;
         font-family: $font-stack-mono;
+    }
+    td:first-child,
+    th:first-child {
+        border-left: none;
+    }
+
+    td:last-child,
+    th:last-child {
+        border-right: none;
+    }
+
+    thead:first-child tr:first-child th:first-child,
+    tbody:first-child tr:first-child td:first-child {
+        border-radius: $cornerRadius 0 0 0;
+    }
+    thead:last-child tr:last-child th:first-child,
+    tbody:last-child tr:last-child td:first-child {
+        border-radius: 0 0 0 $cornerRadius;
     }
 }
 </style>

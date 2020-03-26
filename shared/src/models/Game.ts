@@ -49,8 +49,14 @@ export class Game extends BaseModel {
         return Object.values(this.players);
     }
 
-    incrementScore(team: number) {
-        this.scores[team] = (this.scores[team] ?? 0) + 1;
+    incrementScore(userId: string) {
+        const player = this.getPlayer(userId);
+        const team = player?.team;
+        if (team !== undefined) {
+            this.scores[team] = (this.scores[team] ?? 0) + 1;
+        }
+
+        player?.incrementScore();
     }
 
     allPlayersInPhase(phase: Phase): boolean {
@@ -78,11 +84,19 @@ export class Game extends BaseModel {
         this.updateNextTeams();
     }
 
-    completeWord(wordEntry: WordEntry) {
+    /**
+     * remove the word from the array of remaining words.
+     * @param {WordEntry} wordEntry
+     * @return {boolean} true if the word was removed, false if it was not.
+     */
+    completeWord(wordEntry: WordEntry): boolean {
         logger.info("Completing word ", wordEntry);
+        const startingCount = this.remainingWordsInRound.length;
         this.remainingWordsInRound = [...this.remainingWordsInRound].filter(
             w => wordEntry.word !== w.word || w.userId !== wordEntry.userId
         );
+        const endingCount = this.remainingWordsInRound.length;
+        return endingCount < startingCount;
     }
 
     addWord(wordEntry: WordEntry): boolean {
@@ -127,7 +141,10 @@ export class Game extends BaseModel {
         this.players[player.userId] = player;
     }
 
-    getWordsForUser(userId: string): WordEntry[] {
+    getWordsForUser(userId?: string): WordEntry[] {
+        if (!userId) {
+            return [];
+        }
         return this.words.filter(w => w.userId === userId);
     }
 
@@ -172,8 +189,25 @@ export class Game extends BaseModel {
         this.round = this.round + 1;
     }
 
+    wordsByUser(userId: string): WordEntry[] {
+        return this.words.filter(w => w.userId === userId);
+    }
+
     static fromData(data: FirestoreData): Game {
         return super.create(data, Game);
+    }
+
+    prepareFromFirestore(data: FirestoreData) {
+        super.prepareFromFirestore(data);
+        this.players = this.playersList.reduce(
+            (map: { [id: string]: Player }, player) => {
+                const p = new Player(player.userId);
+                map[player.userId] = Object.assign(p, player);
+
+                return map;
+            },
+            {}
+        );
     }
 
     static fromSnapshot(snapshot: DocumentSnapshot): Game {

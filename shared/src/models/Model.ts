@@ -37,7 +37,7 @@ export abstract class BaseModel implements Model {
 
     //eslint-disable-next-line @typescript-eslint/no-unused-vars
     prepareFromFirestore(data: FirestoreData) {
-        return this;
+        // nothing to do here
     }
 
     data(removeKeys = ["id", "collection"]): FirestoreData {
