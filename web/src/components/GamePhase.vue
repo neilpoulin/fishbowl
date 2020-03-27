@@ -177,6 +177,7 @@ export default Vue.extend({
 
     .game-link {
         overflow: auto;
+        @include font($sm);
     }
 }
 </style>
