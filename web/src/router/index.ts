@@ -95,7 +95,6 @@ router.beforeEach((to, from, next) => {
 
         const user = auth().currentUser;
         const displayName = store.getters[AuthGetters.displayName];
-        debugger;
         if (!authLoaded || !user || !displayName) {
             logger.info("Before route - auth loaded = ", authLoaded);
             logger.info("Setting continue url to ", to.fullPath);

@@ -32,13 +32,11 @@ export default class Signup extends Vue {
     pageName = "Sign Up";
 
     async saved(displayName: string) {
-        debugger;
         if (!auth().currentUser) {
             await this.signInAnonymously({ displayName });
         }
 
         const continueUrl = this.continueUrl;
-        debugger;
         if (continueUrl) {
             logger.info("Navigating to nextUrl", continueUrl);
             await this.$router.push(continueUrl);
