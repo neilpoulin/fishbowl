@@ -7,7 +7,8 @@ export enum AuthGetters {
     currentUserId = "auth.currentUserId",
     authLoaded = "auth.authLoaded",
     displayName = "auth.displayName",
-    player = "auth.player"
+    player = "auth.player",
+    loginContinueUrl = "auth.loginContinueUrl"
 }
 
 export const getters: GetterTree<AuthState, GlobalState> = {
@@ -24,5 +25,8 @@ export const getters: GetterTree<AuthState, GlobalState> = {
     },
     [AuthGetters.player](state): Player | null {
         return state.player;
+    },
+    [AuthGetters.loginContinueUrl](state): string | null {
+        return state.loginContinueUrl;
     }
 };

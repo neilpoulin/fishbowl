@@ -1,16 +1,13 @@
 import { ActionTree } from "vuex";
-import {
-    AuthState,
-    SetDisplayNamePayload
-} from "@web/store/modules/auth/AuthModuleTypes";
+import { AuthState, SetDisplayNamePayload } from "@web/store/modules/auth/AuthModuleTypes";
 import { GlobalState } from "@web/store/StoreTypes";
 import { auth } from "@web/config/FirebaseConfig";
 import Logger from "@shared/Logger";
-import UserCredential = firebase.auth.UserCredential;
 import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 import { GamesActions } from "@web/store/modules/games/GamesActions";
 import { isBlank } from "@shared/util/ObjectUtil";
 import { getRandomAnimalDispalyName } from "@web/util/AnimalNames";
+import UserCredential = firebase.auth.UserCredential;
 
 export enum AuthActions {
     watchAuth = "auth.watchAuth",
@@ -20,26 +17,28 @@ export enum AuthActions {
 
 const logger = new Logger("AuthActions");
 export const actions: ActionTree<AuthState, GlobalState> = {
-    [AuthActions.watchAuth]: ({ commit, dispatch }) => {
+    [AuthActions.watchAuth]: ({ commit }) => {
         auth().onAuthStateChanged(async user => {
             logger.info(`Auth state changed. User = `, user?.toJSON());
-            if (!user) {
-                await dispatch(AuthActions.signInAnonymously, null);
-                await dispatch(AuthActions.setDisplayName, {
-                    displayName: getRandomAnimalDispalyName()
-                });
-            } else {
-                commit(AuthMutations.authChanged, { user });
-            }
+            // if (!user) {
+            //     // await dispatch(AuthActions.signInAnonymously, null);
+            //     // await dispatch(AuthActions.setDisplayName, {
+            //     //     displayName: getRandomAnimalDispalyName()
+            //     // });
+            // } else {
+            //     commit(AuthMutations.authChanged, { user });
+            // }
+            commit(AuthMutations.authChanged, { user });
         });
     },
-    [AuthActions.signInAnonymously]: async (): Promise<UserCredential> => {
-        return await auth().signInAnonymously();
+    [AuthActions.signInAnonymously]: async ({ dispatch }, params: { displayName?: string }): Promise<UserCredential> => {
+        const cred = await auth().signInAnonymously();
+        await dispatch(AuthActions.setDisplayName, {
+            displayName: params.displayName || getRandomAnimalDispalyName()
+        });
+        return cred;
     },
-    async [AuthActions.setDisplayName](
-        { commit, dispatch },
-        payload: SetDisplayNamePayload
-    ) {
+    async [AuthActions.setDisplayName]({ commit, dispatch }, payload: SetDisplayNamePayload) {
         if (isBlank(payload.displayName)) {
             payload.displayName = getRandomAnimalDispalyName();
         }

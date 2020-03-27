@@ -1,15 +1,12 @@
 import { MutationTree } from "vuex";
-import {
-    AuthChangedPayload,
-    AuthState,
-    SetDisplayNamePayload
-} from "@web/store/modules/auth/AuthModuleTypes";
+import { AuthChangedPayload, AuthState, SetDisplayNamePayload } from "@web/store/modules/auth/AuthModuleTypes";
 import Player from "@shared/models/Player";
 import { getRandomAnimalDispalyName } from "@web/util/AnimalNames";
 
 export enum AuthMutations {
     authChanged = "auth.changed",
-    setDisplayName = "auth.setDisplayName"
+    setDisplayName = "auth.setDisplayName",
+    continueUrl = "auth.continueUrl"
 }
 
 export const mutations: MutationTree<AuthState> = {
@@ -32,5 +29,8 @@ export const mutations: MutationTree<AuthState> = {
         }
         state.displayName = payload.displayName;
         localStorage.setItem("displayName", payload.displayName);
+    },
+    [AuthMutations.continueUrl](state, payload: { continueUrl: string | null }) {
+        state.loginContinueUrl = payload.continueUrl;
     }
 };

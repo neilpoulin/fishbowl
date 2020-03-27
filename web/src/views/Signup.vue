@@ -4,11 +4,7 @@
             <h1>{{ pageName }}</h1>
             <p>Set up a display name to continue</p>
 
-            <display-name-form
-                @saved="saved"
-                :always-show-save="true"
-                save-label="Continue"
-            />
+            <display-name-form @saved="saved" :always-show-save="true" save-label="Continue" />
         </div>
     </div>
 </template>
@@ -18,6 +14,12 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
 import { RoutePath } from "@web/router";
+import { auth } from "@web/config/FirebaseConfig";
+import { Action, Getter } from "vuex-class";
+import AuthStore from "@web/store/modules/auth/AuthModule";
+import Logger from "@shared/Logger";
+
+const logger = new Logger("Signup.vue");
 
 @Component({
     components: {
@@ -25,13 +27,24 @@ import { RoutePath } from "@web/router";
     }
 })
 export default class Signup extends Vue {
+    @Action(AuthStore.Actions.signInAnonymously) signInAnonymously!: (params: { displayName?: string }) => Promise<void>;
+    @Getter(AuthStore.Getters.loginContinueUrl) continueUrl!: string | null;
     pageName = "Sign Up";
 
-    async saved() {
-        if (this.$route.params.nextUrl != null) {
-            this.$router.push(this.$route.params.nextUrl);
+    async saved(displayName: string) {
+        debugger;
+        if (!auth().currentUser) {
+            await this.signInAnonymously({ displayName });
+        }
+
+        const continueUrl = this.continueUrl;
+        debugger;
+        if (continueUrl) {
+            logger.info("Navigating to nextUrl", continueUrl);
+            await this.$router.push(continueUrl);
         } else {
-            this.$router.push(RoutePath.GAMES);
+            logger.info("Just going to /games");
+            await this.$router.push(RoutePath.GAMES);
         }
     }
 }

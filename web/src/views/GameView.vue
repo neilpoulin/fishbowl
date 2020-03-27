@@ -4,29 +4,20 @@
         <div class="container">
             <game-sidebar :players="players" :game="game" />
             <div class="main">
+                <div class="my-info" v-if="myPlayer">
+                    <span class="title">My Player</span>
+                    <div class="details">
+                        <display-name-form :show-label="false" class="display-name-form name" :show-team-name="true" />
+                    </div>
+                </div>
                 <div class="gameboard" v-if="game">
-                    <game-phase
-                        :phase="game.phase"
-                        v-if="game.phase === 0 && !loadingNextPhase"
-                    />
-                    <fish-loader
-                        v-if="loadingNextPhase"
-                        message="Loading Next Round"
-                    />
+                    <game-phase :phase="game.phase" v-if="game.phase === 0 && !loadingNextPhase" />
+                    <fish-loader v-if="loadingNextPhase" message="Loading Next Round" />
 
-                    <game-submit-words
-                        v-if="game.phase === 0 && !loadingNextPhase"
-                    />
+                    <game-submit-words v-if="game.phase === 0 && !loadingNextPhase" />
 
                     <div class="timer" v-if="game.phase === 1">
-                        <div
-                            class="timer centered"
-                            v-if="
-                                game.turnStartsAt &&
-                                    game.turnEndsAt &&
-                                    game.isPlaying
-                            "
-                        >
+                        <div class="timer centered" v-if="game.turnStartsAt && game.turnEndsAt && game.isPlaying">
                             <countdown
                                 :turn-end-time="game.turnEndsAt"
                                 :turn-start-time="game.turnStartsAt"
@@ -36,78 +27,50 @@
                         </div>
 
                         <template v-if="isGameActive">
-                            <div
-                                v-if="activePlayer && !currentWord"
-                                class="current-player centered"
-                            >
-                                <span class="now-playing-label"
-                                    >Now Playing:</span
-                                >
+                            <div v-if="activePlayer && !currentWord" class="current-player centered">
+                                <span class="now-playing-label">Now Playing:</span>
                                 <span class="player-name">
                                     {{ activePlayer.displayName }}
                                 </span>
-                                <span class="team-name"
-                                    >Team {{ currentTeam }}</span
-                                >
+                                <span class="team-name">Team {{ currentTeam + 1 }}</span>
                             </div>
 
-                            <div
-                                class="secret-word"
-                                v-if="currentWord && currentWord.word"
-                            >
+                            <div class="secret-word" v-if="currentWord && currentWord.word">
                                 <p class="label">Your word is:</p>
                                 <h2 class="word">{{ currentWord.word }}</h2>
-                                <button
-                                    class="btn primary"
-                                    @click="completeWord"
-                                >
+                                <button class="btn primary" @click="completeWord">
                                     Complete
                                 </button>
                             </div>
                         </template>
-                        <div
-                            class="centered intermission"
-                            :class="{ showRoundInfo: showFirstRoundInfo }"
-                            v-else-if="!isRoundOver"
-                        >
+                        <div class="centered intermission" :class="{ showRoundInfo: showFirstRoundInfo }" v-else-if="!isRoundOver">
                             <div class="up-next">
                                 <template v-if="!isCurrentPlayer">
-                                    <span>Up next is</span>
+                                    <div class="intro">
+                                        {{
+                                            activePlayer.team === myPlayer.team
+                                                ? "Your team is up next:"
+                                                : `Team ${activePlayer.team + 1} is up next:`
+                                        }}
+                                    </div>
                                     <h3 class="player-name" v-if="activePlayer">
                                         {{ activePlayer.displayName }}
                                     </h3>
                                 </template>
 
                                 <h3 class="player-name" v-if="isCurrentPlayer">
-                                    {{
-                                        game.isPlaying
-                                            ? "Get Ready..."
-                                            : "You're up next!"
-                                    }}
+                                    {{ game.isPlaying ? "Get Ready..." : "You're up next!" }}
                                 </h3>
-                                <span class="team-name" v-if="!isCurrentPlayer"
-                                    >Team {{ currentTeam + 1 }}</span
-                                >
                             </div>
-                            <div
-                                class="round-info-container"
-                                v-if="showFirstRoundInfo"
-                            >
+                            <div class="round-info-container" v-if="showFirstRoundInfo">
                                 <game-round-info :round="game.round" />
                             </div>
 
-                            <button
-                                @click="startTurn"
-                                class="btn secondary start-game"
-                                v-if="isCurrentPlayer && !game.isPlaying"
-                            >
+                            <button @click="startTurn" class="btn secondary start-game" v-if="isCurrentPlayer && !game.isPlaying">
                                 Start Turn
                             </button>
                         </div>
-                        <div
-                            class="centered intermission"
-                            v-else-if="isRoundOver"
-                        >
+                        <div class="centered intermission" v-else-if="isRoundOver">
                             <span class="emoji huge">🎣</span>
                             <h4>
                                 The Fish Bowl is empty.
@@ -120,21 +83,12 @@
                             </button>
                         </div>
 
-                        <button
-                            class="btn danger"
-                            @click="endTurn"
-                            v-if="isAdmin"
-                        >
+                        <button class="btn danger" @click="endTurn" v-if="isAdmin">
                             End Turn
                         </button>
 
-                        <div
-                            class="centered round-label round-info"
-                            v-if="!isRoundOver"
-                        >
-                            <h4 v-if="game.phase === 1">
-                                Round {{ game.round + 1 }}
-                            </h4>
+                        <div class="centered round-label round-info" v-if="!isRoundOver">
+                            <h4 v-if="game.phase === 1">Round {{ game.round + 1 }}</h4>
                             <span>
                                 Words Remaining:
                                 {{ game.remainingWordsInRound.length }}
@@ -168,7 +122,6 @@ import { Watch } from "vue-property-decorator";
 import GameSidebar from "@web/components/GameSidebar.vue";
 import Countdown from "@web/components/Countdown.vue";
 import GameRoundInfo from "@web/components/GameRoundInfo.vue";
-
 const logger = new Logger("GameView");
 @Component({
     components: {
@@ -186,9 +139,7 @@ const logger = new Logger("GameView");
 export default class GameView extends Vue {
     @Getter(Games.Getters.currentGame) game?: Game | undefined;
     @Getter(Auth.Getters.currentUserId) userId?: string | undefined;
-    @Action(Games.Actions.completeWord) markCompleted!: (
-        payload: CompleteWordPayload
-    ) => void;
+    @Action(Games.Actions.completeWord) markCompleted!: (payload: CompleteWordPayload) => void;
     @Getter(Games.Getters.currentPlayer) myPlayer: Player | undefined;
     @Action(Games.Actions.startTurn) startTurn!: () => Promise<void>;
     @Action(Games.Actions.reset) restartGame!: () => Promise<void>;
@@ -212,11 +163,7 @@ export default class GameView extends Vue {
         if (!this.game) {
             return false;
         }
-        return (
-            this.game.phase === Phase.SETUP &&
-            this.game.allPlayersInPhase(Phase.IN_PROGRESS) &&
-            this.game.playersList.length > 1
-        );
+        return this.game.phase === Phase.SETUP && this.game.allPlayersInPhase(Phase.IN_PROGRESS) && this.game.playersList.length > 1;
     }
 
     get loading(): boolean {
@@ -433,6 +380,10 @@ export default class GameView extends Vue {
             width: 100%;
         }
 
+        .intro {
+            margin-bottom: spacing($md);
+        }
+
         .player-name {
         }
     }
@@ -470,6 +421,28 @@ export default class GameView extends Vue {
     .team-name {
         @include font($md);
         //color: color($color-accent, $variant-light);
+    }
+}
+
+.my-info {
+    @include visible-sm;
+
+    .title {
+        @include font($sm);
+        margin: 0 spacing($lg);
+        display: none;
+    }
+    background-color: color($color-background, $variant-base);
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    @include container;
+
+    .details {
+        display: flex;
+        flex-direction: column;
     }
 }
 </style>

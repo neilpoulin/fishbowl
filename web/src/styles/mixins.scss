@@ -95,3 +95,17 @@
 @mixin logo {
     font-family: $font-stack-logo;
 }
+
+
+
+@mixin hidden-sm {
+    @include maxW($br-phone-max) {
+        display: none;
+    }
+}
+
+@mixin visible-sm {
+    @include minW($br-phone-max) {
+        display: none;
+    }
+}

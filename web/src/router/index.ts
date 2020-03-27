@@ -4,8 +4,12 @@ import Home from "@web/views/Home.vue";
 import { auth } from "@web/config/FirebaseConfig";
 import { store } from "@web/store/GlobalStore";
 import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
+import Logger from "@shared/Logger";
+import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 
 Vue.use(VueRouter);
+
+const logger = new Logger("Router.index");
 
 export enum RoutePath {
     HOME = "/",
@@ -88,17 +92,18 @@ interface MetaRouteRecord extends RouteRecord {
 router.beforeEach((to, from, next) => {
     if (to.matched.some((record: RouteRecord) => record.meta?.requiresAuth)) {
         const authLoaded = store.getters[AuthGetters.authLoaded];
+
         const user = auth().currentUser;
         const displayName = store.getters[AuthGetters.displayName];
-        if (!authLoaded) {
-            next();
-            return;
-        }
-        if (!user || !displayName) {
+        debugger;
+        if (!authLoaded || !user || !displayName) {
+            logger.info("Before route - auth loaded = ", authLoaded);
+            logger.info("Setting continue url to ", to.fullPath);
+            store.commit(AuthMutations.continueUrl, { continueUrl: to.fullPath });
             next({
-                path: RoutePath.SIGNUP,
-                params: { nextUrl: to.fullPath }
+                path: RoutePath.SIGNUP
             });
+            return;
         } else {
             next();
         }

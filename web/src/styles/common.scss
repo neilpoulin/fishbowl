@@ -137,3 +137,15 @@ ul {
         padding: spacing($xs) 0;
     }
 }
+
+.hidden-sm {
+    @include maxW($br-phone-max) {
+        display: none;
+    }
+}
+
+.visible-sm {
+    @include minW($br-phone-max) {
+        display: none;
+    }
+}

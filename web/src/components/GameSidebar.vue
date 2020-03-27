@@ -2,16 +2,13 @@
     <div class="sidebar">
         <section class="players">
             <section class="header" v-if="game">
-                <span class="game-label">Game</span>
-                <h2>{{ game.name }}</h2>
+                <display-name-form :show-label="true" :show-team-name="true" class="display-name-form " />
                 <player-ready-button class="ready-button" />
-
                 <div class="scoreboard">
                     <scoreboard :game="game" />
                 </div>
             </section>
 
-            <display-name-form :show-label="true" class="display-name-form" />
             <game-video-chat-url :game="game" />
             <hr />
             <h4>
@@ -19,11 +16,7 @@
             </h4>
             <ul>
                 <li v-for="player in sortedPlayers" :key="player.userId">
-                    <player-list-item
-                        :game="game"
-                        :player="player"
-                        @deleted="deletePlayer"
-                    />
+                    <player-list-item :game="game" :player="player" @deleted="deletePlayer" />
                 </li>
             </ul>
         </section>
@@ -50,7 +43,7 @@ import DisplayNameForm from "@web/components/DisplayNameForm.vue";
 import GameVideoChatUrl from "@web/components/GameVideoChatUrl.vue";
 import PlayerReadyButton from "@web/components/PlayerReadyButton.vue";
 import PlayerListItem from "@web/components/PlayerListItem.vue";
-import { Action } from "vuex-class";
+import { Action, Getter } from "vuex-class";
 import GameStore from "@web/store/modules/games/GamesModule";
 import Scoreboard from "@web/components/Scoreboard.vue";
 
@@ -66,18 +59,15 @@ import Scoreboard from "@web/components/Scoreboard.vue";
 export default class GameSidebar extends Vue {
     @Prop({ type: Array as () => Player[], required: true }) players!: Player[];
     @Prop({ type: Object as () => Player[], required: true }) game!: Game;
-    @Action(GameStore.Actions.deletePlayer) deletePlayerAction!: (params: {
-        player: Player;
-    }) => Promise<void>;
+    @Action(GameStore.Actions.deletePlayer) deletePlayerAction!: (params: { player: Player }) => Promise<void>;
+    @Getter(GameStore.Getters.currentPlayer) myPlayer!: Player | undefined;
     @Action(GameStore.Actions.reset) restartGame!: () => Promise<void>;
 
     get sortedPlayers(): Player[] {
         const sorted = [...this.players];
         sorted.sort((p1, p2) => {
             if (p1.team === p2.team) {
-                return (p1.displayName ?? "")?.localeCompare(
-                    p2.displayName ?? ""
-                );
+                return (p1.displayName ?? "")?.localeCompare(p2.displayName ?? "");
             } else {
                 return (p1.team ?? 0) - (p2.team ?? 0);
             }
@@ -89,9 +79,7 @@ export default class GameSidebar extends Vue {
         if (!player) {
             return;
         }
-        const c = window.confirm(
-            `Are you sure you want to delete "${player.displayName}" from the game?`
-        );
+        const c = window.confirm(`Are you sure you want to delete "${player.displayName}" from the game?`);
         if (c) {
             await this.deletePlayerAction({ player: player });
         }

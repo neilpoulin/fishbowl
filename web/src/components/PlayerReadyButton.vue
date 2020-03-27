@@ -1,7 +1,6 @@
 <template>
-    <div class="button-container">
+    <div class="button-container" v-if="showButton">
         <button
-            v-if="showButton"
             class="btn light"
             :class="{ danger: isReady, primary: !isReady, outlined: isReady }"
             @click="togglePhase"

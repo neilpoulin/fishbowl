@@ -6,6 +6,7 @@ export interface AuthState {
     user?: User;
     displayName: string | null;
     player: Player | null;
+    loginContinueUrl: string | null;
 }
 
 export interface AuthChangedPayload {
