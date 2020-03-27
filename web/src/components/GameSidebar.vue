@@ -2,15 +2,15 @@
     <div class="sidebar">
         <section class="players">
             <section class="header" v-if="game">
-                <display-name-form :show-label="false" :show-team-name="true" class="display-name-form " />
+                <display-name-form :show-label="false" :show-team-name="true" class="display-name-form" />
                 <player-ready-button class="ready-button" />
                 <div class="scoreboard">
                     <scoreboard :game="game" />
                 </div>
             </section>
 
-            <game-video-chat-url :game="game" />
-            <hr />
+            <game-video-chat-url :game="game" v-if="false" />
+
             <h4>
                 Players <span class="count">({{ sortedPlayers.length }})</span>
             </h4>
@@ -97,8 +97,8 @@ export default class GameSidebar extends Vue {
         padding-left: 0;
         list-style: none;
         li {
-            margin: 0;
-            padding: spacing($sm);
+            margin: 0 0 spacing($lg) 0;
+            padding: 0;
         }
     }
 }
@@ -126,11 +126,11 @@ export default class GameSidebar extends Vue {
 
 .display-name-form {
     margin-bottom: spacing($xl);
+    @include maxW($br-phone-max) {
+        display: none;
+    }
 }
 
-hr {
-    margin: spacing($xl) 0;
-}
 .links {
     @include container;
 }

@@ -329,7 +329,7 @@ export default class GameView extends Vue {
             }
 
             @include maxW($br-tablet-min) {
-                padding-bottom: 10rem;
+                padding-bottom: spacing($lg);
             }
 
             .phase {
