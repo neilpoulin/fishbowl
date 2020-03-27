@@ -2,7 +2,7 @@
     <div class="sidebar">
         <section class="players">
             <section class="header" v-if="game">
-                <display-name-form :show-label="true" :show-team-name="true" class="display-name-form " />
+                <display-name-form :show-label="false" :show-team-name="true" class="display-name-form " />
                 <player-ready-button class="ready-button" />
                 <div class="scoreboard">
                     <scoreboard :game="game" />

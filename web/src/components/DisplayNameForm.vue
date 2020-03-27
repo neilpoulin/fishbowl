@@ -1,7 +1,7 @@
 <template>
     <div class="display-name-form">
         <div class="input-field">
-            <label v-if="showLabel" for="display-name-input">
+            <label v-if="showLabel" for="display-name-input" class="name-label">
                 My Name
             </label>
             <div class="actions" v-if="editing">
@@ -86,7 +86,7 @@ export default class DisplayNameForm extends Vue {
         flex: 1;
         max-width: 100%;
 
-        label {
+        .name-label {
             @include font($sm);
         }
     }

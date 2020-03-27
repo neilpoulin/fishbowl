@@ -443,6 +443,7 @@ export default class GameView extends Vue {
     .details {
         display: flex;
         flex-direction: column;
+        flex: 1;
     }
 }
 </style>
