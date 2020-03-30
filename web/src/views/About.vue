@@ -2,10 +2,8 @@
     <div class="about" :class="{ inline: inline }">
         <h2>How it works</h2>
         <p>
-            When you first join a game, you'll add some words to the "fish
-            bowl". These words are <strong>nouns</strong>. Once you're finished
-            adding words, you'll hit the "ready" button. Once everyone is ready,
-            the game will start.
+            When you first join a game, you'll add some words to the "fish bowl". These words are <strong>nouns</strong>. Once you're
+            finished adding words, you'll hit the "ready" button. Once everyone is ready, the game will start.
         </p>
         <p>
             The game is broken into 3 (or more) rounds. Here's how they work:

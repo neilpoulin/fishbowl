@@ -3,9 +3,7 @@
         <table>
             <thead>
                 <tr>
-                    <th v-for="team in teams" :key="`team_header${team}`">
-                        Team {{ team + 1 }}
-                    </th>
+                    <th v-for="team in teams" :key="`team_header${team}`">Team {{ team + 1 }}</th>
                 </tr>
             </thead>
             <tbody>

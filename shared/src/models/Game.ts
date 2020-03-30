@@ -3,6 +3,7 @@ import { DocumentSnapshot } from "@shared/util/FirestoreUtil";
 import Player from "@shared/models/Player";
 import Logger from "@shared/Logger";
 import { shuffleArray } from "@shared/util/ObjectUtil";
+import { assignTeams } from "@shared/util/GameUtil";
 
 export interface WordEntry {
     word: string;
@@ -49,6 +50,10 @@ export class Game extends BaseModel {
 
     get playersList(): Player[] {
         return Object.values(this.players);
+    }
+
+    playersInTeam(team: number): Player[] {
+        return this.playersList.filter(p => p.team === team);
     }
 
     incrementScore(userId: string) {
@@ -193,6 +198,29 @@ export class Game extends BaseModel {
         this.round = this.round + 1;
     }
 
+    /**
+     * Move to the next phase, if able
+     * @return {boolean} if the game moved to the next phase or not
+     */
+    nextPhase(): boolean {
+        switch (this.phase) {
+            case Phase.SETUP:
+                const foundNotReady = this.playersList.some(
+                    p => p.phase === Phase.SETUP
+                );
+                if (foundNotReady) {
+                    return false;
+                }
+                this.phase = Phase.IN_PROGRESS;
+                return true;
+            case Phase.IN_PROGRESS:
+                this.phase = Phase.FINISHED;
+                return true;
+            case Phase.FINISHED:
+                return false;
+        }
+    }
+
     wordsByUser(userId: string): WordEntry[] {
         return this.words.filter(w => w.userId === userId);
     }
@@ -216,6 +244,12 @@ export class Game extends BaseModel {
 
     static fromData(data: FirestoreData): Game {
         return super.create(data, Game);
+    }
+
+    assignTeams() {
+        if (this.phase === Phase.IN_PROGRESS) {
+            assignTeams(this);
+        }
     }
 
     prepareFromFirestore(data: FirestoreData) {

@@ -3,34 +3,24 @@
         class="player"
         :class="{
             activePlayer: currentPlayer === player.userId,
-            activeTeam:
-                currentTeam !== undefined && player.team === currentTeam,
+            activeTeam: currentTeam !== undefined && player.team === currentTeam,
             editing: editing
         }"
         @click="editing = !editing"
     >
         <div class="content">
             <span class="name">{{ player.displayName }}</span>
-            <span class="word-count" v-if="!showTeams">{{
-                wordCountLabel
-            }}</span>
-            <span class="score" v-if="showTeams"
-                >{{ player.score || 0 }} points</span
-            >
+            <span class="word-count" v-if="!showTeams">{{ wordCountLabel }}</span>
+            <span class="score" v-if="showTeams">{{ player.score || 0 }} points</span>
         </div>
         <div class="status" v-if="!editing">
             <span class="ready" v-if="playerIsReady(player) && !showTeams">
                 Ready
             </span>
-            <span class="team" v-if="showTeams && player.team !== undefined">
-                Team {{ player.team + 1 }}
-            </span>
+            <span class="team" v-if="showTeams && player.team !== undefined"> Team {{ player.team + 1 }} </span>
         </div>
         <div v-else class="actions">
-            <button
-                class="btn small danger delete-button"
-                @click="deletePlayer"
-            >
+            <button class="btn small danger delete-button" @click="deletePlayer">
                 delete
             </button>
         </div>

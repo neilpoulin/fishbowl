@@ -3,15 +3,9 @@
         <div id="nav" v-if="!$route.meta.hideNav">
             <div class="mask"></div>
             <div class="links">
-                <router-link to="/" class="logo"
-                    ><h1>FishBowl</h1>
-                </router-link>
+                <router-link to="/" class="logo"><h1>FishBowl</h1> </router-link>
                 <template v-for="route in routes">
-                    <router-link
-                        :to="route.path"
-                        :key="route.path"
-                        :class="{ home: route.path === '/' }"
-                    >
+                    <router-link :to="route.path" :key="route.path" :class="{ home: route.path === '/' }">
                         {{ route.name }}
                     </router-link>
                 </template>
@@ -72,8 +66,7 @@ export default class App extends Vue {
     }
 
     .mask {
-        background: url("/images/fishbowl_banner.png") repeat-x center -2rem,
-            color($color-primary, $variant-light);
+        background: url("/images/fishbowl_banner.png") repeat-x center -2rem, color($color-primary, $variant-light);
         background-size: 44%;
         filter: blur(2px);
         position: absolute;
@@ -94,10 +87,7 @@ export default class App extends Vue {
         color: color($color-primary, $variant-dark);
         text-decoration: none;
 
-        background-image: linear-gradient(
-            lighten(color($color-accent), 15%),
-            lighten(color($color-accent), 15%)
-        );
+        background-image: linear-gradient(lighten(color($color-accent), 15%), lighten(color($color-accent), 15%));
         background-position: 0 100%;
         background-repeat: no-repeat;
         background-size: 100% 0;
@@ -106,10 +96,7 @@ export default class App extends Vue {
             color: color($color-accent);
             //background-color: $selectedBg;
 
-            background-image: linear-gradient(
-                lighten(color($color-accent), 15%),
-                lighten(color($color-accent), 15%)
-            );
+            background-image: linear-gradient(lighten(color($color-accent), 15%), lighten(color($color-accent), 15%));
             background-position: 0 100%;
             background-repeat: no-repeat;
             background-size: 100% 0.5rem;
@@ -117,10 +104,7 @@ export default class App extends Vue {
 
         &:hover:not(.logo) {
             //background-color: darken($selectedBg, 5%);
-            background-image: linear-gradient(
-                lighten(color($color-accent), 15%),
-                lighten(color($color-accent), 15%)
-            );
+            background-image: linear-gradient(lighten(color($color-accent), 15%), lighten(color($color-accent), 15%));
             background-position: 0 100%;
             background-repeat: no-repeat;
             background-size: 100% 0.8rem;

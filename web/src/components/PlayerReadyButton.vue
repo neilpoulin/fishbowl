@@ -1,10 +1,6 @@
 <template>
     <div class="button-container" v-if="showButton">
-        <button
-            class="btn light"
-            :class="{ danger: isReady, primary: !isReady, outlined: isReady }"
-            @click="togglePhase"
-        >
+        <button class="btn light" :class="{ danger: isReady, primary: !isReady, outlined: isReady }" @click="togglePhase">
             {{ isReady ? "Not Ready" : "Ready" }}
         </button>
         <alert v-if="alert" :alert="alert" />
@@ -27,22 +23,15 @@ import Alert from "@web/components/Alert.vue";
 export default class PlayerReadyButton extends Vue {
     @Getter(Games.Getters.currentPlayer) player!: Player | null;
     @Getter(Games.Getters.currentGame) game!: Game | null;
-    @Action(Games.Actions.setPlayerPhase) setPhase!: (
-        params: SetPhaseParams
-    ) => void;
+    @Action(Games.Actions.setPlayerPhase) setPhase!: (params: SetPhaseParams) => void;
 
     alert?: AlertMessage | null = null;
 
     nextPhase() {
         let phase = this.player?.phase ?? Phase.SETUP;
 
-        if (
-            phase === Phase.SETUP &&
-            this.game?.getWordsForUser(this.player?.userId).length === 0
-        ) {
-            this.alert = AlertMessage.warn(
-                'Please enter a few words before clicking "ready"'
-            );
+        if (phase === Phase.SETUP && this.game?.getWordsForUser(this.player?.userId).length === 0) {
+            this.alert = AlertMessage.warn('Please enter a few words before clicking "ready"');
             return;
         } else {
             this.alert = null;
@@ -73,10 +62,7 @@ export default class PlayerReadyButton extends Vue {
     }
 
     get isReady(): boolean {
-        return (
-            (this.game?.phase ?? Phase.SETUP) <
-            (this.player?.phase ?? Phase.SETUP)
-        );
+        return (this.game?.phase ?? Phase.SETUP) < (this.player?.phase ?? Phase.SETUP);
     }
 
     get showButton(): boolean {

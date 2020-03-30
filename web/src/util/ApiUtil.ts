@@ -36,10 +36,7 @@ export function deserializeJson(payload?: string): any | undefined {
     try {
         return JSON.parse(payload, jsonReviver);
     } catch (error) {
-        logger.error(
-            `Error deserializeing JSON in API Util. Payload = ${payload}. Unable to parse JSON string`,
-            error
-        );
+        logger.error(`Error deserializeing JSON in API Util. Payload = ${payload}. Unable to parse JSON string`, error);
         return;
     }
 }

@@ -6,12 +6,7 @@
             Game Name
         </label>
         <div class="input-field">
-            <input
-                type="text"
-                v-model="name"
-                id="new-game-name-input"
-                placeholder="Enter a name for this game"
-            />
+            <input type="text" v-model="name" id="new-game-name-input" placeholder="Enter a name for this game" />
             <button class="btn primary" @click="submit">Create Game</button>
         </div>
         <alert :alert="alert" v-if="alert" />
@@ -41,9 +36,7 @@ export default class GameState extends Vue {
     alert: AlertMessage | null = null;
 
     @Action(Games.Actions.createGame)
-    private createGame!: (
-        params?: CreateGameParams | undefined
-    ) => Promise<Game>;
+    private createGame!: (params?: CreateGameParams | undefined) => Promise<Game>;
 
     async submit() {
         const validateAlert = this.validate();

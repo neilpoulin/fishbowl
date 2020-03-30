@@ -14,16 +14,10 @@
                         <div v-if="game">
                             <h2>{{ game.name }}</h2>
                             <div class="actions">
-                                <button
-                                    class="btn danger outlined"
-                                    @click="leaveGame"
-                                >
+                                <button class="btn danger outlined" @click="leaveGame">
                                     Leave Game
                                 </button>
-                                <button
-                                    class="btn secondary light"
-                                    @click="joinGame(game.id)"
-                                >
+                                <button class="btn secondary light" @click="joinGame(game.id)">
                                     Join
                                 </button>
                             </div>
@@ -38,11 +32,7 @@
                 <div>
                     <h2>Recent Games</h2>
                     <ul class="games-list">
-                        <li
-                            v-for="(game, index) in availableGames"
-                            @click="joinGame(game.id)"
-                            :key="index"
-                        >
+                        <li v-for="(game, index) in availableGames" @click="joinGame(game.id)" :key="index">
                             <span class="name">{{ game.name }}</span>
                             <span class="players">{{ playerLabel(game) }}</span>
                         </li>
@@ -66,10 +56,7 @@ import Games from "@web/store/modules/games/GamesModule";
 import { Game } from "@shared/models/Game";
 import router, { RouteBuilder } from "@web/router";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
-import {
-    CreateGameParams,
-    JoinGameParams
-} from "@web/store/modules/games/Games";
+import { CreateGameParams, JoinGameParams } from "@web/store/modules/games/Games";
 
 @Component({
     components: { DisplayNameForm, CreateGame }
@@ -192,8 +179,7 @@ export default class Start extends Vue {
                 right: 0;
                 bottom: 0;
                 left: 0;
-                background: url("/images/fishbowl_final.png") no-repeat center
-                    center;
+                background: url("/images/fishbowl_final.png") no-repeat center center;
             }
             .content {
                 position: relative;

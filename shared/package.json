@@ -4,19 +4,32 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:unit": "vue-cli-service test:unit"
   },
   "author": "Neil Poulin",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^25.1.4",
     "@types/node": "^13.9.2",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
+    "@vue/cli-plugin-babel": "^4.2.3",
+    "@vue/cli-plugin-eslint": "^4.2.3",
+    "@vue/cli-plugin-typescript": "^4.2.3",
+    "@vue/cli-plugin-unit-jest": "^4.2.3",
+    "@vue/cli-service": "^4.2.3",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^5.0.1",
+    "@vue/test-utils": "^1.0.0-beta.32",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.1",
+    "jest": "^25.2.3",
     "prettier": "^1.19.1",
+    "ts-jest": "^25.2.1",
     "typescript": "~3.7.5"
+  },
+  "dependencies": {
+    "core-js": "^3.6.4"
   }
 }

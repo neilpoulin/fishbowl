@@ -3,8 +3,7 @@
         <div v-if="phase === Phase.SETUP" class="description">
             <h3 class="title">Welcome to <span class="logo">FishBowl</span></h3>
             <p>
-                First, enter some words into the fishbowl. These words will be
-                used through out the game.
+                First, enter some words into the fishbowl. These words will be used through out the game.
             </p>
 
             <p>
@@ -25,8 +24,7 @@
             </div>
 
             <p>
-                The game will start once everyone has pressed their
-                ready&nbsp;button
+                The game will start once everyone has pressed their ready&nbsp;button
             </p>
         </div>
     </div>

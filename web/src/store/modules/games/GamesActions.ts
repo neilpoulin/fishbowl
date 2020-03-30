@@ -13,13 +13,7 @@ import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
 import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 import { AlertMessage } from "@web/util/AlertMessage";
-import {
-    AddWordParams,
-    CompleteWordPayload,
-    CreateGameParams,
-    JoinGameParams,
-    SetPhaseParams
-} from "@web/store/modules/games/Games";
+import { AddWordParams, CompleteWordPayload, CreateGameParams, JoinGameParams, SetPhaseParams } from "@web/store/modules/games/Games";
 import { isBlank } from "@shared/util/ObjectUtil";
 
 export enum GamesActions {
@@ -45,10 +39,7 @@ export const minWordLength = 3;
 let gamesUnsubscriber: Unsubscribe | null = null;
 
 export const actions: ActionTree<GamesState, GlobalState> = {
-    async [GamesActions.createGame](
-        { dispatch },
-        payload: CreateGameParams
-    ): Promise<Game> {
+    async [GamesActions.createGame]({ dispatch }, payload: CreateGameParams): Promise<Game> {
         const game = new Game();
         game.name = payload?.name ?? new Date().toISOString();
         await FirestoreService.shared.save(game);
@@ -143,9 +134,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         }
         if (word.length < minWordLength) {
             commit(GamesMutations.addWordError, {
-                error: AlertMessage.warn(
-                    `Words must be at least ${minWordLength} letters long.`
-                )
+                error: AlertMessage.warn(`Words must be at least ${minWordLength} letters long.`)
             });
             return;
         }
@@ -159,9 +148,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         } else {
             logger.error("Unable to add word");
             commit(GamesMutations.addWordError, {
-                error: AlertMessage.error(
-                    "Unable to add this word. You may have already added it."
-                )
+                error: AlertMessage.error("Unable to add this word. You may have already added it.")
             });
         }
     },
@@ -177,10 +164,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         game.addPlayer(player);
         await FirestoreService.shared.save(game);
     },
-    async [GamesActions.completeWord](
-        { getters },
-        payload: CompleteWordPayload
-    ) {
+    async [GamesActions.completeWord]({ getters }, payload: CompleteWordPayload) {
         const { word } = payload;
         const userId = getters[AuthGetters.currentUserId] as string | undefined;
         const game = getters[GamesGetters.currentGame] as Game | undefined;
@@ -225,10 +209,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             await FirestoreService.shared.save(game);
         }
     },
-    async [GamesActions.setVideoChatUrl](
-        { getters },
-        payload: { url: string | undefined }
-    ) {
+    async [GamesActions.setVideoChatUrl]({ getters }, payload: { url: string | undefined }) {
         const game = getters[GamesGetters.currentGame] as Game | undefined;
         if (!game) {
             return;
@@ -237,10 +218,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
 
         await FirestoreService.shared.save(game);
     },
-    async [GamesActions.deletePlayer](
-        { getters },
-        payload: { player: Player }
-    ) {
+    async [GamesActions.deletePlayer]({ getters }, payload: { player: Player }) {
         const game = getters[GamesGetters.currentGame] as Game | undefined;
         if (!game) {
             return;
@@ -248,10 +226,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         const { player } = payload;
         if (player.userId) {
             game.removePlayer(player.userId);
-            await FirestoreService.shared.deleteField(
-                game,
-                `${Game.Field.players}.${player.userId}`
-            );
+            await FirestoreService.shared.deleteField(game, `${Game.Field.players}.${player.userId}`);
             logger.info("removed player", player);
         }
     },
@@ -261,9 +236,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             return;
         }
 
-        const c = confirm(
-            "Are you sure you want to restart the game? All words and scores will be cleared."
-        );
+        const c = confirm("Are you sure you want to restart the game? All words and scores will be cleared.");
         if (!c) {
             return;
         }

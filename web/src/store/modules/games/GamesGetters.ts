@@ -49,9 +49,7 @@ export const getters: GetterTree<GamesState, GlobalState> = {
 
     [GamesGetters.availableGames](state, getters): Game[] {
         const userId = getters[AuthGetters.currentUserId];
-        return Object.values(state.gamesById).filter(
-            game => !!game.getPlayer(userId)
-        );
+        return Object.values(state.gamesById).filter(game => !!game.getPlayer(userId));
     },
     [GamesGetters.gameNames](state): (string | undefined)[] {
         return Object.values(state.gamesById)
