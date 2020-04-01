@@ -2,7 +2,7 @@ import { BaseModel, Collection, FirestoreData } from "@shared/models/Model";
 import { DocumentSnapshot } from "@shared/util/FirestoreUtil";
 import Player from "@shared/models/Player";
 import Logger from "@shared/Logger";
-import { shuffleArray } from "@shared/util/ObjectUtil";
+import { isString, shuffleArray } from "@shared/util/ObjectUtil";
 import { assignTeams } from "@shared/util/GameUtil";
 
 export interface WordEntry {
@@ -53,11 +53,20 @@ export class Game extends BaseModel {
     }
 
     get nextTeam(): number {
-        let current = this.currentTeam;
+        const current = this.currentTeam;
         if (current + 1 >= this.numberOfTeams) {
             return 0;
         }
         return current + 1;
+    }
+
+    get currentPlayer(): Player | undefined {
+        const team = this.currentTeam;
+        const playerId = this.currentPlayerByTeam[team];
+        if (isString(playerId)) {
+            return this.getPlayer(playerId);
+        }
+        return undefined;
     }
 
     /**
@@ -184,22 +193,40 @@ export class Game extends BaseModel {
     }
 
     updateNextTeams() {
-        const currentTeam = this.currentTeam;
-        let nextTeam = currentTeam + 1;
-        if (nextTeam >= this.numberOfTeams) {
-            nextTeam = 0;
+        const nextPlayer = this.getNextPlayerForTeam(this.currentTeam);
+        if (nextPlayer) {
+            this.currentPlayerByTeam[this.currentTeam] = nextPlayer?.userId;
         }
-        this.currentTeam = nextTeam;
-        Object.keys(this.currentPlayerByTeam)
-            .map(Number)
-            .forEach(team => {
-                const currentUserId = this.currentPlayerByTeam[team];
-                const playersOnTeam = this.playersInTeam(team);
-                const currentIndex = playersOnTeam.findIndex(p => p.userId === currentUserId);
-                const nextIndex = Math.min(playersOnTeam.length - 1, Math.max(0, currentIndex + 1));
-                const nextPlayer = playersOnTeam[nextIndex];
-                this.currentPlayerByTeam[team] = nextPlayer.userId;
-            });
+        this.currentTeam = this.nextTeam;
+    }
+
+    getNextPlayerForTeam(team: number): Player | undefined {
+        const currentUserId = this.currentPlayerByTeam[team] as string | undefined;
+        if (!currentUserId) {
+            return;
+        }
+        const players = this.playersInTeam(team);
+        const currentIndex = players.findIndex(p => p.userId === currentUserId);
+        let nextIndex = currentIndex + 1;
+        if (nextIndex > players.length - 1) {
+            nextIndex = 0;
+        }
+        if (nextIndex <= players.length && players.length > 0) {
+            return players[nextIndex];
+        }
+        return;
+    }
+
+    assignCurrentPlayers() {
+        for (let team = 0; team < this.numberOfTeams; team++) {
+            const currentUserId = this.currentPlayerByTeam[team];
+            const playersOnTeam = this.playersInTeam(team);
+            const currentIndex = playersOnTeam.findIndex(p => p.userId === currentUserId);
+            // const nextIndex = Math.min(playersOnTeam.length - 1, Math.max(0, currentIndex + 1));
+            const nextIndex = Math.min(playersOnTeam.length - 1, currentIndex + 1);
+            const nextPlayer = playersOnTeam[nextIndex];
+            this.currentPlayerByTeam[team] = nextPlayer.userId;
+        }
     }
 
     moveToNextRound() {
@@ -256,6 +283,7 @@ export class Game extends BaseModel {
     assignTeams() {
         if (this.phase === Phase.IN_PROGRESS) {
             assignTeams(this);
+            this.assignCurrentPlayers();
         }
     }
 

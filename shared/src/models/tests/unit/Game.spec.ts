@@ -151,3 +151,49 @@ test("get next team | current team 2 | num teams 2", () => {
     game.currentTeam = 2;
     expect(game.nextTeam).toEqual(0);
 });
+
+describe("get next player", () => {
+    test("initial ", () => {
+        const game = setupGame();
+        game.phase = Phase.IN_PROGRESS;
+        game.assignTeams();
+
+        expect(game.currentTeam).toEqual(0);
+        expect(game.nextTeam).toEqual(1);
+        expect(game.currentPlayer?.userId).toEqual("u1");
+
+
+        game.endTurn();
+        expect(game.currentTeam).toEqual(1);
+        expect(game.nextTeam).toEqual(0);
+
+        expect(game.currentPlayer?.userId).toEqual("u2");
+        expect(game.currentPlayer?.team).toEqual(1);
+
+        game.endTurn();
+        expect(game.currentTeam).toEqual(0);
+        expect(game.nextTeam).toEqual(1);
+
+        expect(game.currentPlayer?.userId).toEqual("u3");
+        expect(game.currentPlayer?.team).toEqual(0);
+
+        game.endTurn();
+        expect(game.currentTeam).toEqual(1);
+        expect(game.nextTeam).toEqual(0);
+
+        expect(game.currentPlayer?.userId).toEqual("u4");
+        expect(game.currentPlayer?.team).toEqual(1);
+
+
+        game.endTurn();
+        expect(game.currentTeam).toEqual(0);
+        expect(game.nextTeam).toEqual(1);
+        expect(game.currentPlayer?.userId).toEqual("u1");
+
+
+        game.endTurn();
+        expect(game.currentTeam).toEqual(1);
+        expect(game.nextTeam).toEqual(0);
+        expect(game.currentPlayer?.userId).toEqual("u2");
+    })
+})

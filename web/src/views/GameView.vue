@@ -280,7 +280,6 @@ export default class GameView extends Vue {
             return;
         }
         this.deactivateTurn();
-        await this.$store.dispatch(GamesActions.turnEnded);
     }
 }
 </script>
