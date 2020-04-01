@@ -6,6 +6,6 @@ export interface Config {
 
 export const getConfig = () => {
     return {
-        allowedOrigins: [/localhost:*/, "fishbowl.fun", "forrestofdicks.com", "fishbowl-online.firebaseapp.com", "fishbowl-online.web.app"]
+        allowedOrigins: [/localhost:*/, /fishbowl\.fun/, /forrestofdicks\.com/, /fishbowl-online\.firebaseapp\.com/, /fishbowl-online\.web\.app/]
     }
 };

@@ -8,7 +8,8 @@ type EndpointGetter = () => string;
 
 export const Endpoint = {
     gameNextTurn: (gameId: string): EndpointGetter => () => `/games/${gameId}/next-turn`,
-    completeWord: (gameId: string): EndpointGetter => () => `games/${gameId}/actions/complete-word`
+    completeWord: (gameId: string): EndpointGetter => () => `games/${gameId}/actions/complete-word`,
+    getGame: (gameId: string): EndpointGetter => () => `/games/${gameId}`
 };
 
 export default class ApiService {

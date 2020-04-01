@@ -9,10 +9,15 @@ import * as cors from "cors";
 import { getConfig } from "@api/util/Config";
 const app = express();
 const logger = new Logger("GameEndpoints");
-
+logger.info("allowed Origins: ", JSON.stringify(getConfig().allowedOrigins));
 app.use(cors({
     origin: getConfig().allowedOrigins,
 }));
+
+app.get("/:gameId", async (request: express.Request, response: express.Response) => {
+    response.send("Got it!" + request.params.gameId);
+    return;
+});
 
 app.post("/:gameId/next-turn", async (request: express.Request, response: express.Response) => {
     const gameId = request.params.gameId;

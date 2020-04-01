@@ -21,12 +21,14 @@ import Component from "vue-class-component";
 import Auth from "@web/store/modules/auth/AuthModule";
 import { routes } from "@web/router";
 import { Getter } from "vuex-class";
+import ApiService, { Endpoint } from "@web/services/ApiService";
 
 @Component
 export default class App extends Vue {
     routes = routes.filter(r => r.showInNav);
     @Getter(Auth.Getters.authLoaded) authLoaded!: boolean;
     @Getter(Auth.Getters.currentUserId) userId!: boolean;
+
 }
 </script>
 
