@@ -41,7 +41,7 @@
 
                             <div class="secret-word" v-if="currentWord && currentWord.word">
                                 <p class="label">Your word is:</p>
-                                <h2 class="word">{{ currentWord.word }}</h2>
+                                <h2 class="word marker">{{ currentWord.word }}</h2>
                                 <button class="btn primary" @click="completeWord" :disabled="isSaving">
                                     Complete
                                 </button>
@@ -416,6 +416,8 @@ export default class GameView extends Vue {
 
     .word {
         padding: spacing($lg);
+        font-size: 5rem;
+        font-weight: normal;
     }
 }
 

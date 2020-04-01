@@ -2,7 +2,7 @@
 @import "forms";
 @import url("https://fonts.googleapis.com/css?family=Raleway&display=swap");
 @import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Spicy+Rice&display=swap');
 @font-face {
     font-family: "Bemydor";
     src: url("/fonts/Bemydor-wmyw.ttf") format("truetype");
@@ -37,7 +37,12 @@ h6 {
 }
 
 h1 {
-    @include font($xxl, bold);
+    @include font($xxl, normal);
+    font-family: $font-stack-marker;
+}
+
+.marker {
+    font-family: $font-stack-marker;
 }
 
 h2 {

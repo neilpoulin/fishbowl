@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <div id="nav" v-if="!$route.meta.hideNav">
-            <div class="mask"></div>
+            <div v-if="false" class="mask"></div>
             <div class="links">
                 <router-link to="/" class="logo"><h1>FishBowl</h1> </router-link>
                 <template v-for="route in routes">
@@ -36,6 +36,7 @@ export default class App extends Vue {
 
 #nav {
     position: relative;
+    border-bottom: 1px solid rgba(color($color-shadow, $variant-light), 0.1);
     .links {
         height: $nav-height;
         display: flex;

@@ -76,7 +76,7 @@ export default {
     }
 }
 .header-section {
-    background: url("/images/goldfish.jpg") center center, color($color-primary, $variant-light);
+    //background: url("/images/goldfish.jpg") center center, color($color-primary, $variant-light);
     background-size: 100%;
 }
 
@@ -84,7 +84,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    text-shadow: 1px rgba(color($color-text), 0.8);
+    //text-shadow: 1px rgba(color($color-text), 0.8);
     h1 {
         font-family: $font-stack-logo;
         font-size: 10rem;
@@ -92,7 +92,7 @@ export default {
         color: color($color-primary);
         display: inline-block;
         margin: 0;
-        text-shadow: 4px 4px rgba(color($color-text, $variant-light), 0.8);
+        //text-shadow: 4px 4px rgba(color($color-text, $variant-light), 0.8);
     }
 
     .actions {
@@ -102,8 +102,8 @@ export default {
 
     .subtitle {
         @include font($lg);
-        color: color($color-text, $variant-light);
-        text-shadow: 1px 0 rgba(color($color-text, $variant-dark), 0.8);
+        //color: color($color-text, $variant-light);
+        //text-shadow: 1px 0 rgba(color($color-text, $variant-dark), 0.8);
     }
 }
 
