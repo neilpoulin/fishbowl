@@ -4,8 +4,8 @@
         <div v-if="round === 0">
             <h3>Taboo Round</h3>
             <p>
-                You have {{ roundDurationMinutes }} to get your team to guess your word or phrase. You may only use your voice - no hand
-                gestures. You may not use any of the words in your secret word
+                You have {{ roundDurationMinutes }} {{ roundDurationUnit }} to get your team to guess your word or phrase. You may only use
+                your voice - no hand gestures. You may not use any of the words in your secret word
             </p>
         </div>
         <div v-else-if="round === 1">
@@ -46,6 +46,13 @@ export default class GameRoundInfo extends Vue {
     get roundDurationMinutes(): string {
         const isWholeNumber = ROUND_DURATION_SECONDS % 60 === 0;
         return (ROUND_DURATION_SECONDS / 60).toFixed(isWholeNumber ? 0 : 1);
+    }
+
+    get roundDurationUnit(): string {
+        if (this.roundDurationMinutes === "1") {
+            return "minute";
+        }
+        return "minutes";
     }
 }
 </script>

@@ -17,8 +17,8 @@
                                 <button class="btn danger outlined" @click="leaveGame">
                                     Leave Game
                                 </button>
-                                <button class="btn secondary light" @click="joinGame(game.id)">
-                                    Join
+                                <button class="btn" @click="joinGame(game.id)">
+                                    Continue
                                 </button>
                             </div>
                         </div>
@@ -158,8 +158,8 @@ export default class Start extends Vue {
             @include shadowbox;
             @include container($xl);
             @include rounded($cornerRadiusLg);
-            background-color: color($color-primary, $variant-base);
-            color: color($color-text, $variant-light);
+            background-color: color($color-primary, $variant-light);
+            color: color($color-text, $variant-base);
             .actions {
                 margin-top: spacing($xl);
             }
