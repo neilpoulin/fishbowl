@@ -117,3 +117,37 @@ describe("setup game and take actions on it", () => {
         expect(game.phase).toEqual(Phase.FINISHED);
     });
 });
+
+describe("get players in team", () => {
+    test("expected sort order for players", () => {
+        const game = setupGame();
+        game.phase = Phase.IN_PROGRESS;
+        game.assignTeams();
+
+        const userIds = game.playersInTeam(0).map(p => p.userId);
+        expect(userIds).toEqual(["u1", "u3"]);
+        expect(game.playersInTeam(1).map(p => p.userId)).toEqual(["u2", "u4"]);
+    });
+});
+
+test("get next team | current team 0 | num teams 2", () => {
+    const game = new Game();
+    game.numberOfTeams = 2;
+    game.currentTeam = 0;
+    expect(game.nextTeam).toEqual(1);
+});
+
+test("get next team | current team 1 | num teams 2", () => {
+    const game = new Game();
+    game.numberOfTeams = 2;
+    game.currentTeam = 1;
+    expect(game.nextTeam).toEqual(0);
+});
+
+
+test("get next team | current team 2 | num teams 2", () => {
+    const game = new Game();
+    game.numberOfTeams = 2;
+    game.currentTeam = 2;
+    expect(game.nextTeam).toEqual(0);
+});

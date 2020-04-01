@@ -88,7 +88,7 @@
                         </button>
 
                         <div class="centered round-label round-info" v-if="!isRoundOver">
-                            <h4 v-if="game.phase === 1">Round {{ game.round + 1 }}</h4>
+                            <h4 v-if="game.phase === 1">Round {{ game.round + 1 }} | Turn {{ game.turn + 1 }}</h4>
                             <span>
                                 Words Remaining:
                                 {{ game.remainingWordsInRound.length }}

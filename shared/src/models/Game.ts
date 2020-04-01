@@ -35,7 +35,7 @@ export class Game extends BaseModel {
     players: { [userId: string]: Player } = {};
     words: WordEntry[] = [];
     round = 0;
-
+    turn = 0;
     remainingWordsInRound: WordEntry[] = [];
     currentTeam = 0;
     currentPlayerByTeam: { [team: number]: string } = {};
@@ -52,8 +52,25 @@ export class Game extends BaseModel {
         return Object.values(this.players);
     }
 
+    get nextTeam(): number {
+        let current = this.currentTeam;
+        if (current + 1 >= this.numberOfTeams) {
+            return 0;
+        }
+        return current + 1;
+    }
+
+    /**
+     * Returns a sorted list of players by team, sorted by userId
+     * @param {number} team
+     * @return {Player[]}
+     */
     playersInTeam(team: number): Player[] {
-        return this.playersList.filter(p => p.team === team);
+        const players = this.playersList.filter(p => p.team === team);
+        players.sort((p1, p2) => {
+            return p1.userId.localeCompare(p2.userId);
+        });
+        return players;
     }
 
     incrementScore(userId: string) {
@@ -75,7 +92,8 @@ export class Game extends BaseModel {
             this.moveToNextRound();
             return;
         }
-
+        this.turn += 1;
+        this.shuffleWordsRemaining();
         this.isPlaying = true;
         const countdown = 10000;
         this.turnStartsAt = new Date(Date.now() + countdown);
@@ -87,8 +105,11 @@ export class Game extends BaseModel {
         this.isPlaying = false;
         this.turnEndsAt = null;
         this.turnStartsAt = null;
-
         this.updateNextTeams();
+    }
+
+    shuffleWordsRemaining() {
+        this.remainingWordsInRound = shuffleArray(this.remainingWordsInRound);
     }
 
     /**
@@ -172,9 +193,9 @@ export class Game extends BaseModel {
         Object.keys(this.currentPlayerByTeam)
             .map(Number)
             .forEach(team => {
-                const userId = this.currentPlayerByTeam[team];
-                const playersOnTeam = Object.values(this.players).filter(p => p.team === team);
-                const currentIndex = playersOnTeam.findIndex(p => p.userId === userId);
+                const currentUserId = this.currentPlayerByTeam[team];
+                const playersOnTeam = this.playersInTeam(team);
+                const currentIndex = playersOnTeam.findIndex(p => p.userId === currentUserId);
                 const nextIndex = Math.min(playersOnTeam.length - 1, Math.max(0, currentIndex + 1));
                 const nextPlayer = playersOnTeam[nextIndex];
                 this.currentPlayerByTeam[team] = nextPlayer.userId;
