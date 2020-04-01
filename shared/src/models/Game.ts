@@ -79,9 +79,7 @@ export class Game extends BaseModel {
         this.isPlaying = true;
         const countdown = 10000;
         this.turnStartsAt = new Date(Date.now() + countdown);
-        this.turnEndsAt = new Date(
-            Date.now() + ROUND_DURATION_SECONDS * 1000 + countdown
-        );
+        this.turnEndsAt = new Date(Date.now() + ROUND_DURATION_SECONDS * 1000 + countdown);
     }
 
     endTurn() {
@@ -111,10 +109,7 @@ export class Game extends BaseModel {
     addWord(wordEntry: WordEntry): boolean {
         const _word = wordEntry.word.toLowerCase().toLowerCase();
         const existing = this.words.find(w => {
-            return (
-                w.userId === wordEntry.userId &&
-                w.word.toLowerCase().trim() === _word
-            );
+            return w.userId === wordEntry.userId && w.word.toLowerCase().trim() === _word;
         });
         if (existing) {
             return false;
@@ -178,16 +173,9 @@ export class Game extends BaseModel {
             .map(Number)
             .forEach(team => {
                 const userId = this.currentPlayerByTeam[team];
-                const playersOnTeam = Object.values(this.players).filter(
-                    p => p.team === team
-                );
-                const currentIndex = playersOnTeam.findIndex(
-                    p => p.userId === userId
-                );
-                const nextIndex = Math.min(
-                    playersOnTeam.length - 1,
-                    Math.max(0, currentIndex + 1)
-                );
+                const playersOnTeam = Object.values(this.players).filter(p => p.team === team);
+                const currentIndex = playersOnTeam.findIndex(p => p.userId === userId);
+                const nextIndex = Math.min(playersOnTeam.length - 1, Math.max(0, currentIndex + 1));
                 const nextPlayer = playersOnTeam[nextIndex];
                 this.currentPlayerByTeam[team] = nextPlayer.userId;
             });
@@ -205,9 +193,7 @@ export class Game extends BaseModel {
     nextPhase(): boolean {
         switch (this.phase) {
             case Phase.SETUP:
-                const foundNotReady = this.playersList.some(
-                    p => p.phase === Phase.SETUP
-                );
+                const foundNotReady = this.playersList.some(p => p.phase === Phase.SETUP);
                 if (foundNotReady) {
                     return false;
                 }
@@ -254,15 +240,12 @@ export class Game extends BaseModel {
 
     prepareFromFirestore(data: FirestoreData) {
         super.prepareFromFirestore(data);
-        this.players = this.playersList.reduce(
-            (map: { [id: string]: Player }, player) => {
-                const p = new Player(player.userId);
-                map[player.userId] = Object.assign(p, player);
+        this.players = this.playersList.reduce((map: { [id: string]: Player }, player) => {
+            const p = new Player(player.userId);
+            map[player.userId] = Object.assign(p, player);
 
-                return map;
-            },
-            {}
-        );
+            return map;
+        }, {});
     }
 
     static fromSnapshot(snapshot: DocumentSnapshot): Game {

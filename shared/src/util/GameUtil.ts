@@ -1,4 +1,4 @@
-import { Game, Phase } from "@shared/models/Game";
+import { Game } from "@shared/models/Game";
 import Player from "@shared/models/Player";
 import Logger from "@shared/Logger";
 
@@ -38,12 +38,12 @@ export function assignTeams(game: Game) {
     unassignedPlayers.forEach(p => {
         let smallestTeam = 0;
         Object.keys(teams)
-        .map(Number)
-        .forEach(team => {
-            if (teams[team].length < teams[smallestTeam].length) {
-                smallestTeam = team;
-            }
-        });
+            .map(Number)
+            .forEach(team => {
+                if (teams[team].length < teams[smallestTeam].length) {
+                    smallestTeam = team;
+                }
+            });
 
         p.team = smallestTeam;
         teams[smallestTeam].push(p);
