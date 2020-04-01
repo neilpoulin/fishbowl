@@ -15,6 +15,7 @@ import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 import { AlertMessage } from "@web/util/AlertMessage";
 import { AddWordParams, CompleteWordPayload, CreateGameParams, JoinGameParams, SetPhaseParams } from "@web/store/modules/games/Games";
 import { isBlank } from "@shared/util/ObjectUtil";
+import GameService from "@web/services/GameService";
 
 export enum GamesActions {
     createGame = "games.createGame",
@@ -164,25 +165,36 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         game.addPlayer(player);
         await FirestoreService.shared.save(game);
     },
-    async [GamesActions.completeWord]({ getters }, payload: CompleteWordPayload) {
+    async [GamesActions.completeWord]({ getters, commit }, payload: CompleteWordPayload) {
         const { word } = payload;
         const userId = getters[AuthGetters.currentUserId] as string | undefined;
         const game = getters[GamesGetters.currentGame] as Game | undefined;
         if (!game || !word || !userId) {
             return;
         }
-        const completed = game.completeWord(word);
-
-        if (completed) {
-            game.incrementScore(userId);
+        commit(GamesMutations.setSaving, { saving: true });
+        const result = await GameService.shared.completeWord({ gameId: game.id, word });
+        commit(GamesMutations.setSaving, { saving: false });
+        if (!result) {
+            logger.error("no response found");
+            return;
+        }
+        if (result.success) {
+            logger.info("Completed word via api: success = ", result.success);
         }
 
-        if (game.remainingWordsInRound.length === 0) {
-            logger.info("No words left, ending turn.");
-            game.endTurn();
-        }
-
-        await FirestoreService.shared.save(game);
+        // const completed = game.completeWord(word);
+        //
+        // if (completed) {
+        //     game.incrementScore(userId);
+        // }
+        //
+        // if (game.remainingWordsInRound.length === 0) {
+        //     logger.info("No words left, ending turn.");
+        //     game.endTurn();
+        // }
+        //
+        // await FirestoreService.shared.save(game);
     },
 
     async [GamesActions.startTurn]({ getters }) {

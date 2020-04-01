@@ -1,12 +1,18 @@
 import * as express from "express";
 import Logger from "@shared/Logger";
-import { Game, WordEntry } from "@shared/models/Game";
+import { Game } from "@shared/models/Game";
 import { getAuthUserId } from "@api/util/RequestUtil";
 import * as admin from "firebase-admin";
 import { Collection } from "@shared/models/Model";
-
+import { CompleteWordParams } from "@shared/api/GameApiTypes";
+import * as cors from "cors";
+import { getConfig } from "@api/util/Config";
 const app = express();
 const logger = new Logger("GameEndpoints");
+
+app.use(cors({
+    origin: getConfig().allowedOrigins,
+}));
 
 app.post("/:gameId/next-turn", async (request: express.Request, response: express.Response) => {
     const gameId = request.params.gameId;
@@ -17,12 +23,12 @@ app.post("/:gameId/next-turn", async (request: express.Request, response: expres
 
 app.post("/:gameId/actions/complete-word", async (request: express.Request, response: express.Response) => {
     const userId = await getAuthUserId(request);
-    const word = request.body.word as WordEntry | undefined;
+    const {word} = request.body as CompleteWordParams;
     if (!userId) {
         response.sendStatus(401);
         return;
     }
-
+    logger.info("completing word", word);
     const gameId = request.params.gameId;
     const txnResult = await admin.firestore().runTransaction(async txn => {
         const gameRef = admin

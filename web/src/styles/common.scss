@@ -127,6 +127,10 @@ input {
             );
         }
     }
+
+    &:disabled {
+        filter: grayscale(100%);
+    }
 }
 
 ul {

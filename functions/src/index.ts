@@ -6,12 +6,11 @@ import Logger from "@shared/Logger";
 import * as chalk from "chalk";
 import { initialize as initFirestoreUtil } from "@shared/util/FirestoreUtil";
 
+admin.initializeApp();
 initFirestoreUtil({ timestamp: admin.firestore.Timestamp });
 import * as Triggers from "@api/Triggers";
 import GameEndpoints from "@api/GameEndpoints";
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
+
 const helloWorld = functions.https.onRequest((request, response) => {
     const logger = new Logger("HelloWorld");
     logger.info("Saying Hello from functions");

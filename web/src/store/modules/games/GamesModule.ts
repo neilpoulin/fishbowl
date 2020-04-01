@@ -10,12 +10,14 @@ export interface GamesState {
     currentGameId?: string | null;
     gameActive: boolean;
     addWordError?: AlertMessage | null;
+    isSaving: boolean;
     gamesById: { [gameId: string]: Game };
 }
 
 export const state: GamesState = {
     currentGameId: localStorage.getItem("currentGameId"),
     gameActive: false,
+    isSaving: false,
     gamesById: {},
     addWordError: null
 };

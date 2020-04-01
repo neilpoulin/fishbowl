@@ -38,7 +38,7 @@
                             <div class="secret-word" v-if="currentWord && currentWord.word">
                                 <p class="label">Your word is:</p>
                                 <h2 class="word">{{ currentWord.word }}</h2>
-                                <button class="btn primary" @click="completeWord">
+                                <button class="btn primary" @click="completeWord" :disabled="isSaving">
                                     Complete
                                 </button>
                             </div>
@@ -46,7 +46,7 @@
                         <div class="centered intermission" :class="{ showRoundInfo: showFirstRoundInfo }" v-else-if="!isRoundOver">
                             <div class="up-next">
                                 <template v-if="!isCurrentPlayer">
-                                    <div class="intro">
+                                    <div class="intro" v-if="activePlayer">
                                         {{
                                             activePlayer.team === myPlayer.team
                                                 ? "Your team is up next:"
@@ -144,7 +144,7 @@ export default class GameView extends Vue {
     @Action(Games.Actions.startTurn) startTurn!: () => Promise<void>;
     @Action(Games.Actions.reset) restartGame!: () => Promise<void>;
     @Getter(Games.Getters.isGameActive) _gameActive!: boolean;
-
+    @Getter(Games.Getters.isSaving) isSaving!: boolean;
     get isGameActive(): boolean {
         return this._gameActive;
     }
@@ -183,6 +183,7 @@ export default class GameView extends Vue {
             this.game?.round === 0 &&
             !this.isGameActive &&
             !this.game.isPlaying &&
+            this.activePlayer &&
             this.game?.phase === Phase.IN_PROGRESS &&
             this.game.words.length === this.game.remainingWordsInRound.length
         );

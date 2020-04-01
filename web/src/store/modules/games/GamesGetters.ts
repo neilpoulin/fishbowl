@@ -16,7 +16,8 @@ export enum GamesGetters {
     submittedWordsError = "games.submittedWordsError",
     currentPlayer = "games.currentPlayer",
     getById = "games.getById",
-    isGameActive = "games.isGameActive"
+    isGameActive = "games.isGameActive",
+    isSaving = "games.isSaving"
 }
 
 // type GetterType =
@@ -69,5 +70,8 @@ export const getters: GetterTree<GamesState, GlobalState> = {
     },
     [GamesGetters.isGameActive](state): boolean {
         return state.gameActive;
+    },
+    [GamesGetters.isSaving](state): boolean {
+        return state.isSaving;
     }
 };

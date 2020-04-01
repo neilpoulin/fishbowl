@@ -8,7 +8,7 @@ type EndpointGetter = () => string;
 
 export const Endpoint = {
     gameNextTurn: (gameId: string): EndpointGetter => () => `/games/${gameId}/next-turn`,
-    completeWord: (gameId: string): EndpointGetter => () => `games/${{ gameId }}/actions/complete-word`
+    completeWord: (gameId: string): EndpointGetter => () => `games/${gameId}/actions/complete-word`
 };
 
 export default class ApiService {
@@ -44,6 +44,7 @@ export default class ApiService {
     async post<Req, Resp>(endpoint: EndpointGetter, payload: Req): Promise<Resp | undefined> {
         try {
             const authHeaders = await this.getAuthHeaders();
+            this.logger.info("got auth headers:", authHeaders);
             const response = await axios.post<Resp>(endpoint(), payload, {
                 headers: { ...authHeaders }
             });
