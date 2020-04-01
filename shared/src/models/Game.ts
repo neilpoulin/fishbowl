@@ -232,6 +232,7 @@ export class Game extends BaseModel {
     moveToNextRound() {
         this.remainingWordsInRound = shuffleArray([...this.words]);
         this.round = this.round + 1;
+        this.turn = 0;
     }
 
     /**
