@@ -2,14 +2,15 @@
     <div
         class="player"
         :class="{
-            activePlayer: currentPlayer === player.userId,
+            activePlayer: activePlayer === player.userId,
             activeTeam: currentTeam !== undefined && player.team === currentTeam,
-            editing: editing
+            editing: editing,
+            currentUser: isCurrentUser
         }"
         @click="editing = !editing"
     >
         <div class="content">
-            <span class="name">{{ player.displayName }}</span>
+            <span class="name">{{ player.displayName }}<span v-if="isCurrentUser">&nbsp;(You)</span></span>
             <span class="word-count" v-if="!showTeams">{{ wordCountLabel }}</span>
             <span class="score" v-if="showTeams">{{ player.score || 0 }} points</span>
         </div>
@@ -33,12 +34,14 @@ import Player from "@shared/models/Player";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { Game, Phase } from "@shared/models/Game";
+import AuthModule from "@web/store/modules/auth/AuthModule";
+import { Getter } from "vuex-class";
 
 @Component
 export default class PlayerListItem extends Vue {
     @Prop({ type: Object as () => Player, required: true }) player!: Player;
     @Prop({ type: Object as () => Game, required: true }) game!: Game;
-
+    @Getter(AuthModule.Getters.currentUserId) currentUserId: string | undefined;
     editing = false;
 
     get showTeams(): boolean {
@@ -48,6 +51,10 @@ export default class PlayerListItem extends Vue {
     playerIsReady(player: Player): boolean {
         const gamePhase = this.game?.phase ?? Phase.SETUP;
         return (player.phase ?? Phase.SETUP) > gamePhase;
+    }
+
+    get isCurrentUser(): boolean {
+        return this.player.userId === this.currentUserId;
     }
 
     get wordCount(): number {
@@ -71,7 +78,7 @@ export default class PlayerListItem extends Vue {
         return this.game?.currentTeam;
     }
 
-    get currentPlayer(): string | undefined {
+    get activePlayer(): string | undefined {
         return this.game?.getActivePlayer()?.userId;
     }
 
@@ -144,6 +151,10 @@ export default class PlayerListItem extends Vue {
         position: relative;
         justify-content: center;
         align-items: center;
+    }
+
+    &.currentUser {
+        font-style: italic;
     }
 }
 </style>
