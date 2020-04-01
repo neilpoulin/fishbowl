@@ -184,12 +184,10 @@ describe("get next player", () => {
         expect(game.currentPlayer?.userId).toEqual("u4");
         expect(game.currentPlayer?.team).toEqual(1);
 
-
         game.endTurn();
         expect(game.currentTeam).toEqual(0);
         expect(game.nextTeam).toEqual(1);
         expect(game.currentPlayer?.userId).toEqual("u1");
-
 
         game.endTurn();
         expect(game.currentTeam).toEqual(1);

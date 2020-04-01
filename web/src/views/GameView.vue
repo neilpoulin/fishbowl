@@ -27,7 +27,11 @@
                         </div>
 
                         <template v-if="isGameActive">
-                            <div v-if="activePlayer && !currentWord" class="current-player centered">
+                            <div
+                                v-if="activePlayer && !currentWord"
+                                class="current-player centered"
+                                :class="{ active: activePlayer.team === myPlayer.team }"
+                            >
                                 <span class="now-playing-label">Now Playing:</span>
                                 <span class="player-name">
                                     {{ activePlayer.displayName }}
@@ -43,7 +47,11 @@
                                 </button>
                             </div>
                         </template>
-                        <div class="centered intermission" :class="{ showRoundInfo: showFirstRoundInfo }" v-else-if="!isRoundOver">
+                        <div
+                            class="centered intermission"
+                            :class="{ showRoundInfo: showFirstRoundInfo, active: activePlayer.team === myPlayer.team }"
+                            v-else-if="!isRoundOver"
+                        >
                             <div class="up-next">
                                 <template v-if="!isCurrentPlayer">
                                     <div class="intro" v-if="activePlayer">
@@ -387,6 +395,11 @@ export default class GameView extends Vue {
         .player-name {
         }
     }
+
+    &.active {
+        background-color: color($color-accent, $variant-light);
+        color: white;
+    }
 }
 
 .secret-word {
@@ -394,7 +407,8 @@ export default class GameView extends Vue {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: color($color-primary, $variant-light);
+    background-color: color($color-accent, $variant-light);
+    color: white;
 
     .label {
         margin: 0;
@@ -409,7 +423,6 @@ export default class GameView extends Vue {
     background-color: color($color-primary, $variant-light);
     .now-playing-label {
         @include font($sm);
-        color: color($color-text);
         margin-bottom: spacing($lg);
     }
 
@@ -421,6 +434,11 @@ export default class GameView extends Vue {
     .team-name {
         @include font($md);
         //color: color($color-accent, $variant-light);
+    }
+
+    &.active {
+        background-color: color($color-accent, $variant-light);
+        color: white;
     }
 }
 
