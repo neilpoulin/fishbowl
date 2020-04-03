@@ -4,7 +4,7 @@
             <div class="header content">
                 <h1>Fish Bowl</h1>
                 <p class="subtitle">
-                    Play your favorite party game &mdash; now with less COVD-19!
+                    Play your favorite party game &mdash; now with less COVID-19!
                 </p>
                 <div class="actions">
                     <router-link tag="button" class="btn primary" :to="playRoute">
