@@ -2,7 +2,7 @@ import { BaseModel, Collection, FirestoreData } from "@shared/models/Model";
 import { DocumentSnapshot } from "@shared/util/FirestoreUtil";
 import Player from "@shared/models/Player";
 import Logger from "@shared/Logger";
-import { isString, shuffleArray } from "@shared/util/ObjectUtil";
+import { isNull, isString, shuffleArray } from "@shared/util/ObjectUtil";
 import { assignTeams } from "@shared/util/GameUtil";
 
 export interface WordEntry {
@@ -217,7 +217,34 @@ export class Game extends BaseModel {
         return;
     }
 
-    assignCurrentPlayers() {
+    /**
+     * Set up the current player object
+     * @return {number} The number of teams that were updated.
+     */
+    initializeCurrentPlayers(): number {
+        if (!this.currentPlayerByTeam) {
+            this.currentPlayerByTeam = {};
+        }
+        let count = 0;
+        for (let team = 0; team < this.numberOfTeams; team++) {
+            const currentUserId = this.currentPlayerByTeam[team];
+            if (!isNull(currentUserId)) {
+                continue;
+            }
+            const playersOnTeam = this.playersInTeam(team);
+            if (playersOnTeam.length > 0) {
+                const nextPlayer = playersOnTeam[0];
+                this.currentPlayerByTeam[team] = nextPlayer.userId;
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Figure out who is the current player on each team and assign it to the currentPlayerByTeam Object
+     */
+    updateCurrentPlayers() {
         for (let team = 0; team < this.numberOfTeams; team++) {
             const currentUserId = this.currentPlayerByTeam[team];
             const playersOnTeam = this.playersInTeam(team);
@@ -235,6 +262,10 @@ export class Game extends BaseModel {
         this.turn = 0;
     }
 
+    allPlayersReadyForNextPhase(): boolean {
+        return !this.playersList.some(p => p.phase <= this.phase)
+    }
+
     /**
      * Move to the next phase, if able
      * @return {boolean} if the game moved to the next phase or not
@@ -242,10 +273,11 @@ export class Game extends BaseModel {
     nextPhase(): boolean {
         switch (this.phase) {
             case Phase.SETUP:
-                const foundNotReady = this.playersList.some(p => p.phase === Phase.SETUP);
-                if (foundNotReady) {
+                // const foundNotReady = this.playersList.some(p => p.phase === Phase.SETUP);
+                if (!this.allPlayersReadyForNextPhase()) {
                     return false;
                 }
+                this.remainingWordsInRound = shuffleArray([...this.words]);
                 this.phase = Phase.IN_PROGRESS;
                 return true;
             case Phase.IN_PROGRESS:
@@ -281,11 +313,18 @@ export class Game extends BaseModel {
         return super.create(data, Game);
     }
 
-    assignTeams() {
+    /**
+     * Assign players to teams. This will also set up the current player map.
+     * @return {number} The number of players that were assigned teams.
+     */
+    assignTeams(): {playersAssigned: number, numTeamsAssigned: number} {
+        let numberAssigned = 0;
+        let numTeamsAssigned = 0;
         if (this.phase === Phase.IN_PROGRESS) {
-            assignTeams(this);
-            this.assignCurrentPlayers();
+            numberAssigned = assignTeams(this);
+            numTeamsAssigned = this.initializeCurrentPlayers();
         }
+        return {playersAssigned:numberAssigned, numTeamsAssigned}
     }
 
     prepareFromFirestore(data: FirestoreData) {

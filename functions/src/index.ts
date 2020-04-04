@@ -22,8 +22,8 @@ const helloWorld = functions.https.onRequest((request, response) => {
 
 module.exports = {
     helloWorld,
-    updateGamePhase: Triggers.updateGamePhase,
-    setupTeams: Triggers.setupTeams,
+    updateGameState: Triggers.updateGameState,
+    // setupTeams: Triggers.setupTeams,
     // processGameEvent: Triggers.processGameEvent,
 
     //https

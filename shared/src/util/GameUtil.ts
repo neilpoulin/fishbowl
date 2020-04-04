@@ -4,7 +4,14 @@ import Logger from "@shared/Logger";
 
 const logger = new Logger("GameUtil");
 
-export function assignTeams(game: Game) {
+/**
+ * Assign teams to players in the game.
+ * This can be run at any time and will only update players that do not yet have a team.
+ * New players are added to the team with the fewest number of players.
+ * @param {Game} game
+ * @return {number}
+ */
+export function assignTeams(game: Game): number {
     // if (game.phase === Phase.SETUP) {
     //     logger.info("Game is in setup, no need to process it");
     //     return;
@@ -32,7 +39,7 @@ export function assignTeams(game: Game) {
 
     if (unassignedPlayers.length === 0) {
         logger.info("all players have been assigned, returning");
-        return;
+        return 0;
     }
 
     unassignedPlayers.forEach(p => {
@@ -48,4 +55,5 @@ export function assignTeams(game: Game) {
         p.team = smallestTeam;
         teams[smallestTeam].push(p);
     });
+    return unassignedPlayers.length;
 }

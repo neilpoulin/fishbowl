@@ -152,6 +152,28 @@ test("get next team | current team 2 | num teams 2", () => {
     expect(game.nextTeam).toEqual(0);
 });
 
+describe("assign players", () => {
+    test("new game with new players", () => {
+        const game = setupGame();
+        game.phase = Phase.IN_PROGRESS;
+        let assignResult = game.assignTeams();
+
+        expect(assignResult.playersAssigned).toEqual(game.playersList.length);
+        expect(assignResult.numTeamsAssigned).toEqual(2);
+
+        assignResult = game.assignTeams();
+        expect(assignResult.playersAssigned).toEqual(0);
+        expect(assignResult.numTeamsAssigned).toEqual(0);
+
+        game.addPlayer(new Player("np", "New Player"));
+        assignResult = game.assignTeams();
+
+        expect(assignResult.playersAssigned).toEqual(1);
+        expect(assignResult.numTeamsAssigned).toEqual(0);
+
+    })
+});
+
 describe("get next player", () => {
     test("initial ", () => {
         const game = setupGame();
@@ -161,7 +183,6 @@ describe("get next player", () => {
         expect(game.currentTeam).toEqual(0);
         expect(game.nextTeam).toEqual(1);
         expect(game.currentPlayer?.userId).toEqual("u1");
-
 
         game.endTurn();
         expect(game.currentTeam).toEqual(1);
@@ -194,4 +215,15 @@ describe("get next player", () => {
         expect(game.nextTeam).toEqual(0);
         expect(game.currentPlayer?.userId).toEqual("u2");
     })
-})
+});
+
+test("all players ready for next phase", () => {
+    const game = setupGame();
+    expect(game.allPlayersReadyForNextPhase()).toBeFalsy();
+
+    game.playersList.forEach(p => p.phase = Phase.IN_PROGRESS);
+    expect(game.allPlayersReadyForNextPhase()).toBeTruthy();
+
+    game.phase = Phase.IN_PROGRESS;
+    expect(game.allPlayersReadyForNextPhase()).toBeFalsy();
+});
