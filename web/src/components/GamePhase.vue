@@ -3,7 +3,12 @@
         <div v-if="phase === Phase.SETUP" class="description">
             <h3 class="title">Welcome to <span class="logo">FishBowl</span></h3>
             <p>
-                First, enter some words into the fishbowl. These words will be used through out the game.
+                Start adding words into the "fish bowl". The words added should be nouns. Players in the game can choose how many words to
+                add, we recommend around 3-5 words per person.
+            </p>
+            <p>
+                When you're finished adding words, hit the "ready" button. You can see on the bottom of the screen the players that are
+                ready as well as what team you are on (Team 1 or Team 2). When all players are ready, the game will start!
             </p>
 
             <p>

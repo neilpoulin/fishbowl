@@ -23,6 +23,7 @@ enum Field {
 }
 
 export const ROUND_DURATION_SECONDS = 60;
+export const COUNTDOWN_DURATION_SECONDS = 5;
 
 const logger = new Logger("Game.ts");
 
@@ -104,9 +105,9 @@ export class Game extends BaseModel {
         this.turn += 1;
         this.shuffleWordsRemaining();
         this.isPlaying = true;
-        const countdown = 10000;
-        this.turnStartsAt = new Date(Date.now() + countdown);
-        this.turnEndsAt = new Date(Date.now() + ROUND_DURATION_SECONDS * 1000 + countdown);
+
+        this.turnStartsAt = new Date(Date.now() + COUNTDOWN_DURATION_SECONDS * 1000);
+        this.turnEndsAt = new Date(Date.now() + (ROUND_DURATION_SECONDS + COUNTDOWN_DURATION_SECONDS) * 1000);
     }
 
     endTurn() {
@@ -263,7 +264,7 @@ export class Game extends BaseModel {
     }
 
     allPlayersReadyForNextPhase(): boolean {
-        return !this.playersList.some(p => p.phase <= this.phase)
+        return !this.playersList.some(p => p.phase <= this.phase);
     }
 
     /**
@@ -317,14 +318,14 @@ export class Game extends BaseModel {
      * Assign players to teams. This will also set up the current player map.
      * @return {number} The number of players that were assigned teams.
      */
-    assignTeams(): {playersAssigned: number, numTeamsAssigned: number} {
+    assignTeams(): { playersAssigned: number; numTeamsAssigned: number } {
         let numberAssigned = 0;
         let numTeamsAssigned = 0;
         if (this.phase === Phase.IN_PROGRESS) {
             numberAssigned = assignTeams(this);
             numTeamsAssigned = this.initializeCurrentPlayers();
         }
-        return {playersAssigned:numberAssigned, numTeamsAssigned}
+        return { playersAssigned: numberAssigned, numTeamsAssigned };
     }
 
     prepareFromFirestore(data: FirestoreData) {
