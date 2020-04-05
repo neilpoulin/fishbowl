@@ -11,9 +11,9 @@
                 ready as well as what team you are on (Team 1 or Team 2). When all players are ready, the game will start!
             </p>
 
-            <p>
-                <span>Invite friends by sending them this link:</span>
-            </p>
+            <!--            <p>-->
+            <!--                <span>Invite friends by sending them this link:</span>-->
+            <!--            </p>-->
             <!--            <div class="link-input-container">-->
             <!--                <span class="game-link" ref="linkInput">{{ gameUrl }}</span>-->
             <!--                <button-->
