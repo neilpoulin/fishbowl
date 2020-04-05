@@ -283,8 +283,8 @@ export class Game extends BaseModel {
                 this.phase = Phase.IN_PROGRESS;
                 return true;
             case Phase.IN_PROGRESS:
-                this.phase = Phase.FINISHED;
-                return true;
+                // this.phase = Phase.FINISHED;
+                return false;
             case Phase.FINISHED:
                 return false;
         }
