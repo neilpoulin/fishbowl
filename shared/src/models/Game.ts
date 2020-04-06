@@ -276,7 +276,7 @@ export class Game extends BaseModel {
             case Phase.SETUP:
                 // const foundNotReady = this.playersList.some(p => p.phase === Phase.SETUP);
 
-                if (this.playersList.length > 1 && !this.allPlayersReadyForNextPhase()) {
+                if (this.playersList.length < 2 || !this.allPlayersReadyForNextPhase()) {
                     return false;
                 }
                 this.remainingWordsInRound = shuffleArray([...this.words]);

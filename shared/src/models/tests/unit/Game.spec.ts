@@ -104,8 +104,8 @@ describe("setup game and take actions on it", () => {
         game.playersList.forEach(p => [(p.phase = Phase.IN_PROGRESS)]);
 
         game.phase = Phase.IN_PROGRESS;
-        expect(game.nextPhase()).toBeTruthy();
-        expect(game.phase).toEqual(Phase.FINISHED);
+        expect(game.nextPhase()). toBeFalsy();
+        expect(game.phase).toEqual(Phase.IN_PROGRESS);
     });
 
     test("next phase from FINISHED", () => {
