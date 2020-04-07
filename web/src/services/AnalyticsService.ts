@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { Analytics, auth } from "@web/config/FirebaseConfig";
 import { Game, WordEntry } from "@shared/models/Game";
 import { Route } from "vue-router";
-/* eslint-disable @typescript-eslint/camelcase */
+
 export default class AnalyticsService {
     static shared: AnalyticsService;
     analytics: Analytics;
@@ -18,10 +19,10 @@ export default class AnalyticsService {
         });
     }
 
-    routeChanged(to: Route) {
+    routeChanged(to: Route): void {
         //Only want to fire subsequent page view events as standard analytics will fire the initial page load.
         if (this.firstRouteFired) {
-            this.analytics.logEvent("page_view", {
+            this.analytics.logEvent("page_view" as never, {
                 page_path: to.path,
                 page_title: to.name,
                 page_location: window.location.href,
