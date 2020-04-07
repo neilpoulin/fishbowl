@@ -33,7 +33,6 @@
 
     // Do not allow super() to be called twice in a constructor.
     "no-duplicate-super": true,
-
     // Do not allow the same case to appear more than once in a switch block.
     "no-duplicate-switch-case": true,
 

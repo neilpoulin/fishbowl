@@ -16,6 +16,7 @@ import { AlertMessage } from "@web/util/AlertMessage";
 import { AddWordParams, CompleteWordPayload, CreateGameParams, JoinGameParams, SetPhaseParams } from "@web/store/modules/games/Games";
 import { isBlank } from "@shared/util/ObjectUtil";
 import GameService from "@web/services/GameService";
+import AnalyticsService from "@web/services/AnalyticsService";
 
 export enum GamesActions {
     createGame = "games.createGame",
@@ -46,6 +47,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         await FirestoreService.shared.save(game);
 
         dispatch(GamesActions.join, { gameId: game.id });
+        AnalyticsService.shared.createdGame(game);
         return game;
     },
     async [GamesActions.observeAll]({ dispatch }): Promise<void> {
@@ -98,6 +100,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             commit(GamesMutations.setCurrentGame, payload);
             localStorage.setItem("currentGameId", payload.gameId);
             await dispatch(GamesActions.updatePlayer);
+            AnalyticsService.shared.joinedGame(game);
         }
     },
     async [GamesActions.updatePlayer]({ getters, rootState }) {
@@ -146,6 +149,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             logger.info("added word to the game..saving the game object");
             commit(GamesMutations.addWordSuccess);
             await FirestoreService.shared.save(game);
+            AnalyticsService.shared.wordAdded(wordEntry, game.id);
         } else {
             logger.error("Unable to add word");
             commit(GamesMutations.addWordError, {

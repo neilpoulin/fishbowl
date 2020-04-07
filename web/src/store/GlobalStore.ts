@@ -1,14 +1,19 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import Logger from "@shared/Logger";
-import { initFirestore } from "@web/config/FirebaseConfig";
+import { analytics, initFirebase } from "@web/config/FirebaseConfig";
 import { GlobalState, Namespace } from "@web/store/StoreTypes";
 import * as Auth from "@web/store/modules/auth/AuthModule";
 import Games from "@web/store/modules/games/GamesModule";
 import { getters } from "@web/store/Getters";
+import AnalyticsService from "@web/services/AnalyticsService";
 
 const logger = new Logger("Store");
-initFirestore();
+
+//TODO: refactor these into a more obvious place to init them.
+initFirebase();
+AnalyticsService.initialize({ analytics: analytics() });
+
 Vue.use(Vuex);
 
 const initialState: GlobalState = {

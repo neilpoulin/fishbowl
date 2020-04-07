@@ -18,6 +18,9 @@
 import Vue from "vue";
 import { AlertMessage } from "@web/util/AlertMessage";
 import Logger from "@shared/Logger";
+import AnalyticsService from "@web/services/AnalyticsService";
+import { GamesGetters } from "@web/store/modules/games/GamesGetters";
+
 const logger = new Logger("InvitePlayers");
 export default Vue.extend({
     name: "InvitePlayers",
@@ -61,6 +64,10 @@ export default Vue.extend({
                 const success = document.execCommand("copy");
                 if (success) {
                     logger.info("Copied text to clipboard");
+                    const game = this.$store.getters[GamesGetters.currentGame];
+                    if (game) {
+                        AnalyticsService.shared.copyGameLink(game);
+                    }
                     this.showCopySuccessAlert();
                 } else {
                     logger.warn("unable to copy text");
@@ -85,6 +92,7 @@ export default Vue.extend({
     @include rounded($cornerRadiusXl);
     padding-right: spacing($md);
     background-color: color($color-background, $variant-light);
+
     .inner {
         overflow: auto;
         margin: 0;
@@ -101,6 +109,7 @@ export default Vue.extend({
     border: 1px solid color($color-primary, $variant-base);
 
     @include container($md);
+
     .link-input {
         display: none;
         border-radius: 3rem;

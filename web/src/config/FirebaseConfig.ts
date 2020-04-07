@@ -2,9 +2,11 @@ import * as firebase from "firebase/app";
 // These imports load individual services into the firebase namespace.
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/analytics";
 import Logger from "@shared/Logger";
 import { initialize as initFirestoreUtil } from "@shared/util/FirestoreUtil";
 import FirestoreService from "@web/services/FirestoreService";
+export import Analytics = firebase.analytics.Analytics;
 
 const logger = new Logger("FirestoreConfig");
 
@@ -29,7 +31,11 @@ export const auth = () => {
     return _firebaseApp?.auth() as firebase.auth.Auth;
 };
 
-export function initFirestore(): firebase.app.App {
+export const analytics = () => {
+    return _firebaseApp?.analytics() as firebase.analytics.Analytics;
+};
+
+export function initFirebase(): firebase.app.App {
     initFirestoreUtil({ timestamp: firebase.firestore.Timestamp });
 
     if (_firebaseApp) {
@@ -37,6 +43,7 @@ export function initFirestore(): firebase.app.App {
         return _firebaseApp;
     }
     _firebaseApp = firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
     FirestoreService.initialize(db());
     logger.info("Configured Firebase");
 
