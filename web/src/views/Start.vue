@@ -54,7 +54,7 @@ import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
 import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 import Games from "@web/store/modules/games/GamesModule";
 import { Game } from "@shared/models/Game";
-import router, { RouteBuilder } from "@web/router";
+import router, { RouteBuilder } from "@web/router/router";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
 import { CreateGameParams, JoinGameParams } from "@web/store/modules/games/Games";
 

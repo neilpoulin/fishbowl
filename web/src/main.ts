@@ -1,6 +1,6 @@
 import Vue from "vue";
 import App from "@web/App.vue";
-import router from "@web/router";
+import router from "@web/router/router";
 import { store } from "@web/store/GlobalStore";
 import { auth } from "@web/config/FirebaseConfig";
 import firebase from "firebase";

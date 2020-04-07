@@ -45,7 +45,7 @@
 import Vue from "vue";
 import GameRoundInfo from "@web/components/GameRoundInfo.vue";
 import Component from "vue-class-component";
-import { RoutePath } from "@web/router";
+import { RoutePath } from "@web/router/router";
 
 @Component({
     components: {

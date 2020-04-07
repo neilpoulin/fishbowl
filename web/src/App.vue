@@ -19,7 +19,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import Auth from "@web/store/modules/auth/AuthModule";
-import { routes } from "@web/router";
+import { routes } from "@web/router/router";
 import { Getter } from "vuex-class";
 
 @Component

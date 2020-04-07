@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { RoutePath } from "@web/router";
+import { RoutePath } from "@web/router/router";
 
 export default Vue.extend({
     name: "HelloWorld",

@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import About from "@web/views/About.vue";
-import { RoutePath } from "@web/router";
+import { RoutePath } from "@web/router/router";
 
 export default {
     name: "Home",
