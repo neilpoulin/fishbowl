@@ -176,6 +176,9 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         if (!game || !word || !userId) {
             return;
         }
+        /*
+            Complete word via game service - it's slow
+         */
         commit(GamesMutations.setSaving, { saving: true });
         const result = await GameService.shared.completeWord({ gameId: game.id, word });
         commit(GamesMutations.setSaving, { saving: false });
@@ -187,6 +190,9 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             logger.info("Completed word via api: success = ", result.success);
         }
 
+        /*
+            Complete word locally via transaction
+         */
         // const completed = game.completeWord(word);
         //
         // if (completed) {

@@ -6,4 +6,5 @@ export interface CompleteWordParams {
 
 export interface CompleteWordResult {
     success: boolean;
+    removed?: boolean;
 }
