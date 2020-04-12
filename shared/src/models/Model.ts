@@ -1,7 +1,4 @@
-import {
-    convertTimestampToDate,
-    toFirestoreData
-} from "@shared/util/FirestoreUtil";
+import { convertTimestampToDate, toFirestoreData } from "@shared/util/FirestoreUtil";
 
 export enum Collection {
     games = "games"
@@ -20,11 +17,7 @@ export abstract class BaseModel implements Model {
     createdAt: Date = new Date();
     updatedAt: Date = new Date();
 
-    static create<T extends Model>(
-        data: FirestoreData,
-        Type: { new (): T },
-        id?: string
-    ): T {
+    static create<T extends Model>(data: FirestoreData, Type: { new (): T }, id?: string): T {
         if (id) {
             data.id = id;
         }

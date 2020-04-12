@@ -1,7 +1,17 @@
 <template>
     <div class="word-container">
         <div class="input-container">
-            <h3 class="title">Add Words</h3>
+            <div class="title">
+                <h3 class="">Add Words</h3>
+                <p>
+                    Add 3 - 5 words to be used in the game. Each word must be a
+                    <a
+                        href="https://www.google.com/search?q=what+is+a+noun&rlz=1C5CHFA_enUS810US810&oq=what+is+a+noun&aqs=chrome.0.69i59j0l6j69i60.2269j0j4&sourceid=chrome&ie=UTF-8"
+                        target="_blank"
+                        >noun</a
+                    >.
+                </p>
+            </div>
             <div class="word-entry input-field">
                 <input type="text" v-model="wordInput" placeholder="Enter a word" @keyup.enter="submit" />
                 <button class="btn secondary" @click="submit">
@@ -78,6 +88,12 @@ export default class GameSubmitWords extends Vue {
 
     .title {
         margin-bottom: spacing($lg);
+        a {
+            color: color($color-text, $variant-light);
+            &:visited {
+                color: color($color-text, $variant-light);
+            }
+        }
     }
 }
 

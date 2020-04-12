@@ -102,7 +102,7 @@
                                 <strong>{{ playerName(game.currentTurnResult.userId) }}</strong> completed
                                 {{ game.currentTurnResult.wordsCompleted.length }} words
                             </p>
-                            <ul v-if="!isGameActive">
+                            <ul>
                                 <li v-for="(word, index) in game.currentTurnResult.wordsCompleted" :key="`turn_result_${index}`">
                                     {{ word.word }}
                                 </li>

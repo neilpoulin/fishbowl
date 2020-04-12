@@ -17,7 +17,16 @@
                 </button>
             </div>
         </div>
-        <div v-if="showTeamName && player && player.team !== undefined">Team {{ player.team + 1 }}</div>
+        <div v-if="!editing && showTeamName && player && player.team !== undefined">Team {{ player.team + 1 }}</div>
+        <div v-if="editing && showTeamName">
+            <label>
+                Team
+                <select>
+                    <option>Team 1</option>
+                    <option>Team 2</option>
+                </select>
+            </label>
+        </div>
     </div>
 </template>
 
