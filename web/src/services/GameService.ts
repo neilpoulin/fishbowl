@@ -50,7 +50,13 @@ export default class GameService {
                     this.logger.info("word not removed, not doing anything");
                     return { success: true, removed: false };
                 }
-
+                const turnResult = game.currentTurnResult;
+                if (
+                    !(turnResult?.wordsCompleted ?? []).some(completed => completed.word === word.word && completed.userId === word.userId)
+                ) {
+                    turnResult?.wordsCompleted.push(word);
+                    game.currentTurnResult = turnResult;
+                }
                 game.incrementScore(userId);
 
                 if (game.remainingWordsInRound.length === 0) {

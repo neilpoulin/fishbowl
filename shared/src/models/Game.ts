@@ -25,6 +25,13 @@ enum Field {
 export const ROUND_DURATION_SECONDS = 60;
 export const COUNTDOWN_DURATION_SECONDS = 5;
 
+interface TurnResult {
+    userId: string;
+    wordsCompleted: WordEntry[];
+    turn: number;
+    round: number;
+}
+
 const logger = new Logger("Game.ts");
 
 export class Game extends BaseModel {
@@ -37,6 +44,8 @@ export class Game extends BaseModel {
     words: WordEntry[] = [];
     round = 0;
     turn = 0;
+    turnResults: { [turnKey: string]: TurnResult } = {};
+
     remainingWordsInRound: WordEntry[] = [];
     currentTeam = 0;
     currentPlayerByTeam: { [team: number]: string } = {};
@@ -48,6 +57,32 @@ export class Game extends BaseModel {
     turnStartsAt: Date | undefined | null;
 
     videoChatUrl: string | undefined;
+
+    get turnKey(): string {
+        return `${this.round}:${this.turn}`;
+    }
+
+    get currentTurnResult(): TurnResult | undefined {
+        const result = this.turnResults[this.turnKey] as TurnResult | undefined;
+        if (result) {
+            return result;
+        }
+
+        const currentUserId = this.currentPlayer?.userId;
+        if (!currentUserId) {
+            return undefined;
+        }
+        return { userId: currentUserId, turn: this.turn, round: this.round, wordsCompleted: [] };
+    }
+
+    set currentTurnResult(turnResult: TurnResult | undefined) {
+        if (!turnResult) {
+            return;
+        }
+
+        const turnKey = this.turnKey;
+        this.turnResults[turnKey] = turnResult;
+    }
 
     get playersList(): Player[] {
         return Object.values(this.players);

@@ -78,6 +78,7 @@
                                 Start Turn
                             </button>
                         </div>
+
                         <div class="centered intermission" v-else-if="isRoundOver">
                             <span class="emoji huge">🎣</span>
                             <h4>
@@ -94,6 +95,19 @@
                         <button class="btn danger" @click="endTurn" v-if="isAdmin">
                             End Turn
                         </button>
+
+                        <!-- Turn Info -->
+                        <div v-if="game.currentTurnResult">
+                            <p>
+                                <strong>{{ playerName(game.currentTurnResult.userId) }}</strong> completed
+                                {{ game.currentTurnResult.wordsCompleted.length }} words
+                            </p>
+                            <ul v-if="!isGameActive">
+                                <li v-for="(word, index) in game.currentTurnResult.wordsCompleted" :key="`turn_result_${index}`">
+                                    {{ word.word }}
+                                </li>
+                            </ul>
+                        </div>
 
                         <div class="centered round-label round-info" v-if="!isRoundOver">
                             <h4 v-if="game.phase === 1">Round {{ game.round + 1 }} | Turn {{ game.turn + 1 }}</h4>
@@ -280,6 +294,13 @@ export default class GameView extends Vue {
         if (word) {
             this.markCompleted({ word });
         }
+    }
+
+    playerName(userId?: string): string | undefined {
+        if (!userId) {
+            return undefined;
+        }
+        return this.game?.getPlayer(userId)?.displayName;
     }
 
     async endTurn() {
