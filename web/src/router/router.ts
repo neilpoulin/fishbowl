@@ -11,7 +11,7 @@ import AnalyticsService from "@web/services/AnalyticsService";
 Vue.use(VueRouter);
 
 const logger = new Logger("Router.index");
-
+const DEFAULT_TITLE = "Fishbowl - Play Online";
 export enum RoutePath {
     HOME = "/",
     SIGNUP = "/signup",
@@ -37,6 +37,7 @@ interface MetaRoute extends RouteConfig {
     meta?: {
         requiresAuth?: boolean;
         hideNav?: boolean;
+        title?: string;
     };
 }
 
@@ -51,13 +52,19 @@ export const routes: MetaRoute[] = [
         showInNav: false,
         path: RoutePath.SIGNUP,
         name: RouteName.SIGNUP,
-        component: () => import("@web/views/Signup.vue")
+        component: () => import("@web/views/Signup.vue"),
+        meta: {
+            title: "Sign Up | Fishbowl"
+        }
     },
     {
         showInNav: false,
         path: RoutePath.ABOUT,
         name: RouteName.ABOUT,
-        component: () => import("@web/views/About.vue")
+        component: () => import("@web/views/About.vue"),
+        meta: {
+            title: "How to play | Fishbowl"
+        }
     },
     {
         path: RoutePath.GAMES,
@@ -65,7 +72,8 @@ export const routes: MetaRoute[] = [
         component: () => import("@web/views/Start.vue"),
         showInNav: true,
         meta: {
-            requiresAuth: true
+            requiresAuth: true,
+            title: "Games | Fishbowl"
         }
     },
     {
@@ -75,7 +83,8 @@ export const routes: MetaRoute[] = [
         showInNav: false,
         meta: {
             requiresAuth: true,
-            hideNav: false
+            hideNav: false,
+            title: "Play | Fishbowl"
         }
     }
 ];
@@ -93,6 +102,7 @@ interface MetaRouteRecord extends RouteRecord {
 router.afterEach((to, from) => {
     logger.info(`to: ${to.path} | from: ${from.path}`);
     AnalyticsService.shared.routeChanged(to);
+    document.title = to.meta.title || DEFAULT_TITLE;
 });
 
 router.beforeEach((to, from, next) => {

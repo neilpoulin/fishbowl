@@ -38,24 +38,15 @@ export function initialize(params: { timestamp: any }) {
 }
 
 export function isTimestamp(value: any): boolean {
-    return (
-        isNotNull(value) &&
-        (value instanceof TimestampClass ||
-            (value.seconds && value.nanoseconds))
-    );
+    return isNotNull(value) && (value instanceof TimestampClass || (value.seconds && value.nanoseconds));
 }
 
 export function timestampToDate(timestamp: any): Date | undefined {
     if (isTimestamp(timestamp)) {
         if (timestamp.toDate) {
             return timestamp.toDate();
-        } else if (
-            timestamp.hasOwnProperty("seconds") &&
-            timestamp.hasOwnProperty("nanoseconds")
-        ) {
-            return new Date(
-                timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
-            );
+        } else if (timestamp.hasOwnProperty("seconds") && timestamp.hasOwnProperty("nanoseconds")) {
+            return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
         }
     }
     return;
@@ -95,10 +86,7 @@ export function convertTimestampToDate(input: any): any {
     });
 }
 
-export function fromFirestoreData<T extends BaseModel>(
-    data: any,
-    Type: { new (): T }
-): T {
+export function fromFirestoreData<T extends BaseModel>(data: any, Type: { new (): T }): T {
     const transformed = convertTimestampToDate(data);
 
     const model = new Type();
