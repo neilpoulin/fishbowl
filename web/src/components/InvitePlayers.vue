@@ -1,59 +1,29 @@
 <template>
-    <div class="phase">
-        <div v-if="phase === Phase.SETUP" class="description">
-            <h3 class="title">Welcome to <span class="logo">FishBowl</span></h3>
-            <p>
-                Start adding words into the "fish bowl". The words added should be nouns. Players in the game can choose how many words to
-                add, we recommend around 3-5 words per person.
-            </p>
-            <p>
-                When you're finished adding words, hit the "ready" button. You can see on the bottom of the screen the players that are
-                ready as well as what team you are on (Team 1 or Team 2). When all players are ready, the game will start!
-            </p>
-
-            <!--            <p>-->
-            <!--                <span>Invite friends by sending them this link:</span>-->
-            <!--            </p>-->
-            <!--            <div class="link-input-container">-->
-            <!--                <span class="game-link" ref="linkInput">{{ gameUrl }}</span>-->
-            <!--                <button-->
-            <!--                    class="btn small"-->
-            <!--                    :class="{-->
-            <!--                        'primary light': copyAlert != null,-->
-            <!--                        secondary: copyAlert == null-->
-            <!--                    }"-->
-            <!--                    @click="copyLink"-->
-            <!--                >-->
-            <!--                    {{ copyAlert !== null ? copyAlert.message : "Copy Link " }}-->
-            <!--                </button>-->
-            <!--            </div>-->
-        </div>
+    <div class="link-input-container">
+        <span class="game-link" ref="linkInput">{{ gameUrl }}</span>
+        <button
+            class="btn small"
+            :class="{
+                'primary light': copyAlert != null,
+                secondary: copyAlert == null
+            }"
+            @click="copyLink"
+        >
+            {{ copyAlert !== null ? copyAlert.message : "Copy Link " }}
+        </button>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { Phase } from "@shared/models/Game";
-import Logger from "@shared/Logger";
 import { AlertMessage } from "@web/util/AlertMessage";
+import Logger from "@shared/Logger";
+import AnalyticsService from "@web/services/AnalyticsService";
+import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 
-const logger = new Logger("GamePhase");
-
+const logger = new Logger("InvitePlayers");
 export default Vue.extend({
-    components: {},
-    props: {
-        phase: { type: Number as () => Phase, default: Phase.SETUP }
-    },
-    filters: {
-        trim(input?: string | undefined): string | undefined {
-            return input?.trim();
-        }
-    },
-    destroyed(): void {
-        if (this.copyAlertTimeout) {
-            clearTimeout(this.copyAlertTimeout);
-        }
-    },
+    name: "InvitePlayers",
     data(): {
         copyAlert: AlertMessage | null;
         copyAlertTimeout: number | null;
@@ -64,22 +34,8 @@ export default Vue.extend({
         };
     },
     computed: {
-        // eslint-disable-next-line vue/return-in-computed-property
-        title(): string {
-            switch (this.phase) {
-                case Phase.SETUP:
-                    return "Welcome to Fish Bowl!";
-                case Phase.IN_PROGRESS:
-                    return "";
-                case Phase.FINISHED:
-                    return "";
-            }
-        },
         gameUrl(): string {
             return window.location.href;
-        },
-        Phase(): object {
-            return Phase;
         }
     },
     methods: {
@@ -108,6 +64,10 @@ export default Vue.extend({
                 const success = document.execCommand("copy");
                 if (success) {
                     logger.info("Copied text to clipboard");
+                    const game = this.$store.getters[GamesGetters.currentGame];
+                    if (game) {
+                        AnalyticsService.shared.copyGameLink(game);
+                    }
                     this.showCopySuccessAlert();
                 } else {
                     logger.warn("unable to copy text");
@@ -125,15 +85,6 @@ export default Vue.extend({
 <style scoped lang="scss">
 @import "mixins";
 
-.logo {
-    @include logo;
-}
-
-.phase {
-    width: 100%;
-    overflow: hidden;
-}
-
 .link-container {
     border: 1px solid rgba(color($color-shadow), 0.3);
     overflow: hidden;
@@ -141,6 +92,7 @@ export default Vue.extend({
     @include rounded($cornerRadiusXl);
     padding-right: spacing($md);
     background-color: color($color-background, $variant-light);
+
     .inner {
         overflow: auto;
         margin: 0;
@@ -157,6 +109,7 @@ export default Vue.extend({
     border: 1px solid color($color-primary, $variant-base);
 
     @include container($md);
+
     .link-input {
         display: none;
         border-radius: 3rem;

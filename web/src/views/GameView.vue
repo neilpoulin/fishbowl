@@ -27,7 +27,11 @@
                         </div>
 
                         <template v-if="isGameActive">
-                            <div v-if="activePlayer && !currentWord" class="current-player centered">
+                            <div
+                                v-if="activePlayer && !currentWord"
+                                class="current-player centered"
+                                :class="{ active: activePlayer.team === myPlayer.team }"
+                            >
                                 <span class="now-playing-label">Now Playing:</span>
                                 <span class="player-name">
                                     {{ activePlayer.displayName }}
@@ -37,16 +41,20 @@
 
                             <div class="secret-word" v-if="currentWord && currentWord.word">
                                 <p class="label">Your word is:</p>
-                                <h2 class="word">{{ currentWord.word }}</h2>
-                                <button class="btn primary" @click="completeWord">
+                                <h2 class="word marker">{{ currentWord.word }}</h2>
+                                <button class="btn primary" @click="completeWord" :disabled="isSaving">
                                     Complete
                                 </button>
                             </div>
                         </template>
-                        <div class="centered intermission" :class="{ showRoundInfo: showFirstRoundInfo }" v-else-if="!isRoundOver">
+                        <div
+                            class="centered intermission"
+                            :class="{ showRoundInfo: showFirstRoundInfo, active: activePlayer.team === myPlayer.team }"
+                            v-else-if="!isRoundOver"
+                        >
                             <div class="up-next">
                                 <template v-if="!isCurrentPlayer">
-                                    <div class="intro">
+                                    <div class="intro" v-if="activePlayer">
                                         {{
                                             activePlayer.team === myPlayer.team
                                                 ? "Your team is up next:"
@@ -70,6 +78,7 @@
                                 Start Turn
                             </button>
                         </div>
+
                         <div class="centered intermission" v-else-if="isRoundOver">
                             <span class="emoji huge">🎣</span>
                             <h4>
@@ -87,8 +96,21 @@
                             End Turn
                         </button>
 
+                        <!-- Turn Info -->
+                        <div v-if="game.currentTurnResult">
+                            <p>
+                                <strong>{{ playerName(game.currentTurnResult.userId) }}</strong> completed
+                                {{ game.currentTurnResult.wordsCompleted.length }} words
+                            </p>
+                            <ul v-if="!isGameActive">
+                                <li v-for="(word, index) in game.currentTurnResult.wordsCompleted" :key="`turn_result_${index}`">
+                                    {{ word.word }}
+                                </li>
+                            </ul>
+                        </div>
+
                         <div class="centered round-label round-info" v-if="!isRoundOver">
-                            <h4 v-if="game.phase === 1">Round {{ game.round + 1 }}</h4>
+                            <h4 v-if="game.phase === 1">Round {{ game.round + 1 }} | Turn {{ game.turn + 1 }}</h4>
                             <span>
                                 Words Remaining:
                                 {{ game.remainingWordsInRound.length }}
@@ -144,7 +166,7 @@ export default class GameView extends Vue {
     @Action(Games.Actions.startTurn) startTurn!: () => Promise<void>;
     @Action(Games.Actions.reset) restartGame!: () => Promise<void>;
     @Getter(Games.Getters.isGameActive) _gameActive!: boolean;
-
+    @Getter(Games.Getters.isSaving) isSaving!: boolean;
     get isGameActive(): boolean {
         return this._gameActive;
     }
@@ -183,6 +205,7 @@ export default class GameView extends Vue {
             this.game?.round === 0 &&
             !this.isGameActive &&
             !this.game.isPlaying &&
+            this.activePlayer &&
             this.game?.phase === Phase.IN_PROGRESS &&
             this.game.words.length === this.game.remainingWordsInRound.length
         );
@@ -273,13 +296,19 @@ export default class GameView extends Vue {
         }
     }
 
+    playerName(userId?: string): string | undefined {
+        if (!userId) {
+            return undefined;
+        }
+        return this.game?.getPlayer(userId)?.displayName;
+    }
+
     async endTurn() {
         const game = this.game;
         if (!game) {
             return;
         }
         this.deactivateTurn();
-        await this.$store.dispatch(GamesActions.turnEnded);
     }
 }
 </script>
@@ -387,6 +416,11 @@ export default class GameView extends Vue {
         .player-name {
         }
     }
+
+    &.active {
+        background-color: color($color-accent, $variant-light);
+        color: white;
+    }
 }
 
 .secret-word {
@@ -394,7 +428,8 @@ export default class GameView extends Vue {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: color($color-primary, $variant-light);
+    background-color: color($color-accent, $variant-light);
+    color: white;
 
     .label {
         margin: 0;
@@ -402,6 +437,8 @@ export default class GameView extends Vue {
 
     .word {
         padding: spacing($lg);
+        font-size: 5rem;
+        font-weight: normal;
     }
 }
 
@@ -409,7 +446,6 @@ export default class GameView extends Vue {
     background-color: color($color-primary, $variant-light);
     .now-playing-label {
         @include font($sm);
-        color: color($color-text);
         margin-bottom: spacing($lg);
     }
 
@@ -421,6 +457,11 @@ export default class GameView extends Vue {
     .team-name {
         @include font($md);
         //color: color($color-accent, $variant-light);
+    }
+
+    &.active {
+        background-color: color($color-accent, $variant-light);
+        color: white;
     }
 }
 

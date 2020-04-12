@@ -2,7 +2,8 @@ import { BaseModel, Collection, FirestoreData } from "@shared/models/Model";
 import { DocumentSnapshot } from "@shared/util/FirestoreUtil";
 import Player from "@shared/models/Player";
 import Logger from "@shared/Logger";
-import { shuffleArray } from "@shared/util/ObjectUtil";
+import { isNull, isString, shuffleArray } from "@shared/util/ObjectUtil";
+import { assignTeams } from "@shared/util/GameUtil";
 
 export interface WordEntry {
     word: string;
@@ -22,6 +23,14 @@ enum Field {
 }
 
 export const ROUND_DURATION_SECONDS = 60;
+export const COUNTDOWN_DURATION_SECONDS = 5;
+
+interface TurnResult {
+    userId: string;
+    wordsCompleted: WordEntry[];
+    turn: number;
+    round: number;
+}
 
 const logger = new Logger("Game.ts");
 
@@ -34,6 +43,8 @@ export class Game extends BaseModel {
     players: { [userId: string]: Player } = {};
     words: WordEntry[] = [];
     round = 0;
+    turn = 0;
+    turnResults: { [turnKey: string]: TurnResult } = {};
 
     remainingWordsInRound: WordEntry[] = [];
     currentTeam = 0;
@@ -47,8 +58,64 @@ export class Game extends BaseModel {
 
     videoChatUrl: string | undefined;
 
+    get turnKey(): string {
+        return `${this.round}:${this.turn}`;
+    }
+
+    get currentTurnResult(): TurnResult | undefined {
+        const result = this.turnResults[this.turnKey] as TurnResult | undefined;
+        if (result) {
+            return result;
+        }
+
+        const currentUserId = this.currentPlayer?.userId;
+        if (!currentUserId) {
+            return undefined;
+        }
+        return { userId: currentUserId, turn: this.turn, round: this.round, wordsCompleted: [] };
+    }
+
+    set currentTurnResult(turnResult: TurnResult | undefined) {
+        if (!turnResult) {
+            return;
+        }
+
+        const turnKey = this.turnKey;
+        this.turnResults[turnKey] = turnResult;
+    }
+
     get playersList(): Player[] {
         return Object.values(this.players);
+    }
+
+    get nextTeam(): number {
+        const current = this.currentTeam;
+        if (current + 1 >= this.numberOfTeams) {
+            return 0;
+        }
+        return current + 1;
+    }
+
+    get currentPlayer(): Player | undefined {
+        const team = this.currentTeam;
+        const playerId = this.currentPlayerByTeam[team];
+        if (isString(playerId)) {
+            return this.getPlayer(playerId);
+        }
+        return undefined;
+    }
+
+    /**
+     * Returns a sorted list of players by team, sorted by userId
+     * @param {number} team
+     * @return {Player[]}
+     */
+    playersInTeam(team: number): Player[] {
+        const players = this.playersList.filter(p => p.team === team);
+        players.sort((p1, p2) => {
+            return p1.userId.localeCompare(p2.userId);
+        });
+        return players;
     }
 
     incrementScore(userId: string) {
@@ -70,13 +137,12 @@ export class Game extends BaseModel {
             this.moveToNextRound();
             return;
         }
-
+        this.turn += 1;
+        this.shuffleWordsRemaining();
         this.isPlaying = true;
-        const countdown = 10000;
-        this.turnStartsAt = new Date(Date.now() + countdown);
-        this.turnEndsAt = new Date(
-            Date.now() + ROUND_DURATION_SECONDS * 1000 + countdown
-        );
+
+        this.turnStartsAt = new Date(Date.now() + COUNTDOWN_DURATION_SECONDS * 1000);
+        this.turnEndsAt = new Date(Date.now() + (ROUND_DURATION_SECONDS + COUNTDOWN_DURATION_SECONDS) * 1000);
     }
 
     endTurn() {
@@ -84,8 +150,11 @@ export class Game extends BaseModel {
         this.isPlaying = false;
         this.turnEndsAt = null;
         this.turnStartsAt = null;
-
         this.updateNextTeams();
+    }
+
+    shuffleWordsRemaining() {
+        this.remainingWordsInRound = shuffleArray(this.remainingWordsInRound);
     }
 
     /**
@@ -106,10 +175,7 @@ export class Game extends BaseModel {
     addWord(wordEntry: WordEntry): boolean {
         const _word = wordEntry.word.toLowerCase().toLowerCase();
         const existing = this.words.find(w => {
-            return (
-                w.userId === wordEntry.userId &&
-                w.word.toLowerCase().trim() === _word
-            );
+            return w.userId === wordEntry.userId && w.word.toLowerCase().trim() === _word;
         });
         if (existing) {
             return false;
@@ -163,34 +229,100 @@ export class Game extends BaseModel {
     }
 
     updateNextTeams() {
-        const currentTeam = this.currentTeam;
-        let nextTeam = currentTeam + 1;
-        if (nextTeam >= this.numberOfTeams) {
-            nextTeam = 0;
+        const nextPlayer = this.getNextPlayerForTeam(this.currentTeam);
+        if (nextPlayer) {
+            this.currentPlayerByTeam[this.currentTeam] = nextPlayer?.userId;
         }
-        this.currentTeam = nextTeam;
-        Object.keys(this.currentPlayerByTeam)
-            .map(Number)
-            .forEach(team => {
-                const userId = this.currentPlayerByTeam[team];
-                const playersOnTeam = Object.values(this.players).filter(
-                    p => p.team === team
-                );
-                const currentIndex = playersOnTeam.findIndex(
-                    p => p.userId === userId
-                );
-                const nextIndex = Math.min(
-                    playersOnTeam.length - 1,
-                    Math.max(0, currentIndex + 1)
-                );
-                const nextPlayer = playersOnTeam[nextIndex];
+        this.currentTeam = this.nextTeam;
+    }
+
+    getNextPlayerForTeam(team: number): Player | undefined {
+        const currentUserId = this.currentPlayerByTeam[team] as string | undefined;
+        if (!currentUserId) {
+            return;
+        }
+        const players = this.playersInTeam(team);
+        const currentIndex = players.findIndex(p => p.userId === currentUserId);
+        let nextIndex = currentIndex + 1;
+        if (nextIndex > players.length - 1) {
+            nextIndex = 0;
+        }
+        if (nextIndex <= players.length && players.length > 0) {
+            return players[nextIndex];
+        }
+        return;
+    }
+
+    /**
+     * Set up the current player object
+     * @return {number} The number of teams that were updated.
+     */
+    initializeCurrentPlayers(): number {
+        if (!this.currentPlayerByTeam) {
+            this.currentPlayerByTeam = {};
+        }
+        let count = 0;
+        for (let team = 0; team < this.numberOfTeams; team++) {
+            const currentUserId = this.currentPlayerByTeam[team];
+            if (!isNull(currentUserId)) {
+                continue;
+            }
+            const playersOnTeam = this.playersInTeam(team);
+            if (playersOnTeam.length > 0) {
+                const nextPlayer = playersOnTeam[0];
                 this.currentPlayerByTeam[team] = nextPlayer.userId;
-            });
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Figure out who is the current player on each team and assign it to the currentPlayerByTeam Object
+     */
+    updateCurrentPlayers() {
+        for (let team = 0; team < this.numberOfTeams; team++) {
+            const currentUserId = this.currentPlayerByTeam[team];
+            const playersOnTeam = this.playersInTeam(team);
+            const currentIndex = playersOnTeam.findIndex(p => p.userId === currentUserId);
+            // const nextIndex = Math.min(playersOnTeam.length - 1, Math.max(0, currentIndex + 1));
+            const nextIndex = Math.min(playersOnTeam.length - 1, currentIndex + 1);
+            const nextPlayer = playersOnTeam[nextIndex];
+            this.currentPlayerByTeam[team] = nextPlayer.userId;
+        }
     }
 
     moveToNextRound() {
         this.remainingWordsInRound = shuffleArray([...this.words]);
         this.round = this.round + 1;
+        this.turn = 0;
+    }
+
+    allPlayersReadyForNextPhase(): boolean {
+        return !this.playersList.some(p => p.phase <= this.phase);
+    }
+
+    /**
+     * Move to the next phase, if able
+     * @return {boolean} if the game moved to the next phase or not
+     */
+    nextPhase(): boolean {
+        switch (this.phase) {
+            case Phase.SETUP:
+                // const foundNotReady = this.playersList.some(p => p.phase === Phase.SETUP);
+
+                if (this.playersList.length < 2 || !this.allPlayersReadyForNextPhase()) {
+                    return false;
+                }
+                this.remainingWordsInRound = shuffleArray([...this.words]);
+                this.phase = Phase.IN_PROGRESS;
+                return true;
+            case Phase.IN_PROGRESS:
+                // this.phase = Phase.FINISHED;
+                return false;
+            case Phase.FINISHED:
+                return false;
+        }
     }
 
     wordsByUser(userId: string): WordEntry[] {
@@ -218,17 +350,28 @@ export class Game extends BaseModel {
         return super.create(data, Game);
     }
 
+    /**
+     * Assign players to teams. This will also set up the current player map.
+     * @return {number} The number of players that were assigned teams.
+     */
+    assignTeams(): { playersAssigned: number; numTeamsAssigned: number } {
+        let numberAssigned = 0;
+        let numTeamsAssigned = 0;
+        if (this.phase === Phase.IN_PROGRESS) {
+            numberAssigned = assignTeams(this);
+            numTeamsAssigned = this.initializeCurrentPlayers();
+        }
+        return { playersAssigned: numberAssigned, numTeamsAssigned };
+    }
+
     prepareFromFirestore(data: FirestoreData) {
         super.prepareFromFirestore(data);
-        this.players = this.playersList.reduce(
-            (map: { [id: string]: Player }, player) => {
-                const p = new Player(player.userId);
-                map[player.userId] = Object.assign(p, player);
+        this.players = this.playersList.reduce((map: { [id: string]: Player }, player) => {
+            const p = new Player(player.userId);
+            map[player.userId] = Object.assign(p, player);
 
-                return map;
-            },
-            {}
-        );
+            return map;
+        }, {});
     }
 
     static fromSnapshot(snapshot: DocumentSnapshot): Game {

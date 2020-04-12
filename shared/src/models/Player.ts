@@ -7,8 +7,9 @@ export default class Player {
     team?: number | null;
     score = 0;
 
-    constructor(userId: string) {
+    constructor(userId: string, displayName?: string | undefined) {
         this.userId = userId;
+        this.displayName = displayName;
         this.phase = Phase.SETUP;
     }
 

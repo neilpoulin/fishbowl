@@ -14,17 +14,11 @@
                         <div v-if="game">
                             <h2>{{ game.name }}</h2>
                             <div class="actions">
-                                <button
-                                    class="btn danger outlined"
-                                    @click="leaveGame"
-                                >
+                                <button class="btn danger outlined" @click="leaveGame">
                                     Leave Game
                                 </button>
-                                <button
-                                    class="btn secondary light"
-                                    @click="joinGame(game.id)"
-                                >
-                                    Join
+                                <button class="btn" @click="joinGame(game.id)">
+                                    Continue
                                 </button>
                             </div>
                         </div>
@@ -38,11 +32,7 @@
                 <div>
                     <h2>Recent Games</h2>
                     <ul class="games-list">
-                        <li
-                            v-for="(game, index) in availableGames"
-                            @click="joinGame(game.id)"
-                            :key="index"
-                        >
+                        <li v-for="(game, index) in availableGames" @click="joinGame(game.id)" :key="index">
                             <span class="name">{{ game.name }}</span>
                             <span class="players">{{ playerLabel(game) }}</span>
                         </li>
@@ -64,12 +54,9 @@ import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
 import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 import Games from "@web/store/modules/games/GamesModule";
 import { Game } from "@shared/models/Game";
-import router, { RouteBuilder } from "@web/router";
+import router, { RouteBuilder } from "@web/router/router";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
-import {
-    CreateGameParams,
-    JoinGameParams
-} from "@web/store/modules/games/Games";
+import { CreateGameParams, JoinGameParams } from "@web/store/modules/games/Games";
 
 @Component({
     components: { DisplayNameForm, CreateGame }
@@ -171,8 +158,8 @@ export default class Start extends Vue {
             @include shadowbox;
             @include container($xl);
             @include rounded($cornerRadiusLg);
-            background-color: color($color-primary, $variant-base);
-            color: color($color-text, $variant-light);
+            background-color: color($color-primary, $variant-light);
+            color: color($color-text, $variant-base);
             .actions {
                 margin-top: spacing($xl);
             }
@@ -192,8 +179,7 @@ export default class Start extends Vue {
                 right: 0;
                 bottom: 0;
                 left: 0;
-                background: url("/images/fishbowl_final.png") no-repeat center
-                    center;
+                background: url("/images/fishbowl_final.png") no-repeat center center;
             }
             .content {
                 position: relative;

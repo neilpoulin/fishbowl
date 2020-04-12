@@ -13,7 +13,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import DisplayNameForm from "@web/components/DisplayNameForm.vue";
-import { RoutePath } from "@web/router";
+import { RoutePath } from "@web/router/router";
 import { auth } from "@web/config/FirebaseConfig";
 import { Action, Getter } from "vuex-class";
 import AuthStore from "@web/store/modules/auth/AuthModule";

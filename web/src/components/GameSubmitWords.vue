@@ -3,12 +3,7 @@
         <div class="input-container">
             <h3 class="title">Add Words</h3>
             <div class="word-entry input-field">
-                <input
-                    type="text"
-                    v-model="wordInput"
-                    placeholder="Enter a word"
-                    @keyup.enter="submit"
-                />
+                <input type="text" v-model="wordInput" placeholder="Enter a word" @keyup.enter="submit" />
                 <button class="btn secondary" @click="submit">
                     Add
                 </button>
@@ -45,13 +40,8 @@ import { AddWordParams } from "@web/store/modules/games/Games";
 })
 export default class GameSubmitWords extends Vue {
     @Getter(GamesGetters.submittedWords) currentWords!: WordEntry[];
-    @Getter(GamesGetters.submittedWordsError) alert:
-        | AlertMessage
-        | undefined
-        | null = undefined;
-    @Action(GamesActions.addWord) addWord!: (
-        payload: AddWordParams
-    ) => Promise<void>;
+    @Getter(GamesGetters.submittedWordsError) alert: AlertMessage | undefined | null = undefined;
+    @Action(GamesActions.addWord) addWord!: (payload: AddWordParams) => Promise<void>;
 
     wordInput = "";
 

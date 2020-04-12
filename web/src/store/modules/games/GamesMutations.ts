@@ -10,7 +10,8 @@ export enum GamesMutations {
     addGame = "games.addGame",
     addWordError = "games.addWordError",
     addWordSuccess = "games.addWordSuccess",
-    setGameActive = "games.setGameActive"
+    setGameActive = "games.setGameActive",
+    setSaving = "games.setSaving"
 }
 
 export const mutations: MutationTree<GamesState> = {
@@ -31,5 +32,8 @@ export const mutations: MutationTree<GamesState> = {
     },
     [GamesMutations.setGameActive](state, payload: { isActive: boolean }) {
         state.gameActive = payload.isActive;
+    },
+    [GamesMutations.setSaving](state, payload: { saving: boolean }) {
+        state.isSaving = payload.saving;
     }
 };

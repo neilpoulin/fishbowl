@@ -4,14 +4,10 @@
             <div class="header content">
                 <h1>Fish Bowl</h1>
                 <p class="subtitle">
-                    Play your favorite party game &mdash; now with less COVD-19!
+                    Play your favorite party game &mdash; now with less COVID-19!
                 </p>
                 <div class="actions">
-                    <router-link
-                        tag="button"
-                        class="btn primary"
-                        :to="playRoute"
-                    >
+                    <router-link tag="button" class="btn primary" :to="playRoute">
                         Play Now
                     </router-link>
                 </div>
@@ -21,37 +17,22 @@
             <div class="">
                 <figure class="drawing">
                     <div class="frame">
-                        <img
-                            alt="Afflatus fo the Fishbowl"
-                            src="/images/fishbowl_final.png"
-                        />
+                        <img alt="Afflatus fo the Fishbowl" src="/images/fishbowl_final.png" />
                     </div>
                     <figcaption class="caption">
                         <h3 class="title">Afflatus of the Fishbowl</h3>
                         <span class="artist">Brooke Berry</span>
                         <span class="medium">Crayon on Parchment</span>
                         <p class="description">
-                            This piece speaks to the innate human desire that
-                            inspiration be unfettered by the burden of
-                            definition. The artist hints at the connection of
-                            inspiration to the tangible with a stock
-                            representation of a basal “fishbowl” as the base of
-                            the piece. A trio of Disney-esque fish glide within
-                            the bowl, not drawn by the artist, rather an
-                            assistant; a subtle allusion to the dogma that true
-                            inspiration can be fathomed. These callow
-                            understandings of inspiration are undercut with
-                            harsh and jagged strikes of orange and violet
-                            leading, even forcing, the eye downward to the
-                            right. They seem to scream, “No! Not here!
-                            Elsewhere!”. Here, out of the confines of the bowl,
-                            the uplifting red strokes buoy the eye to the true
-                            nature of inspiration. But the artist leaves the
-                            sense of having lacked examination of the entire
-                            piece. The crimson spirals above, the enigmatic
-                            maroon to the bottom left: conveying that
-                            inspiration has no one path, just as “Fishbowl” has
-                            no one game.
+                            This piece speaks to the innate human desire that inspiration be unfettered by the burden of definition. The
+                            artist hints at the connection of inspiration to the tangible with a stock representation of a basal “fishbowl”
+                            as the base of the piece. A trio of Disney-esque fish glide within the bowl, not drawn by the artist, rather an
+                            assistant; a subtle allusion to the dogma that true inspiration can be fathomed. These callow understandings of
+                            inspiration are undercut with harsh and jagged strikes of orange and violet leading, even forcing, the eye
+                            downward to the right. They seem to scream, “No! Not here! Elsewhere!”. Here, out of the confines of the bowl,
+                            the uplifting red strokes buoy the eye to the true nature of inspiration. But the artist leaves the sense of
+                            having lacked examination of the entire piece. The crimson spirals above, the enigmatic maroon to the bottom
+                            left: conveying that inspiration has no one path, just as “Fishbowl” has no one game.
                         </p>
                     </figcaption>
                 </figure>
@@ -65,7 +46,7 @@
 
 <script lang="ts">
 import About from "@web/views/About.vue";
-import { RoutePath } from "@web/router";
+import { RoutePath } from "@web/router/router";
 
 export default {
     name: "Home",
@@ -95,14 +76,15 @@ export default {
     }
 }
 .header-section {
-    background-color: color($color-primary, $variant-light);
+    //background: url("/images/goldfish.jpg") center center, color($color-primary, $variant-light);
+    background-size: 100%;
 }
 
 .header {
     display: flex;
     flex-direction: column;
     justify-content: center;
-
+    //text-shadow: 1px rgba(color($color-text), 0.8);
     h1 {
         font-family: $font-stack-logo;
         font-size: 10rem;
@@ -110,6 +92,7 @@ export default {
         color: color($color-primary);
         display: inline-block;
         margin: 0;
+        //text-shadow: 4px 4px rgba(color($color-text, $variant-light), 0.8);
     }
 
     .actions {
@@ -119,6 +102,8 @@ export default {
 
     .subtitle {
         @include font($lg);
+        //color: color($color-text, $variant-light);
+        //text-shadow: 1px 0 rgba(color($color-text, $variant-dark), 0.8);
     }
 }
 
@@ -133,7 +118,7 @@ export default {
 }
 
 .artwork {
-    background-color: color($color-accent, $variant-dark);
+    background: url("/images/45-degree-fabric-light.png"), lighten(color($color-accent, $variant-dark), 15%);
     padding: spacing($xxl);
 }
 

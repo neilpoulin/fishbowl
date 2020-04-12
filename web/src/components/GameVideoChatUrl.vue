@@ -5,20 +5,13 @@
                 Video Chat
             </label>
             <div class="actions" v-if="editing">
-                <input
-                    type="text"
-                    v-model="url"
-                    id="video-chat-input"
-                    placeholder="Add a link to a video chat"
-                />
+                <input type="text" v-model="url" id="video-chat-input" placeholder="Add a link to a video chat" />
                 <button class="btn secondary small" @click.prevent="save">
                     {{ doneButtonLabel }}
                 </button>
             </div>
             <div v-else class="link-container">
-                <a :href="url" target="_blank" class="link">{{
-                    "Join the chatroom"
-                }}</a>
+                <a :href="url" target="_blank" class="link">{{ "Join the chatroom" }}</a>
                 <button class="btn secondary small" @click="editing = true">
                     Edit
                 </button>

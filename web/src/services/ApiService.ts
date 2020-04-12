@@ -7,8 +7,9 @@ import { auth } from "@web/config/FirebaseConfig";
 type EndpointGetter = () => string;
 
 export const Endpoint = {
-    gameNextTurn: (gameId: string): EndpointGetter => () =>
-        `/games/${gameId}/next-turn`
+    gameNextTurn: (gameId: string): EndpointGetter => () => `/games/${gameId}/next-turn`,
+    completeWord: (gameId: string): EndpointGetter => () => `games/${gameId}/actions/complete-word`,
+    getGame: (gameId: string): EndpointGetter => () => `/games/${gameId}`
 };
 
 export default class ApiService {
@@ -41,12 +42,10 @@ export default class ApiService {
         return { Authorization: `Bearer ${token}` };
     }
 
-    async post<Req, Resp>(
-        endpoint: EndpointGetter,
-        payload: Req
-    ): Promise<Resp | undefined> {
+    async post<Req, Resp>(endpoint: EndpointGetter, payload: Req): Promise<Resp | undefined> {
         try {
             const authHeaders = await this.getAuthHeaders();
+            this.logger.info("got auth headers:", authHeaders);
             const response = await axios.post<Resp>(endpoint(), payload, {
                 headers: { ...authHeaders }
             });
@@ -54,16 +53,9 @@ export default class ApiService {
         } catch (error) {
             if (isAxiosError<Resp>(error)) {
                 const data = error.response?.data;
-                this.logger.error(
-                    `Request to ${endpoint()} returned status ${
-                        error.response?.status
-                    }. ${JSON.stringify(data)}`
-                );
+                this.logger.error(`Request to ${endpoint()} returned status ${error.response?.status}. ${JSON.stringify(data)}`);
             } else {
-                this.logger.error(
-                    `Failed to process request to "${endpoint()}"`,
-                    error
-                );
+                this.logger.error(`Failed to process request to "${endpoint()}"`, error);
                 return;
             }
         }
@@ -79,16 +71,9 @@ export default class ApiService {
         } catch (error) {
             if (isAxiosError<Resp>(error)) {
                 const data = error.response?.data;
-                this.logger.error(
-                    `Request to ${endpoint()} returned status ${
-                        error.response?.status
-                    }. ${JSON.stringify(data)}`
-                );
+                this.logger.error(`Request to ${endpoint()} returned status ${error.response?.status}. ${JSON.stringify(data)}`);
             } else {
-                this.logger.error(
-                    `Failed to process request to "${endpoint()}"`,
-                    error
-                );
+                this.logger.error(`Failed to process request to "${endpoint()}"`, error);
                 return;
             }
         }

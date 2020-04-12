@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="countdown"
-        :class="{ hidden: !secondsLeftMs, preTurn: !turnStarted }"
-    >
+    <div class="countdown" :class="{ hidden: !secondsLeftMs, preTurn: !turnStarted }">
         <span class="countdown-label" v-if="!turnStarted">
             The next turn will begin in
         </span>

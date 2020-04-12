@@ -14,6 +14,7 @@
             <h4>
                 Players <span class="count">({{ sortedPlayers.length }})</span>
             </h4>
+            <invite-players />
             <ul>
                 <li v-for="player in sortedPlayers" :key="player.userId">
                     <player-list-item :game="game" :player="player" @deleted="deletePlayer" />
@@ -46,14 +47,15 @@ import PlayerListItem from "@web/components/PlayerListItem.vue";
 import { Action, Getter } from "vuex-class";
 import GameStore from "@web/store/modules/games/GamesModule";
 import Scoreboard from "@web/components/Scoreboard.vue";
-
+import InvitePlayers from "@web/components/InvitePlayers.vue";
 @Component({
     components: {
         PlayerListItem,
         GameVideoChatUrl,
         DisplayNameForm,
         PlayerReadyButton,
-        Scoreboard
+        Scoreboard,
+        InvitePlayers
     }
 })
 export default class GameSidebar extends Vue {

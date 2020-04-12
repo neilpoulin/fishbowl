@@ -19,21 +19,11 @@ export function isNonEmptyObject(input: any): input is Record<string, any> {
     if (isNull(input)) {
         return false;
     }
-    return (
-        typeof input === "object" &&
-        !Array.isArray(input) &&
-        Object.keys(input).length > 0
-    );
+    return typeof input === "object" && !Array.isArray(input) && Object.keys(input).length > 0;
 }
 
-export function hasIdField(
-    input: any
-): input is { id: any; [key: string]: any } {
-    return (
-        isNonEmptyObject(input) &&
-        input.hasOwnProperty("id") &&
-        (input.id ?? false)
-    );
+export function hasIdField(input: any): input is { id: any; [key: string]: any } {
+    return isNonEmptyObject(input) && input.hasOwnProperty("id") && (input.id ?? false);
 }
 
 export function isArray(input: any) {
@@ -77,12 +67,7 @@ export function isNumber(input: any): input is number {
  * @param {string} [forKey] the key that is being transformed currently. Mostly for logging purposes.
  * @return {any}
  */
-export function transformObject(
-    _input: any,
-    transform: (value: any) => any,
-    depth = 0,
-    forKey?: string
-): any {
+export function transformObject(_input: any, transform: (value: any) => any, depth = 0, forKey?: string): any {
     let input = _input;
     if (depth >= 100) {
         logger.warn(
@@ -92,9 +77,7 @@ export function transformObject(
         return input;
     }
     if (isArray(input)) {
-        return input.map((entry: any) =>
-            transformObject(entry, transform, depth + 1, forKey || "root-Array")
-        );
+        return input.map((entry: any) => transformObject(entry, transform, depth + 1, forKey || "root-Array"));
     }
 
     // input = await (transform(input))
@@ -117,10 +100,7 @@ export function transformObject(
             const transformed = transform(value);
 
             //if the transformation did something, don't loop through the value
-            if (
-                value === transformed &&
-                (isNonEmptyObject(value) || Array.isArray(value))
-            ) {
+            if (value === transformed && (isNonEmptyObject(value) || Array.isArray(value))) {
                 value = transformObject(value, transform, depth + 1, key);
             } else {
                 value = transformed;
