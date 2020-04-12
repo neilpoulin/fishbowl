@@ -58,11 +58,6 @@ export default class GameService {
                     game.endTurn();
                 }
                 await txn.set(gameRef, game.data(), { merge: true });
-                // const updates: Partial<Game> = {
-                //       remainingWordsInRound: [...game.remainingWordsInRound],
-                //         scores: {}
-                //
-                // };
 
                 return { success: false };
             });
