@@ -19,7 +19,7 @@
                     <button class="btn secondary" @click="save">
                         {{ saveLabel }}
                     </button>
-                    <button class="btn link" @click="editing = false">
+                    <button class="btn link" @click="editing = false" v-if="showCancel">
                         Cancel
                     </button>
                 </div>
@@ -58,6 +58,7 @@ export default class DisplayNameForm extends Vue {
     @Prop({ type: Boolean, default: true }) showTeamName!: boolean;
     @Prop({ type: Boolean, default: false }) alwaysShowSave!: boolean;
     @Prop({ type: String, default: "Save" }) saveLabel!: string;
+    @Prop({ type: Boolean, default: true }) showCancel!: boolean;
 
     displayNameValue = "";
     editing = false;
