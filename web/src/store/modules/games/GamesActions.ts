@@ -13,8 +13,15 @@ import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
 import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 import { AlertMessage } from "@web/util/AlertMessage";
-import { AddWordParams, CompleteWordPayload, CreateGameParams, JoinGameParams, SetPhaseParams } from "@web/store/modules/games/Games";
-import { isBlank } from "@shared/util/ObjectUtil";
+import {
+    AddWordParams,
+    CompleteWordPayload,
+    CreateGameParams,
+    JoinGameParams,
+    SetPhaseParams,
+    SetPlayerTeam
+} from "@web/store/modules/games/Games";
+import { isBlank, isNotNull } from "@shared/util/ObjectUtil";
 import GameService from "@web/services/GameService";
 import AnalyticsService from "@web/services/AnalyticsService";
 
@@ -25,6 +32,7 @@ export enum GamesActions {
     join = "games.join",
     load = "games.load",
     updatePlayer = "games.updatePlayer",
+    setTeam = "games.setTeam",
     addGame = "games.addGame",
     addWord = "games.addWord",
     setPlayerPhase = "games.setReadyStatus",
@@ -118,6 +126,23 @@ export const actions: ActionTree<GamesState, GlobalState> = {
                 game.addPlayer(player);
                 await FirestoreService.shared.save(game);
             }
+        }
+    },
+    async [GamesActions.setTeam]({ getters }, payload: SetPlayerTeam) {
+        const game = getters[GamesGetters.currentGame] as Game | undefined;
+        const player = getters[GamesGetters.currentPlayer] as Player | undefined;
+        logger.info("Setting team to be ", payload.team);
+        if (!game || !player) {
+            return;
+        }
+        if (isNotNull(payload.team) && payload.team !== player.team) {
+            logger.info("Saving team...");
+            // player.team = payload.team;
+            const gameId = game.id;
+            const gameRef = db()
+                .collection(Collection.games)
+                .doc(gameId);
+            await gameRef.update({ [Game.FieldPath.playerTeam(player.userId)]: payload.team });
         }
     },
     async [GamesActions.addWord]({ getters, commit }, payload: AddWordParams) {

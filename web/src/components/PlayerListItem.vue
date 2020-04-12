@@ -18,7 +18,7 @@
             <span class="ready" v-if="playerIsReady(player) && !showTeams">
                 Ready
             </span>
-            <span class="team" v-if="showTeams && player.team !== undefined"> Team {{ player.team + 1 }} </span>
+            <span class="team" v-if="player.team !== undefined"> Team {{ player.team + 1 }} </span>
         </div>
         <div v-else class="actions">
             <button class="btn small danger delete-button" @click="deletePlayer">

@@ -2,7 +2,7 @@ import { BaseModel, Collection, FirestoreData } from "@shared/models/Model";
 import { DocumentSnapshot } from "@shared/util/FirestoreUtil";
 import Player from "@shared/models/Player";
 import Logger from "@shared/Logger";
-import { isNull, isString, shuffleArray } from "@shared/util/ObjectUtil";
+import { isBlank, isNull, isString, shuffleArray } from "@shared/util/ObjectUtil";
 import { assignTeams } from "@shared/util/GameUtil";
 
 export interface WordEntry {
@@ -22,6 +22,15 @@ enum Field {
     round = "round"
 }
 
+export const FieldPath = {
+    player(userId: string): string {
+        return `${Field.players}.${userId}`;
+    },
+    playerTeam(userId: string): string {
+        return `${Field.players}.${userId}.team`;
+    }
+};
+
 export const ROUND_DURATION_SECONDS = 60;
 export const COUNTDOWN_DURATION_SECONDS = 5;
 
@@ -37,6 +46,7 @@ const logger = new Logger("Game.ts");
 export class Game extends BaseModel {
     readonly collection = Collection.games;
     static Field = Field;
+    static FieldPath = FieldPath;
     name?: string;
     phase: Phase = Phase.SETUP;
     numberOfTeams = 2;
@@ -45,7 +55,7 @@ export class Game extends BaseModel {
     round = 0;
     turn = 0;
     turnResults: { [turnKey: string]: TurnResult } = {};
-
+    teamNames: { [team: number]: string } = {};
     remainingWordsInRound: WordEntry[] = [];
     currentTeam = 0;
     currentPlayerByTeam: { [team: number]: string } = {};
@@ -116,6 +126,14 @@ export class Game extends BaseModel {
             return p1.userId.localeCompare(p2.userId);
         });
         return players;
+    }
+
+    getTeamName(team: number): string {
+        const customName = this.teamNames[team];
+        if (!isBlank(customName)) {
+            return customName;
+        }
+        return `Team ${team + 1}`;
     }
 
     incrementScore(userId: string) {

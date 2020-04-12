@@ -5,10 +5,24 @@
                 My Name
             </label>
             <div class="actions" v-if="editing">
-                <input type="text" v-model="displayNameValue" id="display-name-input" placeholder="Enter your name" />
-                <button class="btn secondary" @click="save">
-                    {{ saveLabel }}
-                </button>
+                <div class="inputs">
+                    <input type="text" v-model="displayNameValue" id="display-name-input" placeholder="Enter your name" />
+
+                    <label v-if="showTeamName">
+                        Team
+                        <select v-model="selectedTeam">
+                            <option v-for="team in teamOptions" :key="team.value" :value="team.value">{{ team.displayName }}</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn secondary" @click="save">
+                        {{ saveLabel }}
+                    </button>
+                    <button class="btn link" @click="editing = false">
+                        Cancel
+                    </button>
+                </div>
             </div>
             <div v-else class="inline">
                 <span class="name">{{ displayName }}</span>
@@ -18,15 +32,6 @@
             </div>
         </div>
         <div v-if="!editing && showTeamName && player && player.team !== undefined">Team {{ player.team + 1 }}</div>
-        <div v-if="editing && showTeamName">
-            <label>
-                Team
-                <select>
-                    <option>Team 1</option>
-                    <option>Team 2</option>
-                </select>
-            </label>
-        </div>
     </div>
 </template>
 
@@ -40,6 +45,7 @@ import { Prop, Watch } from "vue-property-decorator";
 import Logger from "@shared/Logger";
 import Player from "@shared/models/Player";
 import { isBlank } from "@shared/util/ObjectUtil";
+import { Game } from "@shared/models/Game";
 
 const logger = new Logger("DisplayNameForm");
 
@@ -47,6 +53,7 @@ const logger = new Logger("DisplayNameForm");
 export default class DisplayNameForm extends Vue {
     @Getter(Auth.Getters.displayName) displayName: string | undefined | null;
     @Getter(GameStore.Getters.currentPlayer) player: Player | undefined | null;
+    @Getter(GameStore.Getters.currentGame) game: Game | undefined | null;
     @Prop({ type: Boolean, default: false }) showLabel!: boolean;
     @Prop({ type: Boolean, default: true }) showTeamName!: boolean;
     @Prop({ type: Boolean, default: false }) alwaysShowSave!: boolean;
@@ -55,11 +62,15 @@ export default class DisplayNameForm extends Vue {
     displayNameValue = "";
     editing = false;
 
+    selectedTeam: string | undefined | null = null;
+
     beforeMount() {
         this.displayNameValue = this.displayName ?? "";
         if (isBlank(this.displayName)) {
             this.editing = true;
         }
+
+        this.selectedTeam = `${this.player?.team ?? ""}`;
     }
 
     get showSaveButton(): boolean {
@@ -72,11 +83,25 @@ export default class DisplayNameForm extends Vue {
         this.displayNameValue = name;
     }
 
+    get teamOptions(): { value: string; displayName: string }[] {
+        if (!this.game) {
+            return [];
+        }
+        const options: { value: string; displayName: string }[] = [];
+        for (let i = 0; i < this.game.numberOfTeams; i++) {
+            options.push({ value: `${i}`, displayName: this.game.getTeamName(i) });
+        }
+        return options;
+    }
+
     async save() {
         this.editing = false;
         await this.$store.dispatch(Auth.Actions.setDisplayName, {
             displayName: this.displayNameValue
         });
+
+        await this.$store.dispatch(GameStore.Actions.updatePlayer);
+        await this.$store.dispatch(GameStore.Actions.setTeam, { team: this.selectedTeam ? Number(this.selectedTeam) : undefined });
         this.$emit("saved", this.displayName);
     }
 }
@@ -112,12 +137,18 @@ export default class DisplayNameForm extends Vue {
             margin-right: spacing($md);
             /*max-width: 20rem;*/
             flex: 1;
+            height: 2rem;
             background-color: transparent;
 
             &:focus,
             &:hover {
                 background-color: white;
             }
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
         }
     }
 

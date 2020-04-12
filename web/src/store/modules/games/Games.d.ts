@@ -16,6 +16,10 @@ declare interface AddWordParams {
     word: string;
 }
 
+declare interface SetPlayerTeam {
+    team?: number;
+}
+
 declare interface SetPhaseParams {
     phase: Phase;
 }
