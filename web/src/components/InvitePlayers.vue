@@ -108,7 +108,8 @@ export default Vue.extend({
     border-radius: 3rem;
     border: 1px solid color($color-primary, $variant-base);
 
-    @include container($md);
+    //@include container($md);
+    padding-right: 4rem;
 
     .link-input {
         display: none;
@@ -130,6 +131,8 @@ export default Vue.extend({
     .game-link {
         overflow: auto;
         @include font($sm);
+        @include container($md);
+        margin-right: 4rem;
     }
 }
 </style>

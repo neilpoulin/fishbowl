@@ -53,7 +53,7 @@ export default class App extends Vue {
             h1 {
                 @include logo;
                 margin: 0;
-                font-size: 4rem;
+                font-size: 2.4rem;
             }
 
             display: flex;

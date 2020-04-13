@@ -240,6 +240,7 @@ export class Game extends BaseModel {
         const updatedPlayers = { ...this.players };
         delete updatedPlayers[userId];
         this.players = updatedPlayers;
+        this.initializeCurrentPlayers();
     }
 
     getPlayer(userId: string): Player | undefined {

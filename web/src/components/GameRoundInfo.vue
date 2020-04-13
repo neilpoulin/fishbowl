@@ -2,7 +2,7 @@
     <div class="round-info">
         <span class="tagline"><span v-if="showUpNext">Next Up: </span>Round {{ roundLabel }}</span>
         <div v-if="round === 0">
-            <h3>Taboo Round</h3>
+            <h3>Catchphrase Round</h3>
             <p>
                 You have {{ roundDurationMinutes }} {{ roundDurationUnit }} to have your team guess your word. You can say whatever you
                 would like (except for the word or rhymes) to help your team guess - no hand gestures.

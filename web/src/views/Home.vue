@@ -4,11 +4,14 @@
             <div class="header content">
                 <h1>Fish Bowl</h1>
                 <p class="subtitle">
-                    Play your favorite party game &mdash; now with less COVID-19!
+                    A multi-player word game to play over video chat while in quarantine
                 </p>
                 <div class="actions">
-                    <router-link tag="button" class="btn primary" :to="playRoute">
+                    <router-link tag="button" class="btn primary" :to="routes.GAMES">
                         Play Now
+                    </router-link>
+                    <router-link tag="button" class="btn secondary" :to="routes.ABOUT">
+                        Learn More
                     </router-link>
                 </div>
             </div>
@@ -55,7 +58,7 @@ export default {
     },
     data() {
         return {
-            playRoute: RoutePath.GAMES
+            routes: RoutePath
         };
     }
 };
@@ -71,7 +74,7 @@ export default {
         margin-bottom: 0;
         padding: spacing($xxl);
         @include maxW($br-tablet-min) {
-            padding: spacing($xxl) 0;
+            padding: spacing($lg) 0;
         }
     }
 }
@@ -102,11 +105,15 @@ export default {
 
     .actions {
         position: relative;
-        display: inline-block;
+        display: flex;
+        flex-direction: column;
+        > *:not(:last-child) {
+            margin-bottom: spacing($lg);
+        }
     }
 
     .subtitle {
-        @include font($lg);
+        @include font($md);
         //color: color($color-text, $variant-light);
         //text-shadow: 1px 0 rgba(color($color-text, $variant-dark), 0.8);
     }
@@ -115,6 +122,7 @@ export default {
 .content {
     margin: 0 auto 0;
     max-width: $pageMaxWidth;
+    padding: spacing($xxl);
 }
 
 .about {

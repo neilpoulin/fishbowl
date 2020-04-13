@@ -17,6 +17,7 @@ import { Game, Phase } from "@shared/models/Game";
 import { SetPhaseParams } from "@web/store/modules/games/Games";
 import { AlertMessage } from "@web/util/AlertMessage";
 import Alert from "@web/components/Alert.vue";
+
 @Component({
     components: { Alert }
 })
@@ -24,14 +25,13 @@ export default class PlayerReadyButton extends Vue {
     @Getter(Games.Getters.currentPlayer) player!: Player | null;
     @Getter(Games.Getters.currentGame) game!: Game | null;
     @Action(Games.Actions.setPlayerPhase) setPhase!: (params: SetPhaseParams) => void;
-
     alert?: AlertMessage | null = null;
 
     nextPhase() {
         let phase = this.player?.phase ?? Phase.SETUP;
 
         if (phase === Phase.SETUP && this.game?.getWordsForUser(this.player?.userId).length === 0) {
-            this.alert = AlertMessage.warn('Please enter at least one word before you "ready" up. 3 - 5 words is recommended.');
+            this.alert = AlertMessage.warn('Please enter at least one word before you "read`y" up. 3 - 5 words is recommended.');
             return;
         } else {
             this.alert = null;

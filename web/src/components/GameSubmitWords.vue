@@ -20,14 +20,21 @@
             </div>
             <alert v-if="alert" :alert="alert" />
             <div class="your-words">
-                <h4>Your Words</h4>
-                <ul v-if="currentWords.length > 0">
-                    <li v-for="(word, i) in currentWords" :key="i">
-                        {{ word.word }}
-                    </li>
-                </ul>
+                <h4>
+                    Words Added <span v-if="currentWords.length > 0">({{ currentWords.length }})</span>
+                </h4>
+                <div v-if="currentWords.length > 0">
+                    <ul>
+                        <li v-for="(word, i) in currentWords" :key="i">
+                            {{ word.word }}
+                        </li>
+                    </ul>
+                    <div class="ready-container">
+                        <player-ready-button />
+                    </div>
+                </div>
                 <div v-else>
-                    <p>No words submitted yet</p>
+                    <p>You have not added any words, yet. Add a few words to continue.</p>
                 </div>
             </div>
         </div>
@@ -44,9 +51,10 @@ import { GamesActions } from "@web/store/modules/games/GamesActions";
 import { AlertMessage } from "@web/util/AlertMessage";
 import Alert from "@web/components/Alert.vue";
 import { AddWordParams } from "@web/store/modules/games/Games";
+import PlayerReadyButton from "@web/components/PlayerReadyButton.vue";
 
 @Component({
-    components: { Alert }
+    components: { PlayerReadyButton, Alert }
 })
 export default class GameSubmitWords extends Vue {
     @Getter(GamesGetters.submittedWords) currentWords!: WordEntry[];
@@ -110,5 +118,18 @@ export default class GameSubmitWords extends Vue {
 
 .your-words {
     margin-top: spacing($xl);
+
+    ul {
+        list-style: none;
+        margin-left: 0;
+        padding-left: 0;
+        li {
+            margin-bottom: spacing($sm);
+        }
+    }
+}
+
+.ready-container {
+    margin-top: spacing($xxl);
 }
 </style>

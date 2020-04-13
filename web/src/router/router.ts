@@ -24,7 +24,7 @@ export enum RouteName {
     HOME = "Home",
     SIGNUP = "Sign Up",
     ABOUT = "About",
-    GAMES = "Games",
+    GAMES = "Play",
     GAME = "Game"
 }
 
@@ -43,7 +43,7 @@ interface MetaRoute extends RouteConfig {
 
 export const routes: MetaRoute[] = [
     {
-        showInNav: true,
+        showInNav: false,
         path: RoutePath.HOME,
         name: RouteName.HOME,
         component: Home
@@ -58,7 +58,7 @@ export const routes: MetaRoute[] = [
         }
     },
     {
-        showInNav: false,
+        showInNav: true,
         path: RoutePath.ABOUT,
         name: RouteName.ABOUT,
         component: () => import("@web/views/About.vue"),

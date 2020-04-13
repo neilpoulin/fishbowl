@@ -3,16 +3,17 @@
         <section class="players">
             <section class="header" v-if="game">
                 <display-name-form :show-label="false" :show-team-name="true" class="display-name-form" />
-                <player-ready-button class="ready-button" />
-                <div class="scoreboard">
-                    <scoreboard :game="game" />
-                </div>
+                <!--                <player-ready-button class="ready-button" />-->
+                <!--                <div class="scoreboard" v-if="game.phase > 0">-->
+                <!--                    <scoreboard :game="game" />-->
+                <!--                </div>-->
             </section>
 
             <game-video-chat-url :game="game" v-if="false" />
 
             <div class="invite-players">
-                <h4>Link to game</h4>
+                <h4>Invite Friends</h4>
+                <p>Add other players by sending them this link.</p>
                 <invite-players />
             </div>
 

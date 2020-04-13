@@ -11,12 +11,11 @@
                     </div>
                 </div>
                 <div class="gameboard" v-if="game">
-                    <game-phase :phase="game.phase" v-if="game.phase === 0 && !loadingNextPhase" />
                     <fish-loader v-if="loadingNextPhase" message="Loading Next Round" />
-
                     <game-submit-words v-if="game.phase === 0 && !loadingNextPhase" />
-
+                    <game-phase :phase="game.phase" v-if="game.phase === 0 && !loadingNextPhase" />
                     <div class="timer" v-if="game.phase === 1">
+                        <scoreboard :game="game" />
                         <div class="timer centered" v-if="game.turnStartsAt && game.turnEndsAt && game.isPlaying">
                             <countdown
                                 :turn-end-time="game.turnEndsAt"
