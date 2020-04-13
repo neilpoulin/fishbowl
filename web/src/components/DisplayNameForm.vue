@@ -2,12 +2,18 @@
     <div class="display-name-form">
         <div class="input-field">
             <label v-if="showLabel || editing" for="display-name-input" class="name-label">
-                My Name
+                Your Name
             </label>
             <div class="actions" v-if="editing">
                 <div class="inputs">
-                    <input type="text" v-model="displayNameValue" id="display-name-input" placeholder="Enter your name" />
-
+                    <input
+                        type="text"
+                        v-model="displayNameValue"
+                        id="display-name-input"
+                        placeholder="Enter your name"
+                        :autofocus="focusOnLoad"
+                    />
+                    <alert v-if="alert" :alert="alert" />
                     <label v-if="showTeamName">
                         Team
                         <select v-model="selectedTeam">
@@ -19,10 +25,10 @@
                     </label>
                 </div>
                 <div class="action-buttons">
-                    <button class="btn secondary" @click="save" :disabled="saving">
+                    <button class="btn secondary" @click="save" :disabled="actionsDisabled">
                         {{ saving ? "Loading..." : saveLabel }}
                     </button>
-                    <button class="btn link" @click="editing = false" v-if="showCancel" :disabled="saving">
+                    <button class="btn link" @click="editing = false" v-if="showCancel" :disabled="actionsDisabled">
                         Cancel
                     </button>
                 </div>
@@ -51,10 +57,16 @@ import Logger from "@shared/Logger";
 import Player from "@shared/models/Player";
 import { isBlank, isNotNull } from "@shared/util/ObjectUtil";
 import { Game } from "@shared/models/Game";
+import { AlertMessage } from "@web/util/AlertMessage";
+import Alert from "@web/components/Alert.vue";
 
 const logger = new Logger("DisplayNameForm");
 
-@Component
+@Component({
+    components: {
+        Alert
+    }
+})
 export default class DisplayNameForm extends Vue {
     @Getter(Auth.Getters.displayName) displayName: string | undefined | null;
     @Getter(GameStore.Getters.currentPlayer) player: Player | undefined | null;
@@ -65,10 +77,12 @@ export default class DisplayNameForm extends Vue {
     @Prop({ type: String, default: "Save" }) saveLabel!: string;
     @Prop({ type: Boolean, default: true }) showCancel!: boolean;
     @Prop({ type: Boolean, default: false }) startInEdit!: boolean;
+    @Prop({ type: Boolean, default: true }) focusOnLoad!: boolean;
     displayNameValue = "";
     editing = this.startInEdit;
     saving = false;
     selectedTeam: string | undefined | null = null;
+    alert: AlertMessage | null = null;
 
     beforeMount() {
         this.displayNameValue = this.displayName ?? "";
@@ -81,6 +95,10 @@ export default class DisplayNameForm extends Vue {
 
     get showSaveButton(): boolean {
         return this.displayNameValue !== this.displayName || this.alwaysShowSave;
+    }
+
+    get actionsDisabled(): boolean {
+        return this.saving || isBlank(this.displayNameValue);
     }
 
     @Watch("displayName")
@@ -110,16 +128,22 @@ export default class DisplayNameForm extends Vue {
     }
 
     async save() {
+        const displayName = this.displayNameValue;
+        if (isBlank(displayName)) {
+            this.alert = AlertMessage.warn("Please enter a display name.");
+            return;
+        }
+        this.alert = null;
         this.editing = this.startInEdit;
         this.saving = true;
-        const displayName = this.displayNameValue;
+
         let team = null;
         if (isNotNull(this.selectedTeam) && this.selectedTeam !== "none" && !isNaN(Number(this.selectedTeam))) {
             team = Number(this.selectedTeam);
         }
         await this.$store.dispatch(GameStore.Actions.updatePlayer, { displayName, team: team });
-        this.saving = false;
         this.$emit("saved", displayName);
+        this.saving = false;
     }
 }
 </script>
@@ -138,7 +162,8 @@ export default class DisplayNameForm extends Vue {
         max-width: 100%;
 
         .name-label {
-            @include font($sm);
+            @include font($base, $bold);
+            margin-bottom: spacing($sm);
         }
     }
 

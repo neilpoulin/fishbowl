@@ -21,7 +21,7 @@
                     </div>
                     <figcaption class="caption">
                         <h3 class="title">Afflatus of the Fishbowl</h3>
-                        <span class="artist">Brooke Berry</span>
+                        <span class="artist">Brooke Berry (2018&mdash;present)</span>
                         <span class="medium">Crayon on Parchment</span>
                         <p class="description">
                             This piece speaks to the innate human desire that inspiration be unfettered by the burden of definition. The
@@ -92,6 +92,11 @@ export default {
         color: color($color-primary);
         display: inline-block;
         margin: 0;
+        line-height: 9rem;
+        @include maxW($br-tablet-min) {
+            font-size: 7rem;
+            line-height: 7rem;
+        }
         //text-shadow: 4px 4px rgba(color($color-text, $variant-light), 0.8);
     }
 
