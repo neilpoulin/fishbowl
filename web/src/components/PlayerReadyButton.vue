@@ -1,7 +1,7 @@
 <template>
     <div class="button-container" v-if="showButton">
         <button class="btn light" :class="{ danger: isReady, primary: !isReady, outlined: isReady }" @click="togglePhase">
-            {{ isReady ? "Not Ready" : "Ready" }}
+            {{ isReady ? "I'm not done adding words" : "I'm done adding words" }}
         </button>
         <alert v-if="alert" :alert="alert" />
     </div>
@@ -31,7 +31,7 @@ export default class PlayerReadyButton extends Vue {
         let phase = this.player?.phase ?? Phase.SETUP;
 
         if (phase === Phase.SETUP && this.game?.getWordsForUser(this.player?.userId).length === 0) {
-            this.alert = AlertMessage.warn('Please enter a few words before clicking "ready"');
+            this.alert = AlertMessage.warn('Please enter at least one word before you "ready" up. 3 - 5 words is recommended.');
             return;
         } else {
             this.alert = null;
@@ -74,6 +74,7 @@ export default class PlayerReadyButton extends Vue {
 <style scoped lang="scss">
 .button-container {
     display: flex;
+    flex-direction: column;
     button {
         flex: 1;
     }

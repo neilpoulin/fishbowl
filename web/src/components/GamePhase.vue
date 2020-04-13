@@ -10,23 +10,7 @@
                 When you're finished adding words, hit the "ready" button. You can see on the bottom of the screen the players that are
                 ready as well as what team you are on (Team 1 or Team 2). When all players are ready, the game will start!
             </p>
-
-            <!--            <p>-->
-            <!--                <span>Invite friends by sending them this link:</span>-->
-            <!--            </p>-->
-            <!--            <div class="link-input-container">-->
-            <!--                <span class="game-link" ref="linkInput">{{ gameUrl }}</span>-->
-            <!--                <button-->
-            <!--                    class="btn small"-->
-            <!--                    :class="{-->
-            <!--                        'primary light': copyAlert != null,-->
-            <!--                        secondary: copyAlert == null-->
-            <!--                    }"-->
-            <!--                    @click="copyLink"-->
-            <!--                >-->
-            <!--                    {{ copyAlert !== null ? copyAlert.message : "Copy Link " }}-->
-            <!--                </button>-->
-            <!--            </div>-->
+            <player-ready-button />
         </div>
     </div>
 </template>
@@ -36,11 +20,12 @@ import Vue from "vue";
 import { Phase } from "@shared/models/Game";
 import Logger from "@shared/Logger";
 import { AlertMessage } from "@web/util/AlertMessage";
+import PlayerReadyButton from "@web/components/PlayerReadyButton.vue";
 
 const logger = new Logger("GamePhase");
 
 export default Vue.extend({
-    components: {},
+    components: { PlayerReadyButton },
     props: {
         phase: { type: Number as () => Phase, default: Phase.SETUP }
     },
