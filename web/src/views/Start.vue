@@ -9,8 +9,8 @@
                 </div>
                 <div class="game-container">
                     <div class="content">
-                        <span class="current-game">Current Game</span>
                         <div v-if="game">
+                            <span class="current-game">Latest Game</span>
                             <h2>{{ game.name }}</h2>
                             <div class="actions">
                                 <button class="btn danger outlined" @click="leaveGame">

@@ -53,9 +53,9 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         const game = new Game();
         game.name = payload?.name ?? new Date().toISOString();
         await FirestoreService.shared.save(game);
-
-        dispatch(GamesActions.join, { gameId: game.id });
         AnalyticsService.shared.createdGame(game);
+
+        await dispatch(GamesActions.join, { gameId: game.id });
         return game;
     },
     async [GamesActions.observeAll]({ dispatch }): Promise<void> {
@@ -103,6 +103,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
     async [GamesActions.join]({ commit, getters }, payload: JoinGameParams) {
         const game = this.getters[GamesGetters.getById](payload.gameId);
         if (!game) {
+            logger.error("there was no game found for join game params. payload = ", payload);
             //todo: add failed status
         } else {
             commit(GamesMutations.setCurrentGame, payload);
@@ -157,24 +158,6 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             }
         }
     },
-    // async [GamesActions.setTeam]({ getters, commit }, payload: SetPlayerTeam) {
-    //     const game = getters[GamesGetters.currentGame] as Game | undefined;
-    //     const player = getters[GamesGetters.currentPlayer] as Player | undefined;
-    //     logger.info("Setting team to be ", payload.team);
-    //     if (!game || !player) {
-    //         return;
-    //     }
-    //     if (isNotNull(payload.team) && !isNaN(Number(payload.team)) && payload.team !== player.team) {
-    //         logger.info("Saving team...");
-    //         player.team = payload.team;
-    //         // const gameId = game.id;
-    //         // const gameRef = db()
-    //         //     .collection(Collection.games)
-    //         //     .doc(gameId);
-    //         commit(GamesMutations.addGame, game);
-    //         // await gameRef.update({ [Game.FieldPath.playerTeam(player.userId)]: payload.team });
-    //     }
-    // },
     async [GamesActions.addWord]({ getters, commit }, payload: AddWordParams) {
         logger.info("attempting ot add word", payload);
         const userId = getters[AuthGetters.currentUserId];
@@ -244,24 +227,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         if (result.success) {
             logger.info("Completed word via api: success = ", result.success);
         }
-
-        /*
-            Complete word locally via transaction
-         */
-        // const completed = game.completeWord(word);
-        //
-        // if (completed) {
-        //     game.incrementScore(userId);
-        // }
-        //
-        // if (game.remainingWordsInRound.length === 0) {
-        //     logger.info("No words left, ending turn.");
-        //     game.endTurn();
-        // }
-        //
-        // await FirestoreService.shared.save(game);
     },
-
     async [GamesActions.startTurn]({ getters }) {
         const game = getters[GamesGetters.currentGame] as Game | undefined;
         if (!game) {

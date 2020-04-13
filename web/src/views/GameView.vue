@@ -212,12 +212,12 @@ export default class GameView extends Vue {
 
     @Watch("game")
     onLoadingChanged(game: boolean) {
+        document.title = `${this.game?.name ?? "Play"}` + " | Fishbowl";
         if (game && !this.hasJoined) {
             const gameId = this.$route.params.gameId;
             if (gameId) {
                 this.$store.dispatch(Games.Actions.join, { gameId });
             }
-
             logger.info(`Game ID = ${gameId}`);
         }
     }
@@ -230,6 +230,10 @@ export default class GameView extends Vue {
         } else {
             logger.info("No game id found on route");
         }
+    }
+
+    mounted() {
+        document.title = `${this.game?.name ?? "Play"}` + " | Fishbowl";
     }
 
     activateTurn() {

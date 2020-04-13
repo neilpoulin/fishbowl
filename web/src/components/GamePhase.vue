@@ -10,7 +10,6 @@
                 When you're finished adding words, hit the "ready" button. You can see on the bottom of the screen the players that are
                 ready as well as what team you are on (Team 1 or Team 2). When all players are ready, the game will start!
             </p>
-            <player-ready-button />
         </div>
     </div>
 </template>
@@ -20,12 +19,11 @@ import Vue from "vue";
 import { Phase } from "@shared/models/Game";
 import Logger from "@shared/Logger";
 import { AlertMessage } from "@web/util/AlertMessage";
-import PlayerReadyButton from "@web/components/PlayerReadyButton.vue";
 
 const logger = new Logger("GamePhase");
 
 export default Vue.extend({
-    components: { PlayerReadyButton },
+    components: {},
     props: {
         phase: { type: Number as () => Phase, default: Phase.SETUP }
     },

@@ -7,7 +7,7 @@
         </label>
         <div class="input-field">
             <input type="text" v-model="name" id="new-game-name-input" placeholder="Enter a name for this game" />
-            <button class="btn primary" @click="submit">Create Game</button>
+            <button class="btn primary" @click="submit" :disabled="saving">Create Game</button>
         </div>
         <alert :alert="alert" v-if="alert" />
     </div>
@@ -24,6 +24,7 @@ import { AlertMessage } from "@web/util/AlertMessage";
 import Alert from "@web/components/Alert.vue";
 import { isBlank } from "@shared/util/ObjectUtil";
 import { CreateGameParams } from "@web/store/modules/games/Games";
+import { RouteBuilder } from "@web/router/router";
 
 const logger = new Logger("CreateGame.vue");
 
@@ -51,6 +52,8 @@ export default class GameState extends Vue {
         logger.info("Created game", game);
         this.saving = false;
         this.reset();
+
+        await this.$router.push(RouteBuilder.game(game.id));
     }
 
     validate(): AlertMessage | null {
@@ -73,6 +76,10 @@ export default class GameState extends Vue {
 @import "mixins";
 @import "variables";
 .create-game {
+    label {
+        @include font($base, $bold);
+        font-weight: bold;
+    }
     .input-field {
         display: flex;
         flex-direction: row;
