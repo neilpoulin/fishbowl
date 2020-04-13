@@ -11,6 +11,7 @@ import FirestoreService from "@web/services/FirestoreService";
 import Player from "@shared/models/Player";
 import { GamesGetters } from "@web/store/modules/games/GamesGetters";
 import { AuthGetters } from "@web/store/modules/auth/AuthGetters";
+import { AuthActions } from "@web/store/modules/auth/AuthActions";
 import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
 import { AlertMessage } from "@web/util/AlertMessage";
 import {
@@ -19,7 +20,7 @@ import {
     CreateGameParams,
     JoinGameParams,
     SetPhaseParams,
-    SetPlayerTeam
+    UpdatePlayerPayload
 } from "@web/store/modules/games/Games";
 import { isBlank, isNotNull } from "@shared/util/ObjectUtil";
 import GameService from "@web/services/GameService";
@@ -32,7 +33,6 @@ export enum GamesActions {
     join = "games.join",
     load = "games.load",
     updatePlayer = "games.updatePlayer",
-    setTeam = "games.setTeam",
     addGame = "games.addGame",
     addWord = "games.addWord",
     setPlayerPhase = "games.setReadyStatus",
@@ -111,40 +111,60 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             AnalyticsService.shared.joinedGame(game);
         }
     },
-    async [GamesActions.updatePlayer]({ getters, rootState }) {
+    async [GamesActions.updatePlayer]({ getters, rootState, dispatch }, payload: UpdatePlayerPayload) {
         const userId = rootState.auth.user?.uid;
         if (userId) {
             const game: Game | undefined = getters[GamesGetters.currentGame];
+            const displayName = payload.displayName;
             if (game) {
                 let player = game.getPlayer(userId);
-                const displayName = getters[AuthGetters.displayName];
+
+                // const displayName = getters[AuthGetters.displayName];
+
                 if (!player) {
                     player = new Player(userId);
                 }
-                player.displayName = displayName;
+                if (isNotNull(displayName)) {
+                    player.displayName = displayName ?? undefined;
+                    await dispatch(AuthActions.setDisplayName, {
+                        displayName
+                    });
+                }
 
-                game.addPlayer(player);
+                if (isNotNull(payload.team) && !isNaN(Number(payload.team)) && payload.team !== player.team) {
+                    logger.info("Saving team...");
+                    player.team = payload.team;
+
+                    logger.info("Players up next on teams", game.currentPlayerByTeam);
+                    //TODO: RESET UP NEXT FOR EACH TEAM
+                    game.initializeCurrentPlayers();
+                    logger.info("Players up next on teams UPDATED: ", game.currentPlayerByTeam);
+                }
+
+                game.setPlayer(player);
+                logger.info("Update Player: Saving player to game");
                 await FirestoreService.shared.save(game);
             }
         }
     },
-    async [GamesActions.setTeam]({ getters }, payload: SetPlayerTeam) {
-        const game = getters[GamesGetters.currentGame] as Game | undefined;
-        const player = getters[GamesGetters.currentPlayer] as Player | undefined;
-        logger.info("Setting team to be ", payload.team);
-        if (!game || !player) {
-            return;
-        }
-        if (isNotNull(payload.team) && payload.team !== player.team) {
-            logger.info("Saving team...");
-            // player.team = payload.team;
-            const gameId = game.id;
-            const gameRef = db()
-                .collection(Collection.games)
-                .doc(gameId);
-            await gameRef.update({ [Game.FieldPath.playerTeam(player.userId)]: payload.team });
-        }
-    },
+    // async [GamesActions.setTeam]({ getters, commit }, payload: SetPlayerTeam) {
+    //     const game = getters[GamesGetters.currentGame] as Game | undefined;
+    //     const player = getters[GamesGetters.currentPlayer] as Player | undefined;
+    //     logger.info("Setting team to be ", payload.team);
+    //     if (!game || !player) {
+    //         return;
+    //     }
+    //     if (isNotNull(payload.team) && !isNaN(Number(payload.team)) && payload.team !== player.team) {
+    //         logger.info("Saving team...");
+    //         player.team = payload.team;
+    //         // const gameId = game.id;
+    //         // const gameRef = db()
+    //         //     .collection(Collection.games)
+    //         //     .doc(gameId);
+    //         commit(GamesMutations.addGame, game);
+    //         // await gameRef.update({ [Game.FieldPath.playerTeam(player.userId)]: payload.team });
+    //     }
+    // },
     async [GamesActions.addWord]({ getters, commit }, payload: AddWordParams) {
         logger.info("attempting ot add word", payload);
         const userId = getters[AuthGetters.currentUserId];
@@ -191,7 +211,7 @@ export const actions: ActionTree<GamesState, GlobalState> = {
         const { phase } = payload;
         player.phase = phase;
         logger.info(`Set player phage to ${phase}`);
-        game.addPlayer(player);
+        game.setPlayer(player);
         await FirestoreService.shared.save(game);
     },
     async [GamesActions.completeWord]({ getters, commit }, payload: CompleteWordPayload) {

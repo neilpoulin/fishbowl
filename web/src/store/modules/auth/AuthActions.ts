@@ -4,7 +4,6 @@ import { GlobalState } from "@web/store/StoreTypes";
 import { auth } from "@web/config/FirebaseConfig";
 import Logger from "@shared/Logger";
 import { AuthMutations } from "@web/store/modules/auth/AuthMutations";
-import { GamesActions } from "@web/store/modules/games/GamesActions";
 import { isBlank } from "@shared/util/ObjectUtil";
 import { getRandomAnimalDispalyName } from "@web/util/AnimalNames";
 import UserCredential = firebase.auth.UserCredential;
@@ -20,14 +19,6 @@ export const actions: ActionTree<AuthState, GlobalState> = {
     [AuthActions.watchAuth]: ({ commit }) => {
         auth().onAuthStateChanged(async user => {
             logger.info(`Auth state changed. User = `, user?.toJSON());
-            // if (!user) {
-            //     // await dispatch(AuthActions.signInAnonymously, null);
-            //     // await dispatch(AuthActions.setDisplayName, {
-            //     //     displayName: getRandomAnimalDispalyName()
-            //     // });
-            // } else {
-            //     commit(AuthMutations.authChanged, { user });
-            // }
             commit(AuthMutations.authChanged, { user });
         });
     },
@@ -38,7 +29,7 @@ export const actions: ActionTree<AuthState, GlobalState> = {
         });
         return cred;
     },
-    async [AuthActions.setDisplayName]({ commit, dispatch }, payload: SetDisplayNamePayload) {
+    async [AuthActions.setDisplayName]({ commit }, payload: SetDisplayNamePayload) {
         if (isBlank(payload.displayName)) {
             payload.displayName = getRandomAnimalDispalyName();
         }
@@ -49,6 +40,6 @@ export const actions: ActionTree<AuthState, GlobalState> = {
                 displayName: payload.displayName
             });
         }
-        await dispatch(GamesActions.updatePlayer);
+        // await dispatch(GamesActions.updatePlayer);
     }
 };

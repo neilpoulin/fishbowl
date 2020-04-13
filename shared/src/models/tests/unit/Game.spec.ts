@@ -7,10 +7,10 @@ function createPlayer(index: number) {
 
 function setupGame(): Game {
     const game = new Game();
-    game.addPlayer(new Player("u1", "One"));
-    game.addPlayer(new Player("u2", "Two"));
-    game.addPlayer(new Player("u3", "Three"));
-    game.addPlayer(new Player("u4", "Four"));
+    game.setPlayer(new Player("u1", "One"));
+    game.setPlayer(new Player("u2", "Two"));
+    game.setPlayer(new Player("u3", "Three"));
+    game.setPlayer(new Player("u4", "Four"));
 
     game.addWord({ userId: "u1", word: "U1 One" });
     game.addWord({ userId: "u1", word: "U1 Two" });
@@ -72,7 +72,7 @@ describe("setup game and take actions on it", () => {
         expect(game.playersInTeam(1).some(p => p.userId === "u4"));
 
         //add a player and re-assign teams
-        game.addPlayer(createPlayer(5));
+        game.setPlayer(createPlayer(5));
         game.assignTeams();
 
         expect(game.playersInTeam(0).length).toEqual(3);
@@ -165,7 +165,7 @@ describe("assign players", () => {
         expect(assignResult.playersAssigned).toEqual(0);
         expect(assignResult.numTeamsAssigned).toEqual(0);
 
-        game.addPlayer(new Player("np", "New Player"));
+        game.setPlayer(new Player("np", "New Player"));
         assignResult = game.assignTeams();
 
         expect(assignResult.playersAssigned).toEqual(1);

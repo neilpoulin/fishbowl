@@ -1,7 +1,7 @@
 <template>
     <div class="display-name-form">
         <div class="input-field">
-            <label v-if="showLabel" for="display-name-input" class="name-label">
+            <label v-if="showLabel || editing" for="display-name-input" class="name-label">
                 My Name
             </label>
             <div class="actions" v-if="editing">
@@ -11,15 +11,18 @@
                     <label v-if="showTeamName">
                         Team
                         <select v-model="selectedTeam">
+                            <option v-if="selectedTeam === undefined || selectedTeam === null || selectedTeam === 'none'" value="none"
+                                >Select A Team</option
+                            >
                             <option v-for="team in teamOptions" :key="team.value" :value="team.value">{{ team.displayName }}</option>
                         </select>
                     </label>
                 </div>
                 <div class="action-buttons">
-                    <button class="btn secondary" @click="save">
-                        {{ saveLabel }}
+                    <button class="btn secondary" @click="save" :disabled="saving">
+                        {{ saving ? "Loading..." : saveLabel }}
                     </button>
-                    <button class="btn link" @click="editing = false" v-if="showCancel">
+                    <button class="btn link" @click="editing = false" v-if="showCancel" :disabled="saving">
                         Cancel
                     </button>
                 </div>
@@ -31,7 +34,9 @@
                 </button>
             </div>
         </div>
-        <div v-if="!editing && showTeamName && player && player.team !== undefined">Team {{ player.team + 1 }}</div>
+        <div v-if="!editing && selectedTeam !== 'none' && showTeamName && player && player.team !== undefined && player.team !== null">
+            Team {{ player.team + 1 }}
+        </div>
     </div>
 </template>
 
@@ -44,7 +49,7 @@ import { Getter } from "vuex-class";
 import { Prop, Watch } from "vue-property-decorator";
 import Logger from "@shared/Logger";
 import Player from "@shared/models/Player";
-import { isBlank } from "@shared/util/ObjectUtil";
+import { isBlank, isNotNull } from "@shared/util/ObjectUtil";
 import { Game } from "@shared/models/Game";
 
 const logger = new Logger("DisplayNameForm");
@@ -59,10 +64,10 @@ export default class DisplayNameForm extends Vue {
     @Prop({ type: Boolean, default: false }) alwaysShowSave!: boolean;
     @Prop({ type: String, default: "Save" }) saveLabel!: string;
     @Prop({ type: Boolean, default: true }) showCancel!: boolean;
-
+    @Prop({ type: Boolean, default: false }) startInEdit!: boolean;
     displayNameValue = "";
-    editing = false;
-
+    editing = this.startInEdit;
+    saving = false;
     selectedTeam: string | undefined | null = null;
 
     beforeMount() {
@@ -71,7 +76,7 @@ export default class DisplayNameForm extends Vue {
             this.editing = true;
         }
 
-        this.selectedTeam = `${this.player?.team ?? ""}`;
+        this.selectedTeam = `${this.player?.team ?? "none"}`;
     }
 
     get showSaveButton(): boolean {
@@ -82,6 +87,15 @@ export default class DisplayNameForm extends Vue {
     onDisplayNameChanged(name: string) {
         logger.info("Display Name changed to " + name);
         this.displayNameValue = name;
+    }
+
+    @Watch("player")
+    onPlayerChanged(newPlayer: Player | undefined | null, oldPlayer: Player | undefined | null) {
+        if (newPlayer?.team === oldPlayer?.team) {
+            return;
+        }
+
+        this.selectedTeam = `${newPlayer?.team ?? "none"}`;
     }
 
     get teamOptions(): { value: string; displayName: string }[] {
@@ -96,13 +110,15 @@ export default class DisplayNameForm extends Vue {
     }
 
     async save() {
-        this.editing = false;
-        await this.$store.dispatch(Auth.Actions.setDisplayName, {
-            displayName: this.displayNameValue
-        });
+        this.editing = this.startInEdit;
+        this.saving = true;
 
-        await this.$store.dispatch(GameStore.Actions.updatePlayer);
-        await this.$store.dispatch(GameStore.Actions.setTeam, { team: this.selectedTeam ? Number(this.selectedTeam) : undefined });
+        let team = null;
+        if (isNotNull(this.selectedTeam) && this.selectedTeam !== "none" && !isNaN(Number(this.selectedTeam))) {
+            team = Number(this.selectedTeam);
+        }
+        await this.$store.dispatch(GameStore.Actions.updatePlayer, { displayName: this.displayNameValue, team: team });
+        this.saving = false;
         this.$emit("saved", this.displayName);
     }
 }
@@ -133,23 +149,50 @@ export default class DisplayNameForm extends Vue {
 
     .actions {
         display: flex;
+        flex-direction: column;
         flex: 1;
+
+        .inputs {
+            display: flex;
+            flex-direction: column;
+            label {
+                @include font($base, $bold);
+            }
+        }
         input {
-            margin-right: spacing($md);
+            @include minW($br-tablet-min) {
+                //margin-right: spacing($md);
+            }
             /*max-width: 20rem;*/
+            margin-bottom: spacing($lg);
+
             flex: 1;
             height: 2rem;
             background-color: transparent;
-
             &:focus,
             &:hover {
                 background-color: white;
             }
         }
 
+        label {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: spacing($lg);
+            select {
+                display: block;
+                width: 100%;
+                border: 1px solid black;
+                height: 3rem;
+            }
+        }
+
         .action-buttons {
             display: flex;
             flex-direction: column;
+            button {
+                margin-bottom: spacing($md);
+            }
         }
     }
 

@@ -11,7 +11,10 @@
 
             <game-video-chat-url :game="game" v-if="false" />
 
-            <invite-players class="invite-players" />
+            <div class="invite-players">
+                <h4>Link to game</h4>
+                <invite-players />
+            </div>
 
             <h4>
                 Players <span class="count">({{ sortedPlayers.length }})</span>
@@ -144,6 +147,6 @@ export default class GameSidebar extends Vue {
 }
 
 .invite-players {
-    margin-bottom: spacing($lg);
+    margin-bottom: spacing($xl);
 }
 </style>

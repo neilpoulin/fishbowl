@@ -225,7 +225,7 @@ export class Game extends BaseModel {
      * Adds a player to this game.
      * @param {Player} player
      */
-    addPlayer(player: Player) {
+    setPlayer(player: Player) {
         this.players[player.userId] = player;
     }
 
@@ -282,7 +282,7 @@ export class Game extends BaseModel {
         let count = 0;
         for (let team = 0; team < this.numberOfTeams; team++) {
             const currentUserId = this.currentPlayerByTeam[team];
-            if (!isNull(currentUserId)) {
+            if (!isNull(currentUserId) && this.getPlayer(currentUserId)?.team === team) {
                 continue;
             }
             const playersOnTeam = this.playersInTeam(team);

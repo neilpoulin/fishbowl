@@ -3,7 +3,7 @@
         class="player"
         :class="{
             activePlayer: activePlayer === player.userId,
-            activeTeam: currentTeam !== undefined && player.team === currentTeam,
+            activeTeam: showActiveTeam,
             editing: editing,
             currentUser: isCurrentUser
         }"
@@ -18,7 +18,7 @@
             <span class="ready" v-if="playerIsReady(player) && !showTeams">
                 Ready
             </span>
-            <span class="team" v-if="player.team !== undefined"> Team {{ player.team + 1 }} </span>
+            <span class="team" v-if="player.team !== undefined && player.team !== null"> Team {{ player.team + 1 }} </span>
         </div>
         <div v-else class="actions">
             <button class="btn small danger delete-button" @click="deletePlayer">
@@ -59,6 +59,10 @@ export default class PlayerListItem extends Vue {
 
     get wordCount(): number {
         return (this.game?.wordsByUser(this.player.userId) ?? []).length;
+    }
+
+    get showActiveTeam(): boolean {
+        return this.game?.isPlaying && this.player.team === this.game.currentTeam;
     }
 
     get wordCountLabel(): string {

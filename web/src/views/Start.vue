@@ -5,8 +5,7 @@
         <div class="flex-container">
             <section class="main-section">
                 <div class="name-container">
-                    <span class="name">Your Name</span>
-                    <display-name-form :show-label="false" />
+                    <display-name-form :show-label="true" :show-team-name="false" />
                 </div>
                 <div class="game-container">
                     <div class="content">

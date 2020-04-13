@@ -4,7 +4,14 @@
             <h1>{{ pageName }}</h1>
             <p>Set up a display name to continue</p>
 
-            <display-name-form @saved="saved" :always-show-save="true" :show-cancel="false" save-label="Continue" :show-team-name="false" />
+            <display-name-form
+                @saved="saved"
+                :start-in-edit="true"
+                :always-show-save="true"
+                :show-cancel="false"
+                save-label="Continue"
+                :show-team-name="false"
+            />
         </div>
     </div>
 </template>

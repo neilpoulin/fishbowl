@@ -17,7 +17,12 @@ declare interface AddWordParams {
 }
 
 declare interface SetPlayerTeam {
-    team?: number;
+    team?: number | null;
+}
+
+declare interface UpdatePlayerPayload {
+    team?: number | null,
+    displayName?: string | null
 }
 
 declare interface SetPhaseParams {
