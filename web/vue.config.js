@@ -15,7 +15,7 @@ module.exports = {
         config.resolve.alias.set("@web", path.resolve(__dirname, "src")).set("@shared", path.resolve(__dirname, "..", "shared", "src"));
 
         config.plugin("html").tap(args => {
-            args[0].title = "Fishbowl - Play Online";
+            args[0].title = "Fishbowl - a word game over video chat";
             return args;
         });
     }

@@ -21,8 +21,8 @@ declare interface SetPlayerTeam {
 }
 
 declare interface UpdatePlayerPayload {
-    team?: number | null,
-    displayName?: string | null
+    team?: number | null;
+    displayName?: string | null;
 }
 
 declare interface SetPhaseParams {

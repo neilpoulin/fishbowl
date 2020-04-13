@@ -112,14 +112,14 @@ export default class DisplayNameForm extends Vue {
     async save() {
         this.editing = this.startInEdit;
         this.saving = true;
-
+        const displayName = this.displayNameValue;
         let team = null;
         if (isNotNull(this.selectedTeam) && this.selectedTeam !== "none" && !isNaN(Number(this.selectedTeam))) {
             team = Number(this.selectedTeam);
         }
-        await this.$store.dispatch(GameStore.Actions.updatePlayer, { displayName: this.displayNameValue, team: team });
+        await this.$store.dispatch(GameStore.Actions.updatePlayer, { displayName, team: team });
         this.saving = false;
-        this.$emit("saved", this.displayName);
+        this.$emit("saved", displayName);
     }
 }
 </script>

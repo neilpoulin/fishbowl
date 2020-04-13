@@ -100,15 +100,25 @@ export const actions: ActionTree<GamesState, GlobalState> = {
             }
         }
     },
-    async [GamesActions.join]({ commit, dispatch }, payload: JoinGameParams) {
+    async [GamesActions.join]({ commit, getters }, payload: JoinGameParams) {
         const game = this.getters[GamesGetters.getById](payload.gameId);
         if (!game) {
             //todo: add failed status
         } else {
             commit(GamesMutations.setCurrentGame, payload);
             localStorage.setItem("currentGameId", payload.gameId);
-            await dispatch(GamesActions.updatePlayer);
+            const userId = getters[AuthGetters.currentUserId];
+            const displayName = getters[AuthGetters.displayName];
+            let player = game.getPlayer(userId);
+            if (!player) {
+                player = new Player(userId, displayName);
+            }
+
             AnalyticsService.shared.joinedGame(game);
+
+            game.setPlayer(player);
+            logger.info("Join Game: Saving player to game");
+            await FirestoreService.shared.save(game);
         }
     },
     async [GamesActions.updatePlayer]({ getters, rootState, dispatch }, payload: UpdatePlayerPayload) {
