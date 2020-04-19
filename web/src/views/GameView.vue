@@ -89,6 +89,9 @@
                             <button @click="startTurn" class="btn secondary">
                                 Start next round
                             </button>
+                            <button @click="restartGame" class="btn danger" v-if="game.round >= 3">
+                                Start new game
+                            </button>
                         </div>
 
                         <button class="btn danger" @click="endTurn" v-if="isAdmin">
