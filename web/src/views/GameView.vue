@@ -21,6 +21,7 @@
                                 :turn-end-time="game.turnEndsAt"
                                 :turn-start-time="game.turnStartsAt"
                                 @started="activateTurn"
+                                @tenLeft="turnEndingSoon"
                                 @ended="endTurn"
                             />
                         </div>
@@ -243,9 +244,23 @@ export default class GameView extends Vue {
         this.isGameActive = true;
     }
 
+    turnEndingSoon() {
+        if (this.isGameActive) {
+            this.playSound("http://soundbible.com/mp3/Bike%20Horn-SoundBible.com-602544869.mp3");
+        }
+    }
+
     deactivateTurn() {
+        this.playSound("http://soundbible.com/mp3/Buzzer-SoundBible.com-188422102.mp3");
         this.isGameActive = false;
         this.$store.dispatch(GamesActions.turnEnded);
+    }
+
+    playSound(sound: string | undefined) {
+        if (sound) {
+            const audio = new Audio(sound);
+            audio.play();
+        }
     }
 
     playerIsReady(player: Player): boolean {
