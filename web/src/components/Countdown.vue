@@ -33,6 +33,7 @@ export default class Countdown extends Vue {
     turnStarted = false;
     secondsLeftMs: number | null = null;
     interval: number | null = null;
+    tenLeftSent = false;
 
     @Watch("turnEndTime")
     init() {
@@ -70,12 +71,21 @@ export default class Countdown extends Vue {
             this.secondsLeftMs = null;
             this.endTurn();
             return;
+        } else if (diff / 1000 <= 11) {
+            if (this.turnStarted && !this.tenLeftSent) {
+                this.sendTenLeft();
+            }
         }
         this.secondsLeftMs = diff;
     }
 
     startTurn() {
         this.$emit("started");
+    }
+
+    sendTenLeft() {
+        this.$emit("tenLeft");
+        this.tenLeftSent = true;
     }
 
     endTurn() {
